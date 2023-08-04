@@ -1,6 +1,7 @@
 'use server'
 
 import moment, { Moment } from 'moment';
+import { kv } from "@vercel/kv";
 
 export type Post = {
     id: string,
@@ -37,36 +38,60 @@ const samplePosts: Post[] = [
     },
 ];
 
-const posts = samplePosts;
+const inMemoryPosts = samplePosts;
 
 export async function getPosts(): Promise<Post[]> {
-    console.log('>> services.post.getPosts()', {posts});
+    console.log('>> services.post.getPosts()');
+
+    // // in-memory
 
     // console.log('>> services.post.getPosts(): waiting...');
     // await new Promise((resolve) => setTimeout(() => resolve(42), 500));
     // console.log('>> services.post.getPosts(): done waiting!');
 
-    // const res = await fetch('/api/posts'
-    // // , {
-    // //     headers: {
-    // //       'Content-Type': 'application/json',
-    // //       'API-Key': process.env.DATA_API_KEY,
-    // //     },
-    // //   }
-    //   );
-    //   const data = await res.json();
+    // return new Promise((resolve, reject) => resolve(posts));
 
+
+    // redis
+    
+    let response = await kv.json.get("posts", "$");
+
+    if (!response) {
+        console.log('>> services.post.getPosts(): empty redis key, uploading samples');
+        await kv.json.set("posts", "$", "[]");
+        samplePosts.forEach(async (post: Post) => await kv.json.arrappend("posts", `$`, post));
+        response = await kv.json.get("posts", "$");
+    }
+
+    const posts = response[0] as Post[];
     return new Promise((resolve, reject) => resolve(posts));
+
 }
 
 export async function getPost(id: string): Promise<Post> {
-    console.log(`>> services.post.getPost(${id})`, {posts});
+    console.log(`>> services.post.getPost(${id})`);
 
-    console.log('>> services.post.getPost(): waiting...');
-    await new Promise((resolve) => setTimeout(() => resolve(42), 1000));
-    console.log('>> services.post.getPost(): done waiting!');
+    // // in-memory
 
-    const post = posts.filter((p) => p.id == id)[0];
+    // console.log('>> services.post.getPost(): waiting...');
+    // await new Promise((resolve) => setTimeout(() => resolve(42), 1000));
+    // console.log('>> services.post.getPost(): done waiting!');
+
+    // const post = posts.filter((p) => p.id == id)[0];
+    // return new Promise((resolve, reject) => resolve(post));
+
+    // redis
+
+    // let response = await kv.json.get("posts", "$");
+    const response = await kv.json.get("posts", `$[?(@.id=='${id}')]`);
+
+    let post: Post
+    if (response) {
+        // const posts = response[0];
+        // post = posts.filter((p: Post) => p.id == id)[0];
+        post = response[0] as Post;
+    }
+
     return new Promise((resolve, reject) => resolve(post));
 }
 
@@ -80,10 +105,18 @@ export async function addPost(content: string, postedBy: string): Promise<Post> 
         content
     };
 
-    console.log('>> services.post.addPost(): waiting...');
-    await new Promise((resolve) => setTimeout(() => resolve(42), 1000));
-    console.log('>> services.post.getPost(): done waiting!');
+    // // in-memory
+
+    // console.log('>> services.post.addPost(): waiting...');
+    // await new Promise((resolve) => setTimeout(() => resolve(42), 1000));
+    // console.log('>> services.post.getPost(): done waiting!');
     
-    posts.push(post);
+    // inMemoryPosts.push(post);
+    // return new Promise((resolve, reject) => resolve(post));
+
+
+    // redis
+    
+    const result = await kv.json.arrappend("posts", "$", post);
     return new Promise((resolve, reject) => resolve(post));
 }
