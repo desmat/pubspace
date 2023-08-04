@@ -12,7 +12,7 @@ export function PostEntry({ id, postedBy, postedAt, content }: Post) {
       <div className="text-center align-bottom first-letter:uppercase text-dark-1 text-sm">
         <span className="opacity-50 truncate">
           <span title={moment(postedAt).format("LLLL")} className="truncate text-ellipsis">{moment(postedAt).fromNow()}</span> by </span>
-        <span _href="TODO" className="_bg-pink-100 text-dark-2">{postedBy}</span>
+        <span className="_bg-pink-100 text-dark-2">{postedBy}</span>
       </div>
     </div>
   );
@@ -26,7 +26,7 @@ export default function Post({ id, postedBy, postedAt, content }: Post) {
       <div className="text-center align-bottom first-letter:uppercase text-dark-1">
         <span className="opacity-50">
           <span title={moment(postedAt).format("LLLL")}>{moment(postedAt).fromNow()}</span> by </span>
-        <span _href="TODO" className="_bg-pink-100 text-dark-2">{postedBy}</span>
+        <span className="_bg-pink-100 text-dark-2">{postedBy}</span>
       </div>
     </div>
   );
