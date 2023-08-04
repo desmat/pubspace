@@ -37,7 +37,7 @@ export default function Feed() {
               .sort((a: Post, b: Post) => b.postedAt.valueOf() - a.postedAt.valueOf())
               .map((post: Post) => <div key={post.id}><PostEntry {...post} /></div>)
           }
-          <p className='italic text-center'>That's all folks!</p>
+          <p className='italic text-center'>That&apos;s all folks!</p>
         </>
       }
       {(!posts || !posts.length) &&
