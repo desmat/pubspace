@@ -8,6 +8,7 @@ import { BsFillPlusCircleFill } from "react-icons/bs"
 import { BsLightningFill } from "react-icons/bs"
 import { BsClipboardFill } from "react-icons/bs"
 import { FaUser } from "react-icons/fa"
+import { Analytics } from '@vercel/analytics/react';
 import NavLink from '../components/NavLink'
 import PostNavLink from '../components/PostNavLink'
 import usePostStore from "../hooks/postStore";
@@ -71,6 +72,7 @@ export default function RootLayout({
           </div>
         </div>
       </body>
+      <Analytics />
     </html>
   )
 }
