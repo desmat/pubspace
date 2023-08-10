@@ -3,7 +3,7 @@ import Post from "../../components/loading/Post";
 export default async function Loading() {
   console.log('>> app.posts.loading.render()');
 
-  const posts = [<Post />, <Post />, <Post />];
+  const posts = [<Post key="1"/>, <Post key="2"/>, <Post key="3"/>];
 
   return (
     <main className="flex flex-col">
