@@ -157,6 +157,49 @@ const usePostStore: any = create(devtools((set: any, get: any) => ({
 
         set({ posts: [...get().posts, post] });
     },
+
+    edit: async (post: Post) => {
+        console.log(">> hooks.postStore.edit post:", post);
+
+        if (!post.id) {
+            throw `Cannot edit post with null id`;
+        }
+
+        fetch(`/api/posts/${post.id}`, {
+            method: "PUT",
+            body: JSON.stringify(post),
+        }).then(async (res) => {
+            if (res.status != 200) {
+                console.error(`Error editing post ${post.id}: ${res.status} (${res.statusText})`);
+            }
+
+            // TODO bring back the thing here?
+        });
+
+        const posts = get().posts.filter((p: Post) => p.id != post.id);
+        posts.push(post);
+        set({ posts: posts});
+    },    
+
+    delete: async (id: string) => {
+        console.log(">> hooks.postStore.delete id:", id);
+
+        if (!id) {
+            throw `Cannot delete post with null id`;
+        }
+
+        fetch(`/api/posts/${id}`, {
+            method: "DELETE",
+        }).then(async (res) => {
+            if (res.status != 200) {
+                console.error(`Error deleting post ${id}: ${res.status} (${res.statusText})`);
+            }
+
+            // TODO bring back the thing here?
+        });
+
+        set({ posts: get().posts.filter((p: Post) => p.id != id) });
+    },
 })));
 
 export default usePostStore;

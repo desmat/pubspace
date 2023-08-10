@@ -6,7 +6,7 @@ import { getPosts, getPost, addPost } from '@/services/posts';
 
 export async function GET(request: Request) {
     console.log('>> app.api.posts.GET');
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
     if (id) {
