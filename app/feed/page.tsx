@@ -1,10 +1,10 @@
 'use client'
 
 import moment from "moment";
-import usePostStore from "../../hooks/postStore";
-import { Post } from "../../services/posts";
-import Loading from "./loading";
 import { useEffect } from "react";
+import usePostStore from "@/hooks/postStore";
+import { Post } from "@/types/Post"
+import Loading from "./loading";
 
 function PostEntry({ postedBy, postedAt, content }: Post) {
   return (
@@ -28,7 +28,7 @@ export default function Feed() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col">
+    <main className="flex flex-col">
       <h1  className="text-center">Latest Posts</h1>
       {posts && posts.length > 0 &&
         <>

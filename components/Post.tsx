@@ -1,7 +1,7 @@
 'use client'
 
 import moment from "moment";
-import { Post } from "../services/posts";
+import { Post } from "@/types/Post"
 
 export function PostEntry({ id, postedBy, postedAt, content }: Post) {
   console.log(`>> components.PostEntry.render(${id})`);

@@ -1,9 +1,6 @@
-'use client'
-
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { createContext, useEffect } from 'react';
 import { BsFillPlusCircleFill } from "react-icons/bs"
 import { BsLightningFill } from "react-icons/bs"
 import { BsClipboardFill } from "react-icons/bs"
@@ -11,36 +8,25 @@ import { FaUser } from "react-icons/fa"
 import { Analytics } from '@vercel/analytics/react';
 import NavLink from '../components/NavLink'
 import PostNavLink from '../components/PostNavLink'
-import usePostStore from "../hooks/postStore";
 
 const inter = Inter({ subsets: ['latin'] })
 
-// export const metadata: Metadata = {
-//   title: 'Pubspace',
-//   description: 'Billboard, calendar, games and other things for coffee shops/bars/public houses/etc',
-// }
-
-export const AppContext = createContext({});
+export const metadata: Metadata = {
+  title: 'Pubspace',
+  description: 'Billboard, calendar, games and other things for coffee shops/bars/public houses/etc',
+}
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  // const [postsPoaded, loadPosts] = usePostStore((state: any) => [state.loaded, state.load, state.add]);
-
-  // useEffect(() => {
-  //   if (!postsPoaded) {
-  //     loadPosts();
-  //   }
-  // }, [postsPoaded]);
-
   return (
     <html lang="en">
       <body className={inter.className}>
         {/* <div className="bg-pink-500 w-full h-10">this is the header bar</div> */}
         <div className="flex flex-col lg:flex-row">
-          <div className="bg-teal-600 text-slate-300 fixed w-full h-10 lg:w-32 lg:h-screen flex flex-row lg:flex-col">
+          <div className="bg-teal-600 text-slate-300 fixed z-10 w-full h-10 lg:w-32 lg:h-screen flex flex-row lg:flex-col">
             <div className="flex flex-grow-0 p-2 -ml-1 lg:ml-0 lg:-mt-1">
               <NavLink href="/" className="_bg-yellow-600 hover:no-underline">
                 <div className="Logo my-auto">PubSpace</div>
@@ -67,7 +53,7 @@ export default function RootLayout({
               </NavLink>
             </div>
           </div>
-          <div className="_bg-blue-500 ml-0 mt-10 lg:ml-32 lg:mt-0 w-screen h-min-screen _p-2">
+          <div className="_bg-blue-500 ml-0 mt-10 lg:ml-32 lg:mt-0 w-screen min-h-[calc(100vh-2.5rem)] lg:min-h-screen">
             {children}
           </div>
         </div>

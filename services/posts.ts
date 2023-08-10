@@ -1,17 +1,10 @@
-'use server'
+// 'use server'
 
 import moment from 'moment';
 import { kv } from "@vercel/kv";
 import * as firestore from "firebase/firestore"
 import * as firebase from './firebase'
-
-export type Post = {
-    id?: string,
-    postedBy: string,
-    postedAt: number, //Moment,
-    content: string,
-    optimistic?: string,
-}
+import { Post } from "@/types/Post"
 
 const samplePosts: Post[] = [
     // {

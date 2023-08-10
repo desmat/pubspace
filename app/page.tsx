@@ -1,10 +1,8 @@
-'use client'
-
 export default function Page() {
   console.log('>> app.page.render()');
 
   return (
-    <main className="flex min-h-screen flex-col items-center _justify-between _p-24">
+    <main className="flex flex-col items-center _justify-between _p-24">
       <h1>Welcome to PubSpace!</h1>
       <p>
         Things for pubs, coffee shops, public spaces, etc.

@@ -3,17 +3,15 @@
 import Link from "next/link";
 import { useRouter } from 'next/navigation'
 import { useEffect } from "react";
-import Loading from "./loading";
 import Post from "@/components/Post";
-import { Post as PostType } from "../../../services/posts";
-import usePostStore from "../../../hooks/postStore";
+import { Post as PostType } from "@/types/Post"
+import usePostStore from "@/hooks/postStore";
+import Loading from "./loading";
 
 function doEdit(e: any, post: PostType, editPost: any): any {
-  // console.log("*** EDIT ***");
   e.preventDefault();
 
   const content = window.prompt("Update content", post.content);
-  // console.log("*** EDIT *** content", content);
   if (content) {
     post.content = content;
     editPost(post);
@@ -22,13 +20,10 @@ function doEdit(e: any, post: PostType, editPost: any): any {
 }
 
 function doDelete(e: any, post: PostType, router: any, deletePost: any) {
-  // console.log("*** DELETE ***");
   e.preventDefault();
 
   const response = confirm("Delete post?");
-  // console.log("*** DELETE *** content", response);
   if (response) {
-    // deletePost(post);
     deletePost(post.id)
     router.back();
   }
@@ -47,13 +42,13 @@ export default function Page({ params }: { params: { id: string } }) {
   if (!loaded) return <Loading />
 
   if (!post) return (
-    <main className="flex min-h-screen flex-col">
+    <main className="flex flex-col">
       <p className='italic text-center'>Post {params.id} not found :(</p>
     </main>
   )
 
   return (
-    <main className="flex min-h-screen flex-col">
+    <main className="flex flex-col">
       <Post {...post} />
       <div className="flex justify-center space-x-4 p-2">
         {/* <div className="text-dark-2">

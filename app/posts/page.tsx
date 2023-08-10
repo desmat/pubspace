@@ -3,11 +3,11 @@
 
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { PostEntry } from "../../components/Post";
-import Loading from './loading';
-import { Post } from '@/services/posts';
-import usePostStore from "../../hooks/postStore";
+import { PostEntry } from "@/components/Post";
+import { Post } from "@/types/Post"
+import usePostStore from "@/hooks/postStore";
 import hashCode from '@/utils/hashCode';
+import Loading from './loading';
 
 export default function Posts() {
   console.log('>> app.posts.page.render()');
@@ -22,25 +22,23 @@ export default function Posts() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col">
+    <main className="flex flex-col">
       {posts && posts.length > 0 &&
         <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-2">
           {posts
             // .sort((a: Post, b: Post) => a.id.localeCompare(b.id))
             .sort((a: Post, b: Post) => hashCode(a.content) - hashCode(b.content))
             .map((post: Post) => (
-              <>
+              <div key={post.id}>
                 {post.optimistic &&
-                  <div key={post.id} className="bg-pink-100">
-                    <PostEntry {...post} />
-                  </div>
+                 <PostEntry {...post} />
                 }
                 {!post.optimistic &&
-                  <Link key={post.id} href={`/posts/${post.id}`} className="no-link-style p-0">
+                  <Link href={`/posts/${post.id}`} className="no-link-style p-0">
                     <PostEntry {...post} />
                   </Link>
                 }
-              </>
+              </div>
             ))
           }
         </div>

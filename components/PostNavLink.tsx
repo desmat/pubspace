@@ -1,6 +1,6 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import usePostStore from '@/hooks/postStore';
 
 function addPostAction(addPost: any, onSuccess: any) {
@@ -21,7 +21,6 @@ export default function PostNavLink({
 }) {
   console.log('>> components.PostNavLink.render()');
   const pathname = usePathname();
-  // const router = useRouter();
   const addPost = usePostStore((state: any) => state.add);
   
   const isActive = href && (href == "/" && pathname == "/") || (href && href != "/" && pathname.startsWith(href))  

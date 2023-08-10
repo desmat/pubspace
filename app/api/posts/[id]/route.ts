@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { Post, getPost, editPost, deletePost } from '@/services/posts';
+import { getPost, editPost, deletePost } from '@/services/posts';
+import { Post } from "@/types/Post"
 
 export async function GET(
     request: Request,
