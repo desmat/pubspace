@@ -1,12 +1,29 @@
+'use client'
+
+import { useEffect } from "react";
+import useUser from "@/hooks/User";
+
 export default function Page() {
   console.log('>> app.profile.page.render()');
+  const user = useUser();
+
+  useEffect(() => {
+    console.log("** app.profile.page.useEffect user:", user);
+  }, []);
 
   return (
     <main className="flex flex-col items-center _justify-between _p-24">
-      <h1>PROFILE HERE</h1>
-      <p>
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa culpa beatae, maiores asperiores quis veniam, minima laborum magni possimus impedit ipsam ad ullam aliquid earum incidunt voluptate eaque maxime repellat.
-      </p>
+      <h1>Profile</h1>
+      {!user &&
+        <p>(Not logged in)</p>
+      }
+      {user &&
+        <>
+          <p>uid: {user.uid}</p>
+          <p>isAnonymous: {user.isAnonymous ? "true" : "false"}</p>
+          <p>displayName: {user.displayName}</p>
+        </>
+      }
     </main>
   )
 }
