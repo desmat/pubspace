@@ -4,10 +4,10 @@ import { Inter } from 'next/font/google'
 import { BsFillPlusCircleFill } from "react-icons/bs"
 import { BsLightningFill } from "react-icons/bs"
 import { BsClipboardFill } from "react-icons/bs"
-import { FaUser } from "react-icons/fa"
 import { Analytics } from '@vercel/analytics/react';
 import NavLink from '../components/NavLink'
 import PostNavLink from '../components/PostNavLink'
+import ProfileNavLink from '@/components/ProfileNavLink'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -47,10 +47,7 @@ export default function RootLayout({
               </PostNavLink>
             </div>
             <div className="flex flex-grow-0 p-2 -mr-1 lg:mr-0 lg:-mb-1">
-              <NavLink href="/profile" className="_bg-orange-600">
-                <FaUser className="my-auto" />
-                <div className="my-auto">Profile</div>
-              </NavLink>
+             <ProfileNavLink href="/profile" className="_bg-orange-600" />
             </div>
           </div>
           <div className="_bg-blue-500 ml-0 mt-10 lg:ml-32 lg:mt-0 w-screen min-h-[calc(100vh-2.5rem)] lg:min-h-screen">
