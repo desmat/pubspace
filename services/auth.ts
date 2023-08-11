@@ -1,3 +1,6 @@
+import { FirebaseApp } from "firebase/app";
+import { Auth } from "firebase/auth";
+
 const firebaseConfig = {
     // apiKey: process.env.FIREBASE_API_KEY,
     // authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -13,13 +16,11 @@ const firebaseConfig = {
     appId: "1:279126390661:web:f42dd60f352501985876ec"    
 };
 
-// Initialize Firebase
-export let app; // = initializeApp(firebaseConfig)
-// export const db = firestore.getFirestore()
-export let auth;
+export let app: FirebaseApp; 
+export let auth: Auth;
 
-export function doAuth() {
-  console.log("*** services.auth.doAuth");
+export function init() {
+  console.log("*** services.auth.init");
   import("firebase/app").then((firebaseApp) => {
     app = firebaseApp.initializeApp(firebaseConfig);
     import("firebase/auth").then((firebaseAuth) => {
