@@ -1,26 +1,12 @@
 import { FirebaseApp } from "firebase/app";
 import { Auth, User } from "firebase/auth";
-
-const firebaseConfig = {
-    // apiKey: process.env.FIREBASE_API_KEY,
-    // authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-    // projectId: process.env.FIREBASE_PROJECT_ID,
-    // storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-    // messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    // appId: process.env.FIREBASE_APP_ID,
-    apiKey: "AIzaSyCfoZFKKOaxF-c0qZQCXrJSzHLe5nAmkBE",
-    authDomain: "test-firestore-desmat-ca.firebaseapp.com",
-    projectId: "test-firestore-desmat-ca",
-    storageBucket: "test-firestore-desmat-ca.appspot.com",
-    messagingSenderId: "279126390661",
-    appId: "1:279126390661:web:f42dd60f352501985876ec"    
-};
+import { firebaseConfig } from "@/firestore.config";
 
 export let app: FirebaseApp; 
 export let auth: Auth;
 
 export function init(callbacks?: any) {
-  console.log("*** services.auth.init callbacks:", callbacks);
+  console.log("*** services.auth.init firebaseConfig:", firebaseConfig);
 
   const authStateChanged = callbacks?.onAuthStateChanged || function(user: User) {
     if (user) {
