@@ -12,23 +12,24 @@ export function init(callbacks?: any) {
     if (user) {
       // // User is signed in, see docs for a list of available properties
       // // https://firebase.google.com/docs/reference/js/firebase.User
-      const uid = user.uid
-      console.log('onAuthStateChanged', { uid: user.uid })
+      // const uid = user.uid;
+      console.log('onAuthStateChanged', { user });
     } else {
       // // User is signed out
-      console.log('onAuthStateChanged signed out')
+      console.log('onAuthStateChanged signed out');
     }
   };
 
-  const onSignInAnonymously = callbacks?.onSignInAnonymously || function(...params:any) {
-    // // Signed in..
-    console.log('Signed in anonymously to firebase auth params:', params);
-  };
+  // const onSignInAnonymously = callbacks?.onSignInAnonymously || function(...params:any) {
+  //   // // Signed in..
+  //   console.log('Signed in anonymously to firebase auth params:', params);
+  // };
 
-  const onSignInAnonymouslyError = callbacks?.onSignInAnonymouslyError || function(error: any) {
-    console.error('Firestore signing error', { error })
-  };
+  // const onSignInAnonymouslyError = callbacks?.onSignInAnonymouslyError || function(error: any) {
+  //   console.error('Firestore signing error', { error })
+  // };
 
+  // try to avoid warnings when running on server side
   import("firebase/app").then((firebaseApp) => {
     app = firebaseApp.initializeApp(firebaseConfig);
     import("firebase/auth").then((firebaseAuth) => {

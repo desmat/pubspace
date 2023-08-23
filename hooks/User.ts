@@ -9,13 +9,16 @@ export default function useUser() {
         if (user) {
             // // User is signed in, see docs for a list of available properties
             // // https://firebase.google.com/docs/reference/js/firebase.User
-            const uid = user.uid
-            console.log('>> hooks.User.useUser.onAuthStateChanged', { uid: user.uid });
+            // const uid = user.uid
+            console.log('>> hooks.User.useUser.onAuthStateChanged', { user });
             setUser(user);
         } else {
             // // User is signed out
             console.log('>> hooks.User.useUser.onAuthStateChanged signed out');
             setUser(undefined);
+            // when not signed in or logged out sign in anonymously
+            signInAnonymously();
+
         }
     };
 
@@ -43,7 +46,7 @@ export default function useUser() {
     }
 
     const signInAnonymously = function() {
-        console.log(">> hooks.User.init");
+        console.log(">> hooks.User.signInAnonymously");
 
         doSignInAnonymously({ onSignInAnonymously, onSignInAnonymouslyError })
     }

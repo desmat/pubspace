@@ -46,7 +46,7 @@ export default function RootLayout({
                 <div className="my-auto">Post</div>
               </PostNavLink>
             </div>
-            <div className="flex flex-grow-0 p-2 -mr-1 lg:mr-0 lg:-mb-1">
+            <div className="flex flex-col p-2 -mr-1 lg:mr-0 lg:-mb-1">
              <ProfileNavLink href="/profile" className="_bg-orange-600" />
             </div>
           </div>

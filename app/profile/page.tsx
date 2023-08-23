@@ -40,7 +40,7 @@ export default function Page() {
     <main className="flex flex-col items-center _justify-between _p-24">
       <h1>Profile</h1>
       {!user &&
-        <p>(Not logged in)</p>
+        <p className='italic text-center animate-pulse'>Loading...</p>
       }
       {user &&
         <>
@@ -52,18 +52,22 @@ export default function Page() {
         </>
       }
       <div className="flex justify-center space-x-4 p-2">
-        <div className="text-dark-2">
+        {/* <div className="text-dark-2">
           <Link href="/" onClick={(e) => doInit(e, init)}>Init</Link>
-        </div>
-        <div className="text-dark-2">
+        </div> */}
+        {/* <div className="text-dark-2">
           <Link href="/" onClick={(e) => doSigningAnonymously(e, signInAnonymously)}>Signin Anonymously</Link>
-        </div>
-        <div className="text-dark-2">
-          <Link href="/" onClick={(e) => doLogin(e, login)}>Login</Link>
-        </div>
-        <div className="text-dark-2 hover:text-light-2">
-          <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
-        </div>
+        </div> */}
+        {user && user.isAnonymous &&
+          <div className="text-dark-2">
+            <Link href="/" onClick={(e) => doLogin(e, login)}>Login with Google</Link>
+          </div>
+        }
+        {user && !user.isAnonymous &&
+          <div className="text-dark-2 hover:text-light-2">
+            <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
+          </div>
+        }
       </div>
 
     </main>
