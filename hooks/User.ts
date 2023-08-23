@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { User } from "firebase/auth";
-import { auth, init } from "@/services/auth";
+import { init as doInit, signInAnonymously as doSignInAnonymously, login as doLogin, logout as doLogout } from "@/services/auth";
 
 export default function useUser() {
     const [user, setUser] = useState<User | undefined>();
@@ -19,18 +19,54 @@ export default function useUser() {
         }
     };
 
-    const onSignInAnonymously = function (...params: any) {
+    const onSignInAnonymously = function (params: any) {
         // // Signed in..
-        console.log('>> hooks.User.useUser: Signed in anonymously to firebase auth params:', params);
+        console.log('>> hooks.User.useUser: Signed in anonymously to firebase auth params:', params.user);
+
+        setUser(params.user);
     };
 
     const onSignInAnonymouslyError = function (error: any) {
-        console.error('>> hooks.User.useUser.: Firestore signing error', { error })
+        console.error('>> hooks.User.useUser: Firestore signing error', { error })
+        setUser(undefined);
     };
 
     useEffect(() => {
-        init({ onAuthStateChanged, onSignInAnonymously, onSignInAnonymouslyError });
+        console.log('>> hooks.User.useUser.useEffect', { user });
+        doInit({ onAuthStateChanged, onSignInAnonymously, onSignInAnonymouslyError });
     }, []);
 
-    return user;
+    const init = function() {
+        console.log(">> hooks.User.init");
+
+        doInit({ onAuthStateChanged, onSignInAnonymously, onSignInAnonymouslyError });
+    }
+
+    const signInAnonymously = function() {
+        console.log(">> hooks.User.init");
+
+        doSignInAnonymously({ onSignInAnonymously, onSignInAnonymouslyError })
+    }
+
+    const login = () => {
+        console.log(">> hooks.User.login");
+
+        const onLogin = (user: User) => {
+            setUser(user);
+        }
+
+        doLogin({ onLogin });
+    };
+
+    const logout = () => {
+        console.log(">> hooks.User.login");
+
+        const onLogout = () => {
+            setUser(undefined);
+        }
+
+        doLogout({ onLogout });
+    };
+
+    return { user, init, signInAnonymously, login, logout };
 }
