@@ -4,22 +4,16 @@ import Link from "next/link";
 import { useEffect } from "react";
 import useUser from "@/hooks/User";
 
-function doInit(e: any, initFn: any) {
-  console.log("** app.profile.page.doInit");
+function doSigninWithGoogle(e: any, signinFn: any) {
+  console.log("** app.profile.page.doSigninWithGoogle");
   e.preventDefault();
-  initFn();
+  signinFn("google");
 }
 
-function doLogin(e: any, loginFn: any) {
-  console.log("** app.profile.page.doLogin");
-  e.preventDefault();
-  loginFn();
-}
-
-function doSigningAnonymously(e: any, signInAnonymouslyFn: any) {
+function doSigningAnonymously(e: any, signinFn: any) {
   console.log("** app.profile.page.doSigningAnonymously");
   e.preventDefault();
-  signInAnonymouslyFn();
+  signinFn("anonymous");
 }
 
 function doLogout(e: any, logoutFn: any) {
@@ -30,7 +24,7 @@ function doLogout(e: any, logoutFn: any) {
 
 export default function Page() {
   console.log('>> app.profile.page.render()');
-  const { user, init, signInAnonymously, login, logout } = useUser();
+  const { user, signin, logout } = useUser();
 
   useEffect(() => {
     console.log("** app.profile.page.useEffect user:", user);
@@ -46,24 +40,34 @@ export default function Page() {
         <>
           <p>uid: {user.uid}</p>
           <p>isAnonymous: {user.isAnonymous ? "true" : "false"}</p>
+          <p>provider: {user.providerId}{user.providerData[0]?.providerId ? ` (${user.providerData[0]?.providerId})` : ''}</p>
           <p>email: {user.email}</p>
           <p>displayName: {user.displayName}</p>
           <p className="flex whitespace-nowrap">photoURL: <img className="max-w-10 max-h-10" src={user.photoURL as string | undefined}></img></p>
         </>
       }
-      <div className="flex justify-center space-x-4 p-2">
-        {/* <div className="text-dark-2">
-          <Link href="/" onClick={(e) => doInit(e, init)}>Init</Link>
-        </div> */}
-        {/* <div className="text-dark-2">
-          <Link href="/" onClick={(e) => doSigningAnonymously(e, signInAnonymously)}>Signin Anonymously</Link>
-        </div> */}
-        {user && user.isAnonymous &&
+      <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
+        {true && //user && !user.isAnonymous &&
           <div className="text-dark-2">
-            <Link href="/" onClick={(e) => doLogin(e, login)}>Login with Google</Link>
+            <Link href="/" onClick={(e) => doSigningAnonymously(e, signin)}>Signin Anonymously</Link>
           </div>
         }
-        {user && !user.isAnonymous &&
+        {true && //user && user.isAnonymous &&
+          <div className="text-dark-2">
+            <Link href="/profile/auth?method=login-email">Login with Email</Link>
+          </div>
+        }
+        {true && //user && user.isAnonymous &&
+          <div className="text-dark-2">
+            <Link href="/profile/auth?method=signup-email">Signup with Email</Link>
+          </div>
+        }
+        {true && //user && user.isAnonymous &&
+          <div className="text-dark-2">
+            <Link href="/" onClick={(e) => doSigninWithGoogle(e, signin)}>Signin with Google</Link>
+          </div>
+        }
+        {true && //user && !user.isAnonymous &&
           <div className="text-dark-2 hover:text-light-2">
             <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
           </div>

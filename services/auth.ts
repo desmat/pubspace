@@ -1,6 +1,7 @@
 import { FirebaseApp } from "firebase/app";
-import { Auth, User, getAuth, signInWithPopup, GoogleAuthProvider, AuthProvider, signOut } from "firebase/auth";
+import { Auth, User, signInWithPopup, GoogleAuthProvider, AuthProvider, signOut } from "firebase/auth";
 import { firebaseConfig } from "@/firestore.config";
+import { SigninMethod } from "@/types/SigninMethod";
 
 export let app: FirebaseApp; 
 export let auth: Auth;
@@ -20,104 +21,79 @@ export function init(callbacks?: any) {
     }
   };
 
-  // const onSignInAnonymously = callbacks?.onSignInAnonymously || function(...params:any) {
-  //   // // Signed in..
-  //   console.log('Signed in anonymously to firebase auth params:', params);
-  // };
-
-  // const onSignInAnonymouslyError = callbacks?.onSignInAnonymouslyError || function(error: any) {
-  //   console.error('Firestore signing error', { error })
-  // };
-
   // try to avoid warnings when running on server side
   import("firebase/app").then((firebaseApp) => {
     app = firebaseApp.initializeApp(firebaseConfig);
     import("firebase/auth").then((firebaseAuth) => {
       auth = firebaseAuth.getAuth();
-
       firebaseAuth.onAuthStateChanged(auth, authStateChanged);
-  
-      // firebaseAuth.signInAnonymously(auth)
-      //   .then(onSignInAnonymously)
-        // .catch(onSignInAnonymouslyError);
     });
   });
 }
 
-export function signInAnonymously(callbacks?: any) {
+export function signInAnonymously() {
   console.log("*** services.auth.signInAnonymously firebaseConfig:", firebaseConfig);
 
-  const onSignInAnonymously = callbacks?.onSignInAnonymously || function(...params:any) {
-    // // Signed in..
-    console.log('Signed in anonymously to firebase auth params:', params);
-  };
-
-  const onSignInAnonymouslyError = callbacks?.onSignInAnonymouslyError || function(error: any) {
-    console.error('Firestore signing error', { error })
-  };
-
-  import("firebase/auth").then((firebaseAuth) => {
-  firebaseAuth.signInAnonymously(auth)
-    .then(onSignInAnonymously)
-    .catch(onSignInAnonymouslyError);
-  });
+  return new Promise((resolve, reject) => {
+    // try to avoid warnings when running on server side
+    import("firebase/auth").then((firebaseAuth) => {
+      firebaseAuth.signInAnonymously(auth).then((user) => {
+        console.log('Signed in anonymously to firebase', user);
+        resolve(user);
+      }).catch((error) => {
+        console.error('Error signing in anonymously to firebase', error);
+        reject(error);
+      })});
+    });
 }
 
-export function login(callbacks?: any) {
+export async function signin(method: SigninMethod, params?: any) {
   console.log("*** services.auth.login firebaseConfig:", firebaseConfig);
 
-  const onLogin = callbacks?.onLogin || function(...params:any) {
-    console.log('Logged in to firebase auth params:', params);
-  };
-
-  const onLoginError = callbacks?.onLoginError || function(error: any) {
-    console.error('Firestore loggin error', { error })
-  };
+  if (method != "google") {
+    throw `Signing method not supported: ${method}`;
+  }
 
   const provider = new GoogleAuthProvider();
 
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential?.accessToken;
-      // The signed-in user info.
-      const user = result.user;
-      // IdP data available using getAdditionalUserInfo(result)
-      // ...
-      console.log("*** services.auth.login user:", user);
-      onLogin(user);
-    }).catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      // ...
-      console.log("*** services.auth.login error:", error);
-      onLoginError(error);
-    });  
+  return new Promise((resolve, reject) => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential?.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+        console.log("*** services.auth.signin user:", user);
+        resolve(user);
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+        console.log("*** services.auth.signin error:", error);
+        reject(error);
+      });  
+    });
 }
 
-export function logout(callbacks?: any) {
+export async function logout(callbacks?: any) {
   console.log("*** services.auth.logout firebaseConfig:", firebaseConfig);
 
-  const onLogout = callbacks?.onLogout || function(...params:any) {
-    console.log('Logged out from firebase auth params:', params);
-  };
-
-  const onLogoutError = callbacks?.onLogoutError || function(error: any) {
-    console.error('Firestore logout error', { error })
-  };
-
-  signOut(auth)
-    .then((params: any) => {
-      console.log("*** services.auth.logout params:", params);
-      onLogout();
-    }).catch((error) => {
-      console.log("*** services.auth.logout error:", error);
-      onLogoutError();
-    });
+  return new Promise((resolve, reject) => {
+    signOut(auth)
+      .then((params: any) => {
+        console.log("*** services.auth.logout params:", params);
+        resolve(true);
+      }).catch((error) => {
+        console.log("*** services.auth.logout error:", error);
+        reject(error);
+      })
+  });
 }
