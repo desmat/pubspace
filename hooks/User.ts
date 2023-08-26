@@ -42,7 +42,7 @@ export default function useUser() {
             });
         } else {
             return new Promise((resolve, reject) => {
-                doSignin(method).then((user) => {
+                doSignin(method, params).then((user) => {
                     setUser(user as User);
                     resolve(user);
                 }).catch((error) => {

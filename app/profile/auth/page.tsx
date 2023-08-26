@@ -2,28 +2,57 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useUser from "@/hooks/User";
 import { SigninMethod } from "@/types/SigninMethod";
 
-function doLogin(e: any, signinFn: any) {
+function doLogin(e: any, signinFn: any, form: any, router: any) {
   console.log("** app.profile.auth.page.doLogin");
   e.preventDefault();
 
-  signinFn("login-email", {}).then(() => {
-    console.log("Success!!!");
-    // TODO navigate or something
-  })
+  signinFn("login-email", form).then(() => {
+    router.push("/profile");
+  }).catch((error: any) => {
+    alert(`Error logging in: ${error}`);
+  });
 }
 
-function doSignup(e: any, signinFn: any) {
+function doSignup(e: any, signinFn: any, form: any, router: any) {
   console.log("** app.profile.auth.page.doSignup");
   e.preventDefault();
 
-  signinFn("signup-email", {}).then(() => {
-    console.log("Success!!!");
-    // TODO navigate or something
-  })
+  const validationError = 
+    !form.email ? `Email must not be empty` :
+    !form.password ? `Password must not be empty` :
+    form.password != form.confirmPassword ? `Confirm Password does not match Password`:
+    undefined;
+
+  if (validationError) {
+    alert(`Error: ${validationError}`);
+    return;
+  }  
+
+  signinFn("signup-email", form).then(() => {
+    router.push("/profile");
+  }).catch((error: any) => {
+    alert(`Error signing up: ${error}`);
+  });
+}
+
+type FormInputField = "email" | "password" | "confirmPassword";
+
+function FormInput({
+  field, label, form, setForm
+}: {
+  field: FormInputField,
+  label: string,
+  form: any,
+  setForm: (form: any) => void
+}) {
+  const fieldType = field == "email" ? "email" : ["password", "confirmPassword"].includes(field) ? "password" : "text";
+  return (
+    <p>{label}: <input type={fieldType} name={field} value={form[field]} onChange={(e) => setForm({ ...form, [field]: e.target.value })} /></p>
+  );
 }
 
 export default function Page() {
@@ -32,6 +61,7 @@ export default function Page() {
   const router = useRouter();
   const params = useSearchParams();
   const method = params.get("method") as SigninMethod;
+  const [form, setForm] = useState({ email: "", password: "", confirmPassword: "" });
 
   useEffect(() => {
     console.log("** app.profile.auth.page.useEffect", { method });
@@ -42,19 +72,23 @@ export default function Page() {
       <h1>
         {method == "login-email" ? "Login" : method == "signup-email" ? "Signup" : "(unknown method)"}
       </h1>
-      {!user &&
+      {/* {!user &&
         <p className='italic text-center animate-pulse'>Loading...</p>
-      }
-      {user &&
+      } */}
+      {true && //user &&
         <>
-          <p>TODO</p>
+          <FormInput field="email" label="Email" form={form} setForm={setForm} />
+          <FormInput field="password" label="Password" form={form} setForm={setForm} />
+          {method == "signup-email" &&
+            <FormInput field="confirmPassword" label="Confirm Password" form={form} setForm={setForm} />
+          }
         </>
       }
       <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
-      <div className="text-dark-2">
-          <Link 
-            href="/" 
-            onClick={(e) => method == "login-email" ? doLogin(e, signin) : method == "signup-email" ? doSignup(e, signin) : console.error("Unknown signing method", method)}
+        <div className="text-dark-2">
+          <Link
+            href="/"
+            onClick={(e) => method == "login-email" ? doLogin(e, signin, form, router) : method == "signup-email" ? doSignup(e, signin, form, router) : console.error("Unknown signing method", method)}
           >
             {method == "login-email" ? "Login" : method == "signup-email" ? "Signup" : "(unknown method)"}
           </Link>
@@ -63,7 +97,6 @@ export default function Page() {
           <Link href="/profile">Cancel</Link>
         </div>
       </div>
-
     </main>
   )
 }

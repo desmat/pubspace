@@ -43,7 +43,7 @@ export default function Page() {
           <p>provider: {user.providerId}{user.providerData[0]?.providerId ? ` (${user.providerData[0]?.providerId})` : ''}</p>
           <p>email: {user.email}</p>
           <p>displayName: {user.displayName}</p>
-          <p className="flex whitespace-nowrap">photoURL: <img className="max-w-10 max-h-10" src={user.photoURL as string | undefined}></img></p>
+          {/* <p className="flex whitespace-nowrap">photoURL: <img className="max-w-10 max-h-10" src={user.photoURL as string | undefined}></img></p> */}
         </>
       }
       <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
