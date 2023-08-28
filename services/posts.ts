@@ -126,12 +126,13 @@ export async function getPost(id: string): Promise<Post | null> {
     return new Promise((resolve, reject) => resolve(post));
 }
 
-export async function addPost(content: string, postedBy: string): Promise<Post> {
-    console.log(">> services.post.addPost content:", content);
+export async function addPost(content: string, postedBy: string, postedByUID?: string): Promise<Post> {
+    console.log(">> services.post.addPost content:", { content, postedBy });
 
     const post = {
         id: crypto.randomUUID(),
         postedBy,
+        postedByUID,
         postedAt: moment().valueOf(),
         content
     };
