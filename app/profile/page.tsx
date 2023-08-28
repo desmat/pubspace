@@ -47,27 +47,27 @@ export default function Page() {
         </>
       }
       <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
-        {true && //user && !user.isAnonymous &&
+        {/* {user && !user.isAnonymous &&
           <div className="text-dark-2">
             <Link href="/" onClick={(e) => doSigningAnonymously(e, signin)}>Signin Anonymously</Link>
           </div>
-        }
-        {true && //user && user.isAnonymous &&
+        } */}
+        {user && user.isAnonymous &&
           <div className="text-dark-2">
             <Link href="/profile/auth?method=login-email">Login with Email</Link>
           </div>
         }
-        {true && //user && user.isAnonymous &&
+        {user && user.isAnonymous &&
           <div className="text-dark-2">
             <Link href="/profile/auth?method=signup-email">Signup with Email</Link>
           </div>
         }
-        {true && //user && user.isAnonymous &&
+        {user && user.isAnonymous &&
           <div className="text-dark-2">
             <Link href="/" onClick={(e) => doSigninWithGoogle(e, signin)}>Signin with Google</Link>
           </div>
         }
-        {true && //user && !user.isAnonymous &&
+        {user && !user.isAnonymous &&
           <div className="text-dark-2 hover:text-light-2">
             <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
           </div>

@@ -72,10 +72,10 @@ export default function Page() {
       <h1>
         {method == "login-email" ? "Login" : method == "signup-email" ? "Signup" : "(unknown method)"}
       </h1>
-      {/* {!user &&
+      {!user &&
         <p className='italic text-center animate-pulse'>Loading...</p>
-      } */}
-      {true && //user &&
+      }
+      {user &&
         <>
           <FormInput field="email" label="Email" form={form} setForm={setForm} />
           <FormInput field="password" label="Password" form={form} setForm={setForm} />
