@@ -6,10 +6,10 @@ import usePostStore from "@/hooks/postStore";
 import { Post } from "@/types/Post"
 import Loading from "./loading";
 
-function PostEntry({ postedBy, postedAt, content }: Post) {
+function PostEntry({ postedBy, postedByUID, postedAt, content }: Post) {
   return (
     <p className="text-left pb-4">
-      <span className="italic"><a href="TODO">{postedBy}</a> posted <span title={moment(postedAt).format("LLLL")}>{moment(postedAt).fromNow()}</span><br></br></span>
+      <span className="italic"><a href={`/users/${postedByUID || 0}`}>{postedBy}</a> posted <span title={moment(postedAt).format("LLLL")}>{moment(postedAt).fromNow()}</span><br></br></span>
       {content}
     </p>
   );
