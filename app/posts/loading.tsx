@@ -1,4 +1,4 @@
-import Post from "../../components/loading/Post";
+import Post from "../_components/loading/Post";
 
 export default async function Loading() {
   console.log('>> app.posts.loading.render()');

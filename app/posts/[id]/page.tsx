@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useRouter } from 'next/navigation'
 import { useEffect } from "react";
-import Post from "@/components/Post";
+import Post from "@/app/_components/Post";
 import { Post as PostType } from "@/types/Post"
-import usePostStore from "@/hooks/postStore";
+import usePostStore from "@/app/_hooks/postStore";
 import Loading from "./loading";
 
 function doEdit(e: any, post: PostType, editPost: any): any {

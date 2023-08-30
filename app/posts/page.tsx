@@ -2,16 +2,20 @@
 'use client'
 
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react';
-import { PostEntry } from "@/components/Post";
+import { PostEntry } from "@/app/_components/Post";
 import { Post } from "@/types/Post"
-import usePostStore from "@/hooks/postStore";
+import usePostStore from "@/app/_hooks/postStore";
 import hashCode from '@/utils/hashCode';
 import Loading from './loading';
 
 export default function Posts() {
   console.log('>> app.posts.page.render()');
   const [posts, load, loaded] = usePostStore((state: any) => [state.posts, state.load, state.loaded]);
+  const params = useSearchParams();
+  const uidFilter = params.get("uid");
+  const filteredPosts = uidFilter ? posts.filter((post: Post) => post.postedByUID == uidFilter) : posts
 
   useEffect(() => {
     load(); // pull again if new data available
@@ -23,9 +27,14 @@ export default function Posts() {
 
   return (
     <main className="flex flex-col">
-      {posts && posts.length > 0 &&
+      {uidFilter && 
+      <Link href="/posts" className="flex flex-row-reverse pb-2 text-dark-2 hover:text-light-3 cursor-zoom-out">
+        User: {uidFilter}
+      </Link>
+      }
+      {filteredPosts && filteredPosts.length > 0 &&
         <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-2">
-          {posts
+          {filteredPosts
             // .sort((a: Post, b: Post) => a.id.localeCompare(b.id))
             .sort((a: Post, b: Post) => hashCode(a.content) - hashCode(b.content))
             .map((post: Post) => (
@@ -43,7 +52,7 @@ export default function Posts() {
           }
         </div>
       }
-      {(!posts || !posts.length) &&
+      {(!filteredPosts || !filteredPosts.length) &&
         <p className='italic text-center'>No posts yet :(</p>
       }
     </main>

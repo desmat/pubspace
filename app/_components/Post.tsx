@@ -1,9 +1,10 @@
 'use client'
 
 import moment from "moment";
+import Link from "next/link";
 import { Post } from "@/types/Post"
 
-export function PostEntry({ id, postedBy, postedAt, content }: Post) {
+export function PostEntry({ id, postedBy, postedByUID, postedAt, content }: Post) {
   console.log(`>> components.PostEntry.render(${id})`);
   return (
     // <Post {...post} />
@@ -11,8 +12,15 @@ export function PostEntry({ id, postedBy, postedAt, content }: Post) {
       <p className="_bg-pink-200 h-20 line-clamp-3">{content.substring(0, 200) + (content.length > 200 ? "..." : "")}</p>
       <div className="text-center align-bottom first-letter:uppercase text-dark-1 text-sm">
         <span className="opacity-50 truncate">
-          <span title={moment(postedAt).format("LLLL")} className="truncate text-ellipsis">{moment(postedAt).fromNow()}</span> by </span>
-        <span className="_bg-pink-100 text-dark-2">{postedBy}</span>
+          <span title={moment(postedAt).format("LLLL")} className="truncate text-ellipsis">{moment(postedAt).fromNow()}</span>
+          <span> by </span>
+        </span>
+        {postedByUID && 
+          <Link className=" text-dark-2 opacity-50 hover:opacity-100" href={`/profile/${postedByUID}`}>{postedBy}</Link>
+        }
+        {!postedByUID && 
+          <span className="_bg-pink-100 _text-dark-2 opacity-50">{postedBy}</span>
+        }
       </div>
     </div>
   );

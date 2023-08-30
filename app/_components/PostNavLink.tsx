@@ -2,8 +2,8 @@
 
 import { User } from "firebase/auth";
 import { usePathname } from 'next/navigation'
-import usePostStore from '@/hooks/postStore';
-import useUser from '@/hooks/User';
+import usePostStore from '@/app/_hooks/postStore';
+import useUser from '@/app/_hooks/User';
 
 function addPostAction(addPost: any, user: User | undefined, onSuccess: any) {
   const content = window.prompt("Enter content","Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa culpa beatae, maiores asperiores quis veniam, minima laborum magni possimus impedit ipsam ad ullam aliquid earum incidunt voluptate eaque maxime repellat.");

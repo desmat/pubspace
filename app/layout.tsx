@@ -5,9 +5,9 @@ import { BsFillPlusCircleFill } from "react-icons/bs"
 import { BsLightningFill } from "react-icons/bs"
 import { BsClipboardFill } from "react-icons/bs"
 import { Analytics } from '@vercel/analytics/react';
-import NavLink from '../components/NavLink'
-import PostNavLink from '../components/PostNavLink'
-import ProfileNavLink from '@/components/ProfileNavLink'
+import NavLink from '@/app/_components/NavLink'
+import PostNavLink from '@/app/_components/PostNavLink'
+import ProfileNavLink from '@/app/_components/ProfileNavLink'
 
 const inter = Inter({ subsets: ['latin'] })
 
