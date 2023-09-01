@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import useUser from "@/app/_hooks/User";
+import usePostStore from "@/app/_hooks/postStore";
 import useProfileStore from "@/app/_hooks/profileStore";
 import { Profile } from "@/types/Profile";
+import { Post } from "@/types/Post";
 
 function doSigninWithGoogle(e: any, signinFn: any) {
   console.log("** app.profile.page.doSigninWithGoogle");
@@ -27,13 +29,18 @@ function doLogout(e: any, logoutFn: any) {
 export default function Page({ params }: { params: { uid?: string } }) {
   console.log('>> app.profile.page.render()', params.uid);
   const { user, signin, logout } = useUser();
+  const [posts, loadPosts, postsLoaded] = usePostStore((state: any) => [state.posts, state.load, state.loaded]);
   const { profiles, loaded, load } = useProfileStore();
   const profile =  params.uid && profiles && profiles[params.uid] as Profile;
   const profileUser = params.uid ? profile?.user : user;
 
+  const myPosts = postsLoaded && loaded ? posts.filter((post: Post) => post.postedByUID == profileUser?.uid) : [];
+  console.log('>> app.profile.page.render() myPosts', myPosts);
+
   useEffect(() => {
     console.log("** app.profile.page.useEffect profileUser:", { uid: params.uid, profileUser });
     load(params.uid);
+    loadPosts();
   }, [params.uid]);
 
   return (
@@ -65,7 +72,7 @@ export default function Page({ params }: { params: { uid?: string } }) {
       {params.uid && loaded && 
         <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
           <div className="text-dark-2">
-            <Link href={`/posts?uid=${params.uid}`}>View Posts</Link>
+            <Link href={`/posts?uid=${params.uid}`}>View Posts ({myPosts.length})</Link>
           </div>
         </div>
       }
@@ -76,6 +83,11 @@ export default function Page({ params }: { params: { uid?: string } }) {
               <Link href="/" onClick={(e) => doSigningAnonymously(e, signin)}>Signin Anonymously</Link>
             </div>
           } */}
+          {profileUser &&
+            <div className="text-dark-2">
+              <Link href={`/posts?uid=${profileUser.uid}`}>View Posts ({myPosts.length})</Link>
+            </div>
+          }
           {profileUser && profileUser.isAnonymous &&
             <div className="text-dark-2">
               <Link href="/auth?method=login-email">Login with Email</Link>
