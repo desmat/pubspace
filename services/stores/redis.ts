@@ -9,7 +9,7 @@ import { samplePosts } from './samples';
 export async function getPosts(): Promise<Post[]> {
     console.log('>> services.stores.redis.getPosts()');
 
-    let response = await kv.json.get("posts", "$[*]");
+    let response = await kv.json.get("posts", "$[*]"); // y this not work? $[?(@.deletedAt==null)]
     console.log("REDIS response", JSON.stringify(response));
 
     if (!response || !response.length) {
