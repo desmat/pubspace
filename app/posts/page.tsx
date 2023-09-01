@@ -36,7 +36,7 @@ export default function Posts() {
         <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-2">
           {filteredPosts
             // .sort((a: Post, b: Post) => a.id.localeCompare(b.id))
-            .sort((a: Post, b: Post) => hashCode(a.content) - hashCode(b.content))
+            .sort((a: Post, b: Post) => hashCode(a?.content || "") - hashCode(b?.content || ""))
             .map((post: Post) => (
               <div key={post.id}>
                 {post.optimistic &&

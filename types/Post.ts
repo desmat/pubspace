@@ -5,4 +5,5 @@ export type Post = {
     postedAt: number, //Moment,
     content: string,
     optimistic?: string,
+    deletedAt?: number,
 }
