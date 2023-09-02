@@ -3,7 +3,7 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { Profile } from "@/types/Profile"
 
-const useProfileStore: any = create(devtools((set: any, get: any) => ({
+const useProfiles: any = create(devtools((set: any, get: any) => ({
     profiles: {},
     loaded: false,
     
@@ -40,4 +40,4 @@ const useProfileStore: any = create(devtools((set: any, get: any) => ({
     },
 })));
 
-export default useProfileStore;
+export default useProfiles;

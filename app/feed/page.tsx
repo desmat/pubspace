@@ -3,7 +3,7 @@
 import moment from "moment";
 import Link from "next/link";
 import { useEffect } from "react";
-import usePostStore from "@/app/_hooks/postStore";
+import usePosts from "@/app/_hooks/posts";
 import { Post } from "@/types/Post"
 import Loading from "./loading";
 
@@ -30,7 +30,7 @@ function PostEntry({ postedBy, postedByUID, postedAt, content }: Post) {
 
 export default function Feed() {
   console.log('>> app.feed.page.render()');
-  const [posts, load, loaded] = usePostStore((state: any) => [state.posts, state.load, state.loaded]);
+  const [posts, load, loaded] = usePosts((state: any) => [state.posts, state.load, state.loaded]);
 
   useEffect(() => {
     load(); // pull again if new data available

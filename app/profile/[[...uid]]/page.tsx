@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
-import useUser from "@/app/_hooks/User";
-import usePostStore from "@/app/_hooks/postStore";
-import useProfileStore from "@/app/_hooks/profileStore";
+import useUser from "@/app/_hooks/user";
+import usePosts from "@/app/_hooks/posts";
+import useProfiles from "@/app/_hooks/profiles";
 import { Profile } from "@/types/Profile";
 import { Post } from "@/types/Post";
 
@@ -29,8 +29,8 @@ function doLogout(e: any, logoutFn: any) {
 export default function Page({ params }: { params: { uid?: string } }) {
   console.log('>> app.profile.page.render()', params.uid);
   const { user, signin, logout } = useUser();
-  const [posts, loadPosts, postsLoaded] = usePostStore((state: any) => [state.posts, state.load, state.loaded]);
-  const { profiles, loaded, load } = useProfileStore();
+  const [posts, loadPosts, postsLoaded] = usePosts((state: any) => [state.posts, state.load, state.loaded]);
+  const { profiles, loaded, load } = useProfiles();
   const profile =  params.uid && profiles && profiles[params.uid] as Profile;
   const profileUser = params.uid ? profile?.user : user;
 

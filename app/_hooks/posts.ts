@@ -5,7 +5,7 @@ import { Post } from "@/types/Post"
 
 // TODO PostState type
 
-const usePostStore: any = create(devtools((set: any, get: any) => ({
+const usePosts: any = create(devtools((set: any, get: any) => ({
     posts: [],
     loaded: false,
     
@@ -135,4 +135,4 @@ const usePostStore: any = create(devtools((set: any, get: any) => ({
     },
 })));
 
-export default usePostStore;
+export default usePosts;

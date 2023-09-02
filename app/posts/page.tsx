@@ -6,13 +6,13 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react';
 import { PostEntry } from "@/app/_components/Post";
 import { Post } from "@/types/Post"
-import usePostStore from "@/app/_hooks/postStore";
+import usePosts from "@/app/_hooks/posts";
 import hashCode from '@/utils/hashCode';
 import Loading from './loading';
 
 export default function Posts() {
   console.log('>> app.posts.page.render()');
-  const [posts, load, loaded] = usePostStore((state: any) => [state.posts, state.load, state.loaded]);
+  const [posts, load, loaded] = usePosts((state: any) => [state.posts, state.load, state.loaded]);
   const params = useSearchParams();
   const uidFilter = params.get("uid");
   const filteredPosts = uidFilter ? posts.filter((post: Post) => post.postedByUID == uidFilter) : posts

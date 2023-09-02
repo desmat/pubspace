@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from "react";
 import Post from "@/app/_components/Post";
 import { Post as PostType } from "@/types/Post"
-import usePostStore from "@/app/_hooks/postStore";
+import usePosts from "@/app/_hooks/posts";
 import Loading from "./loading";
 
 function doEdit(e: any, post: PostType, editPost: any): any {
@@ -31,8 +31,8 @@ function doDelete(e: any, post: PostType, router: any, deletePost: any) {
 
 export default function Page({ params }: { params: { id: string } }) {
   console.log(`>> app.posts.[${params.id}].page.render()`);
-  const [load, loaded, editPost, deletePost] = usePostStore((state: any) => [state.load, state.loaded, state.edit, state.delete]);
-  const post = usePostStore((state: any) => state.posts.filter((post:any) => post.id == params.id)[0]);
+  const [load, loaded, editPost, deletePost] = usePosts((state: any) => [state.load, state.loaded, state.edit, state.delete]);
+  const post = usePosts((state: any) => state.posts.filter((post:any) => post.id == params.id)[0]);
   const router = useRouter();
 
   useEffect(() => {

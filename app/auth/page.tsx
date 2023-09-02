@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from "react";
-import useUser from "@/app/_hooks/User";
+import useUser from "@/app/_hooks/user";
 import { SigninMethod } from "@/types/SigninMethod";
 
 function doLogin(e: any, signinFn: any, form: any, router: any) {
