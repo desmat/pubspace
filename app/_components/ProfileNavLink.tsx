@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation'
 import { FaRegUserCircle, FaUserCircle } from 'react-icons/fa';
-import useUser from '@/app/_hooks/user';
+import useUser from '@/app/_hooks/User';
 
 export default function ProfileNavLink({
   href, className,
