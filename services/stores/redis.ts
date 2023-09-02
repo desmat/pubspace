@@ -50,7 +50,9 @@ export async function addPost(content: string, postedBy: string, postedByUID?: s
         content
     };
 
-    const result = await kv.json.arrappend("posts", "$", post);
+    const response = await kv.json.arrappend("posts", "$", post);
+    console.log("REDIS response", response);
+
     return post;
 }
 
@@ -63,6 +65,7 @@ export async function editPost(post: Post): Promise<Post> {
 
     const response = await kv.json.set("posts", `$[?(@.id=='${post.id}')]`, post);
     console.log("REDIS response", response);
+    
     return post
 }
 

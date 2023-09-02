@@ -1,8 +1,8 @@
 // 'use server'
 
 import moment from 'moment';
-import * as store from "./stores/firestore";
-// import * as store from "./stores/redis";
+// import * as store from "./stores/firestore";
+import * as store from "./stores/redis";
 // import * as store from "./stores/memory";
 import { Post } from "@/types/Post"
 
