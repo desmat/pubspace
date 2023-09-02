@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
-import useUser from "@/app/_hooks/thing";
+import useUser from "@/app/_hooks/user";
 import usePosts from "@/app/_hooks/posts";
 import useProfiles from "@/app/_hooks/profiles";
 import { Profile } from "@/types/Profile";

@@ -3,7 +3,7 @@
 import { User } from "firebase/auth";
 import { usePathname } from 'next/navigation'
 import usePosts from '@/app/_hooks/posts';
-import useUser from '@/app/_hooks/thing';
+import useUser from '@/app/_hooks/user';
 
 function addPostAction(addPost: any, user: User | undefined, onSuccess: any) {
   const content = window.prompt("Enter content","Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa culpa beatae, maiores asperiores quis veniam, minima laborum magni possimus impedit ipsam ad ullam aliquid earum incidunt voluptate eaque maxime repellat.");
