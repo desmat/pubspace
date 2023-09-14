@@ -54,7 +54,7 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
         }
     },
     
-    add: async (content: string, posterName: string, posterUID: string) => {
+    add: async (content: string, posterName: string, posterUID: string, position?: number) => {
         console.log(">> hooks.postStore.add content:", content);
 
         const tempId = crypto.randomUUID();
@@ -63,7 +63,7 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
 
         fetch('/api/posts', {
             method: "POST",
-            body: JSON.stringify({ content, postedBy, postedByUID }),
+            body: JSON.stringify({ content, postedBy, postedByUID, position }),
         }).then(async (res) => {
             if (res.status != 200) {
                 console.error(`Error adding post: ${res.status} (${res.statusText})`);

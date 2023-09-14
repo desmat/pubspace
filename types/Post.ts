@@ -1,5 +1,6 @@
 export type Post = {
     id?: string,
+    position?: number,
     postedBy: string,
     postedByUID?: string,
     postedAt: number, //Moment,

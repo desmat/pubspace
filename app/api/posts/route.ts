@@ -21,6 +21,6 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     console.log('>> app.api.posts.POST', request);
     const data: any = await request.json();
-    const post = await addPost(data.content, data.postedBy, data.postedByUID);
+    const post = await addPost(data.content, data.postedBy, data.postedByUID, data.position);
     return NextResponse.json({ post });
 }

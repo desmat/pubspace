@@ -43,11 +43,12 @@ export async function getPost(id: string): Promise<Post | null> {
     return post;
 }
 
-export async function addPost(content: string, postedBy: string, postedByUID?: string): Promise<Post> {
+export async function addPost(content: string, postedBy: string, postedByUID?: string, position?: number): Promise<Post> {
     console.log(">> services.stores.firestore.addPost content:", { content, postedBy });
 
     const post = {
         id: crypto.randomUUID(),
+        position,
         postedBy,
         postedByUID,
         postedAt: moment().valueOf(),
