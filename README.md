@@ -6,7 +6,7 @@ Just a basic bulletin board for now, more to come soon!
 
 ## Demo
 
-[https://pubspace.vercel.com](PubSpace)
+[https://pubspace.desmat.ca](PubSpace.desmat.ca)
 
 
 ## Tech
