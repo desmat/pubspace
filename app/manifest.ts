@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'PubSpace: The app for public spaces',
     start_url: '/',
     display: 'standalone',
-    background_color: '#264653',
+    background_color: '#2a9d8f',
     theme_color: '#2a9d8f',
     icons: [
       {
