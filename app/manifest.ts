@@ -7,12 +7,12 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'PubSpace: The app for public spaces',
     start_url: '/',
     display: 'standalone',
-    background_color: '#2a9d8f',
+    background_color: '#d6dbdc',
     theme_color: '#2a9d8f',
     icons: [
       {
         src: 'favicon.ico',
-        sizes: '48x48',
+        sizes: 'any',
         type: 'image/x-icon',
       },
     ],
