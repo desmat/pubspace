@@ -16,11 +16,13 @@ function addPostAction(addPost: any, user: User | undefined, onSuccess: any) {
 }
 
 export default function PostNavLink({
-  children, href, className,
+  children, href, className, menu, onClick,
 }: {
   children: React.ReactNode,
   href?: string,
   className?: string,
+  menu?: boolean,
+  onClick?: () => void
 }) {
   console.log('>> components.PostNavLink.render()');
   const pathname = usePathname();
@@ -30,7 +32,16 @@ export default function PostNavLink({
   const isActive = href && (href == "/" && pathname == "/") || (href && href != "/" && pathname.startsWith(href))  
 
   return (
-    <div onClick={() => addPostAction(addPost, user, (post:any) => 42)} className={(isActive ? "text-slate-100" : "text-slate-300") + " flex flex-row space-x-2 h-full lg:h-fit my-0 lg:my-1 mx-1 lg:mx-0 hover:text-slate-100 cursor-pointer hover:underline " + className}>
+    <div 
+      onClick={() => { addPostAction(addPost, user, (post:any) => 42); onClick && onClick(); }} 
+      className={(isActive 
+          ? (menu ? "text-dark-2" : "text-slate-100")
+          : (menu ? "text-dark-2" : "text-slate-300")
+        ) + (menu 
+          ? " hover:text-dark-2"
+          : " hover:text-slate-100"
+        ) + " flex flex-row space-x-2 h-full lg:h-fit my-0 lg:my-1 mx-1 lg:mx-0 cursor-pointer hover:underline " + className}
+    >
       {children}
     </div>
   )

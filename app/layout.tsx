@@ -8,6 +8,7 @@ import { Analytics } from '@vercel/analytics/react';
 import NavLink from '@/app/_components/NavLink'
 import PostNavLink from '@/app/_components/PostNavLink'
 import ProfileNavLink from '@/app/_components/ProfileNavLink'
+import Nav from '@/app/_components/Menu'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -33,21 +34,24 @@ export default function RootLayout({
               </NavLink>
             </div>
             <div className="flex flex-grow flex-row lg:flex-col space-x-4 lg:space-x-0 pl-2 pr-0 py-2 lg:py-0 lg:px-2 -mx-2 -my-0 lg:mx-0 lg:-my-2 _bg-yellow-100">
-              <NavLink href="/feed" className="_bg-pink-300">
+              <NavLink href="/feed" className="_bg-pink-300 hidden md:flex">
                 <BsLightningFill className="my-auto text-right" />
                 <div className="my-auto">Feed</div>
               </NavLink>
-              <NavLink href="/posts" className="_bg-pink-300">
+              <NavLink href="/posts" className="_bg-pink-300 hidden md:flex">
                 <BsClipboardFill className="my-auto" />
                 <div className="my-auto">Board</div>
               </NavLink>
-              <PostNavLink className="_bg-pink-300">
+              <PostNavLink className="_bg-pink-300 hidden md:flex">
                 <BsFillPlusCircleFill className="my-auto" />
                 <div className="my-auto">Post</div>
               </PostNavLink>
+              <div className="md:hidden mt-1">
+                <Nav />
+              </div>
             </div>
             <div className="flex flex-col p-2 -mr-1 lg:mr-0 lg:-mb-1">
-             <ProfileNavLink href="/profile" className="_bg-orange-600" />
+              <ProfileNavLink href="/profile" className="_bg-orange-600" />
             </div>
           </div>
           <div className="_bg-blue-500 ml-0 mt-10 lg:ml-32 lg:mt-0 w-screen min-h-[calc(100vh-2.5rem)] lg:min-h-screen">
