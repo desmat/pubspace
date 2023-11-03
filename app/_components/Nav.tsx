@@ -10,30 +10,49 @@ import NavProfileLink from '@/app/_components/NavProfileLink'
 import NavPopup from '@/app/_components/NavPopup'
 import usePosts from '@/app/_hooks/posts';
 import useUser from '@/app/_hooks/user';
-import { Post } from "@/types/Post";
 
-function menuItems(user: any, addPostFn: any) {
-  return [
-  {name: "Feed", href: "/feed", icon: <BsLightningFill className="my-auto text-right" />},
-  {name: "Board", href: "/posts", icon: <BsClipboardFill className="my-auto" />},
-  {name: "Post", onClick: (addPost: any, user: User) => addPostAction(addPostFn, user), icon: <BsFillPlusCircleFill className="my-auto" />},
-  ];
-}
-
-function addPostAction(addPost: any, user: User | undefined, onSuccess?: (post: Post) => void): boolean {
-  const content = window.prompt("Enter content","Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa culpa beatae, maiores asperiores quis veniam, minima laborum magni possimus impedit ipsam ad ullam aliquid earum incidunt voluptate eaque maxime repellat.");
-  if (content) {
-    const userName = user?.isAnonymous ? "Anonymous" : user?.displayName || user?.email || "Noname";
-    const post = addPost(content, userName, user?.uid);
-    onSuccess && onSuccess(post);
-    return true;
-  }
-
-  return false;
-}
+const placeHolderPost = "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa culpa beatae, maiores asperiores quis veniam, minima laborum magni possimus impedit ipsam ad ullam aliquid earum incidunt voluptate eaque maxime repellat." 
 
 function isActive(pathname: string, href: string): boolean {
   return (href && (href == "/" && pathname == "/") || (href && href != "/" && pathname.startsWith(href))) as boolean;
+}
+
+function getUsername(user: User | undefined) {
+  if (!user) return "";
+
+  return user?.isAnonymous ? "Anonymous" : user?.displayName || user?.email || "Noname";
+}
+
+function menuItems({ pathname, user, addPost }: { pathname: string, user: User | undefined, addPost: any | undefined, postOnClick?: () => boolean }) {
+  return [
+    {
+      name: "Feed",
+      href: "/feed",
+      icon: <BsLightningFill className="my-auto text-right" />
+    },
+    {
+      name: "Board",
+      href: "/posts",
+      icon: <BsClipboardFill className="my-auto" />
+    },
+    {
+      name: "Post",
+      icon: <BsFillPlusCircleFill className="my-auto" />,
+      onClick: function () {
+        const content = window.prompt("Enter content", placeHolderPost);
+        if (content) {
+          const userName = getUsername(user);
+          const post = addPost(content, userName, user?.uid);
+          return post as boolean;
+        }
+
+        return false;
+      }
+    },
+  ].map((menuItem: any) => {
+    menuItem.isActive = isActive(pathname, menuItem.href);
+    return menuItem;
+  });
 }
 
 export default function Nav() {
@@ -49,19 +68,19 @@ export default function Nav() {
         </NavLink>
       </div>
       <div className="flex flex-grow flex-row lg:flex-col space-x-4 lg:space-x-0 pl-2 pr-0 py-2 lg:py-0 lg:px-2 -mx-2 -my-0 lg:mx-0 lg:-my-2 _bg-yellow-100">
-        {menuItems && menuItems(user, addPost).map((menuItem: any) => (
-          <NavLink 
+        {menuItems({pathname, user, addPost}).map((menuItem: any) => (
+          <NavLink
             className="_bg-pink-300 hidden md:flex"
-            href={menuItem.href} 
-            isActive={isActive(pathname, menuItem.href)}
-            onClick={() => menuItem.onClick && menuItem.onClick(addPost, user, () => 42)}
+            href={menuItem.href}
+            isActive={menuItem.isActive}
+            onClick={menuItem.onClick}
           >
             {menuItem.icon}
             <div className="my-auto">{menuItem.name}</div>
           </NavLink>
         ))}
         <div className="md:hidden mt-1">
-          <NavPopup menuItems={menuItems(user, addPost)}/>
+          <NavPopup menuItems={menuItems({pathname, user, addPost})} />
         </div>
       </div>
       <div className="flex flex-col p-2 -mr-1 lg:mr-0 lg:-mb-1">
