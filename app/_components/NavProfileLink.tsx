@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { FaRegUserCircle, FaUserCircle } from 'react-icons/fa';
 import useUser from '@/app/_hooks/user';
 
-export default function ProfileNavLink({
+export default function NavProfileLink({
   href, className,
 }: {
   href: string,

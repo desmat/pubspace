@@ -1,30 +1,28 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 
 export default function NavLink({
-  children, href, className, menu, onClick,
+  children, href, className, isMenu, isActive, onClick,
 }: {
   children: React.ReactNode,
-  href: string,
+  href?: string,
   className?: string,
-  menu?: boolean,
+  isMenu?: boolean,
+  isActive?: boolean
   onClick?: () => void,
 }) {
-  // console.log('>> components.NavLink.render()');
-  const pathname = usePathname();
-  const isActive = href && (href == "/" && pathname == "/") || (href && href != "/" && pathname.startsWith(href))
+  // console.log('>> components.NavLink.render()', { isActive });
 
   return (
     <div className="flex w-max" onClick={() => onClick && onClick()}>
       <Link
-        href={href}
+        href={href || "#"}
         className={(
           isActive
-            ? (menu ? "text-dark-1" : "text-slate-100") + " cursor-default hover:no-underline"
-            : (menu ? "text-dark-2" : "text-slate-300") + " cursor-pointer hover:underline"
-        ) + (menu
+            ? (isMenu ? "text-dark-1" : "text-slate-100") + " cursor-default hover:no-underline"
+            : (isMenu ? "text-dark-2" : "text-slate-300") + " cursor-pointer hover:underline"
+        ) + (isMenu
           ? ""
           : " hover:text-slate-100"
           ) + " flex flex-row ellipsis whitespace-nowrap lg:whitespace-normal space-x-2 h-full lg:h-fit my-0 lg:my-1 mx-1 lg:mx-0 align-middle " + className}
