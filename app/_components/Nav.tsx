@@ -11,7 +11,7 @@ import NavPopup from '@/app/_components/NavPopup'
 import usePosts from '@/app/_hooks/posts';
 import useUser from '@/app/_hooks/user';
 
-const placeHolderPost = "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa culpa beatae, maiores asperiores quis veniam, minima laborum magni possimus impedit ipsam ad ullam aliquid earum incidunt voluptate eaque maxime repellat." 
+const placeHolderPost = "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa culpa beatae, maiores asperiores quis veniam, minima laborum magni possimus impedit ipsam ad ullam aliquid earum incidunt voluptate eaque maxime repellat."
 
 function isActive(pathname: string, href: string): boolean {
   return (href && (href == "/" && pathname == "/") || (href && href != "/" && pathname.startsWith(href))) as boolean;
@@ -68,19 +68,21 @@ export default function Nav() {
         </NavLink>
       </div>
       <div className="flex flex-grow flex-row lg:flex-col space-x-4 lg:space-x-0 pl-2 pr-0 py-2 lg:py-0 lg:px-2 -mx-2 -my-0 lg:mx-0 lg:-my-2 _bg-yellow-100">
-        {menuItems({pathname, user, addPost}).map((menuItem: any) => (
-          <NavLink
-            className="_bg-pink-300 hidden md:flex"
-            href={menuItem.href}
-            isActive={menuItem.isActive}
-            onClick={menuItem.onClick}
-          >
-            {menuItem.icon}
-            <div className="my-auto">{menuItem.name}</div>
-          </NavLink>
+        {menuItems({ pathname, user, addPost }).map((menuItem: any) => (
+          <div key={menuItem.name}>
+            <NavLink
+              className="_bg-pink-300 hidden md:flex"
+              href={menuItem.href}
+              isActive={menuItem.isActive}
+              onClick={menuItem.onClick}
+            >
+              {menuItem.icon}
+              <div className="my-auto">{menuItem.name}</div>
+            </NavLink>
+          </div>
         ))}
         <div className="md:hidden mt-1">
-          <NavPopup menuItems={menuItems({pathname, user, addPost})} />
+          <NavPopup menuItems={menuItems({ pathname, user, addPost })} />
         </div>
       </div>
       <div className="flex flex-col p-2 -mr-1 lg:mr-0 lg:-mb-1">

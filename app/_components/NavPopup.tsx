@@ -42,35 +42,37 @@ export default function NavPopup({
         <Menu.Items className="absolute -left-12 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1" >
             {menuItems && menuItems.map((menuItem: any) => (
-              <Menu.Item>
-                {({ active, close }) => (
-                  <div
-                    className={classNames(
-                      active ? 'bg-gray-100' : '',
-                      'block px-4 py-2 text-sm'
-                    )}
-                  >
-                    <NavLink 
-                      className="_bg-pink-300" 
-                      href={menuItem.href} 
-                      isMenu={true} 
-                      isActive={menuItem.isActive}
-                      onClick={() => {
-                        if (menuItem.onClick) {
-                          if (menuItem.onClick()) {
-                            close();
-                          } 
-                        } else {
-                          close();
-                        }
-                      }}
+              <div key={menuItem.name}>
+                <Menu.Item>
+                  {({ active, close }) => (
+                    <div
+                      className={classNames(
+                        active ? 'bg-gray-100' : '',
+                        'block px-4 py-2 text-sm'
+                      )}
                     >
-                      {menuItem.icon}
-                      <div className="my-auto">{menuItem.name}</div>
-                    </NavLink>
-                  </div>
-                )}
-              </Menu.Item>
+                      <NavLink
+                        className="_bg-pink-300"
+                        href={menuItem.href}
+                        isMenu={true}
+                        isActive={menuItem.isActive}
+                        onClick={() => {
+                          if (menuItem.onClick) {
+                            if (menuItem.onClick()) {
+                              close();
+                            }
+                          } else {
+                            close();
+                          }
+                        }}
+                      >
+                        {menuItem.icon}
+                        <div className="my-auto">{menuItem.name}</div>
+                      </NavLink>
+                    </div>
+                  )}
+                </Menu.Item>
+              </div>
             ))}
           </div>
         </Menu.Items>
