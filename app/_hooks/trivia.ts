@@ -14,8 +14,6 @@ function createGame(numQuestions: number, categories?: string[], name?: string) 
   const parseAnswer = /(\w+)\)\s*(.+)/;
   const parseCorrectAnswer = /(\w+)\)\s*(.+)\s*\(Correct Answer\)/;
 
-  // ^(\d+)\.\s*(.*\n)(?:^\s*(\w+\).*\s*$)\n)(?:^\s*(\w+\).*\s*$)\n)(?:^\s*(\w+\).*\s*$)\n)(?:^\s*(\w+\).*\s*$)\n)
-
   const parsedQuestions: any[] = [];
 
   triviaQuestions.forEach((triviaQuestion: any) => {
@@ -86,13 +84,14 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
   loadGames: async () => {
     console.log("*** hooks.trivia.loadGames", {});
 
-    set({ games: [createGame(2), createGame(2)], loaded: true });;
+    set({ /* games: [createGame(2), createGame(2)], */ loaded: true });
   },
 
   createGame: async (numQuestions: number, categories?: string[]) => {
     console.log("*** hooks.trivia.createGame", { categories });
-
-    set({ games: [...get().games, createGame(numQuestions)] });
+    const game = createGame(numQuestions)
+    set({ games: [...get().games, game] });
+    return game.id;
   },
 
   loadGame: async (id: string) => {
