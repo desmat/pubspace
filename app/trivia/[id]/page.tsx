@@ -1,8 +1,8 @@
 'use client'
 
-import Link from "next/link";
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from "react";
+import Link from "@/app/_components/Link"
 import useTrivia from "@/app/_hooks/trivia";
 // import { Post } from "@/types/Post" // TODO trivia game and question types
 import Loading from "./loading";
@@ -15,7 +15,7 @@ function QuestionEntry({ i, id, text, answers, category, showAnswers }: any) {
       <span className="">
         {i + 1}. <span className="capitalize">[{category}]</span> {text}
         {!showAnswers &&
-          <Link className="text-dark-2 opacity-60 hover:opacity-100 px-1 ml-1" href="#" onClick={(e) => { e.preventDefault(); setShowAnswer(!showAnswer); }}>{showAnswer ? "Hide Correct Answer" : "Show Correct Answer"}</Link>
+          <Link style="light" className="ml-2" href="#" onClick={(e) => { e.preventDefault(); setShowAnswer(!showAnswer); }}>{showAnswer ? "Hide Correct Answer" : "Show Correct Answer"}</Link>
         }
       </span>
       <br />
@@ -42,14 +42,12 @@ function GameEntry({ id, name, status, questions, showAnswers }: any) {
   );
 }
 
-async function handleDeleteGame(e: any, id: string, deleteGameFn: any, router: any) {
-  e.preventDefault();
+async function handleDeleteGame(id: string, deleteGameFn: any, router: any) {
   await deleteGameFn(id);
   router.push("/trivia");
 }
 
-async function handlePlayGame(e: any, id: string, startGameFn: any, router: any) {
-  e.preventDefault();
+async function handlePlayGame(id: string, startGameFn: any, router: any) {
   await startGameFn(id);
   // router.push("/trivia");
 }
@@ -77,7 +75,7 @@ export default function Page({ params }: { params: { id: string } }) {
       <main className="flex flex-col">
         <h1 className="text-center">Game {params.id} not found</h1>
         <div className="flex flex-col lg:flex-row lg:gap-4 items-center justify-center mt-2 mb-4">
-          <Link className="text-dark-2" href="/trivia">Back</Link>
+          <Link href="/trivia">Back</Link>
         </div>
       </main>
     )
@@ -91,11 +89,11 @@ export default function Page({ params }: { params: { id: string } }) {
         Trivia game with {game.questions.length} questions in the {categories.length > 1 ? "" : "category of "}<span className="capitalize">{categories.join(", ")}</span> {categories.length > 1 ? "categories" : ""}
       </p>
 
-      <div className="flex flex-col lg:flex-row lg:gap-4 items-center justify-center mt-2 mb-4">
-        <Link className="text-dark-2" href="/trivia">Back</Link>
-        <Link className="text-dark-2" href="#" onClick={(e) => { e.preventDefault(); setShowAnswers(!showAnswers); }} >{showAnswers ? "Hide Correct Answers" : "Show Correct Answers"}</Link>
-        <Link className="text-dark-2" href="#" onClick={(e) => handlePlayGame(e, params.id, startGame, router)} >Play</Link>
-        <Link className="text-dark-2 hover:text-light-2" href="#" onClick={(e) => handleDeleteGame(e, params.id, deleteGame, router)} >Delete</Link>
+      <div className="flex flex-col lg:flex-row lg:gap-2 items-center justify-center mt-2 mb-4">
+        <Link href="/trivia">Back</Link>
+        <Link onClick={() => setShowAnswers(!showAnswers)}>{showAnswers ? "Hide Correct Answers" : "Show Correct Answers"}</Link>
+        <Link onClick={() => handlePlayGame(params.id, startGame, router)}>Play</Link>
+        <Link style="warning" onClick={() => handleDeleteGame(params.id, deleteGame, router)}>Delete</Link>
       </div>
 
       {game && game.questions && (game?.questions?.length as number) > 0 &&
