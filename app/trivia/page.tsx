@@ -14,7 +14,7 @@ function GameEntry({ id, name, status, questions }: any) {
   return (
     <p className="text-left p-4">
       <span className="m-0">
-        {name} ({questions.length} questions in the {categories.length > 1 ? "" : "category of "}<span className="capitalize">{categories.join(", ")}</span> {categories.length > 1 ? "categories" : ""})
+        {name} ({questions.length} questions in the {categories.length > 1 ? "" : "category of "}<span className="capitalize">{categories.sort().join(", ")}</span> {categories.length > 1 ? "categories" : ""})
         <Link style="light" className="ml-2" href={`/trivia/${id}`}>View</Link>
         <Link style="light warning" onClick={() => deleteGame(id)}>Delete</Link>
       </span>
@@ -49,6 +49,13 @@ export default function Page() {
     loadGames();
   }, []);
 
+  const links = (
+    <div className="flex flex-col lg:flex-row lg:gap-2 items-center justify-center mt-2 mb-4">
+      <Link onClick={() => handleCreateGame(createGame, router)} >Create New Game</Link>
+      {/* <Link>View Leaderboard</Link> */}
+    </div>
+  );
+
   if (!loaded) {
     return <Loading />
   }
@@ -59,16 +66,13 @@ export default function Page() {
       <p className='italic text-center'>
         Create and host trivia games powered by ChatGPT
       </p>
-
-      <div className="flex flex-col lg:flex-row lg:gap-2 items-center justify-center mt-2 mb-4">
-        <Link onClick={() => handleCreateGame(createGame, router)} >Create New Game</Link>
-        <Link>View Leaderboard</Link>
-      </div>
+      {links}
       {games && games.length > 0 &&
         <>
           {
             games
-              // .sort((a: Post, b: Post) => b.postedAt.valueOf() - a.postedAt.valueOf())
+              // .filter(...)
+              // .sort(...)
               .map((game: any) => <div key={game.id}><GameEntry {...game} /></div>)
           }
         </>
@@ -76,6 +80,7 @@ export default function Page() {
       {(!games || games.length == 0) &&
         <p className='italic text-center'>No trivia games yet :(</p>
       }
+      {games && games.length > 4 && links}
     </main>
   )
 }

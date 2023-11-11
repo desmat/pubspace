@@ -70,13 +70,20 @@ export default function Page({ params }: { params: { id: string } }) {
     return <Loading />
   }
 
+  const links = (
+    <div className="flex flex-col lg:flex-row lg:gap-2 items-center justify-center mt-2 mb-4">
+      <Link href="/trivia">Back</Link>
+      {game && <Link onClick={() => setShowAnswers(!showAnswers)}>{showAnswers ? "Hide Correct Answers" : "Show Correct Answers"}</Link>}
+      {/* {game && <Link onClick={() => handlePlayGame(params.id, startGame, router)}>Play</Link>} */}
+      {game && <Link style="warning" onClick={() => handleDeleteGame(params.id, deleteGame, router)}>Delete</Link>}
+    </div>
+  );
+
   if (!game) {
     return (
       <main className="flex flex-col">
         <h1 className="text-center">Game {params.id} not found</h1>
-        <div className="flex flex-col lg:flex-row lg:gap-4 items-center justify-center mt-2 mb-4">
-          <Link href="/trivia">Back</Link>
-        </div>
+        {links}
       </main>
     )
   }
@@ -84,21 +91,14 @@ export default function Page({ params }: { params: { id: string } }) {
   return (
     <main className="flex flex-col">
       <h1 className="text-center">{game.name}</h1>
-
       <p className='italic text-center'>
-        Trivia game with {game.questions.length} questions in the {categories.length > 1 ? "" : "category of "}<span className="capitalize">{categories.join(", ")}</span> {categories.length > 1 ? "categories" : ""}
+        Trivia game with {game.questions.length} questions in the {categories.length > 1 ? "" : "category of "}<span className="capitalize">{categories.sort().join(", ")}</span> {categories.length > 1 ? "categories" : ""}
       </p>
-
-      <div className="flex flex-col lg:flex-row lg:gap-2 items-center justify-center mt-2 mb-4">
-        <Link href="/trivia">Back</Link>
-        <Link onClick={() => setShowAnswers(!showAnswers)}>{showAnswers ? "Hide Correct Answers" : "Show Correct Answers"}</Link>
-        <Link onClick={() => handlePlayGame(params.id, startGame, router)}>Play</Link>
-        <Link style="warning" onClick={() => handleDeleteGame(params.id, deleteGame, router)}>Delete</Link>
-      </div>
-
+      {links}
       {game && game.questions && (game?.questions?.length as number) > 0 &&
         <GameEntry {...{ ...game, showAnswers }} />
       }
+      {links}
     </main>
   )
 }
