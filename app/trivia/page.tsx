@@ -24,9 +24,9 @@ function GameEntry({ id, name, status, questions }: any) {
   );
 }
 
-async function handleCreateGame(createGameFn: any, router: any, user: User) {
+async function handleCreateGame(createGameFn: any, router: any, user: User | undefined) {
   // console.log("*** handleCreateGame", { user, name: user.displayName?.split(/\s+/) });
-  const userName = (!user.isAnonymous && user.displayName)
+  const userName = (user && !user.isAnonymous && user.displayName)
     ? `${user.displayName.split(/\s+/)[0]}'s`
     : "A";
 
