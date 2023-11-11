@@ -11,11 +11,11 @@ function QuestionEntry({ i, id, text, answers, category, showAnswers }: any) {
   const [showAnswer, setShowAnswer] = useState(false);
 
   return (
-    <p className="text-left pb-4">
+    <p className="group text-left pb-4 hover:cursor-pointer" onClick={() => setShowAnswer(!showAnswer)}>
       <span className="">
         {i + 1}. <span className="capitalize">[{category}]</span> {text}
         {!showAnswers &&
-          <Link style="light" className="ml-2" href="#" onClick={(e) => { e.preventDefault(); setShowAnswer(!showAnswer); }}>{showAnswer ? "Hide Correct Answer" : "Show Correct Answer"}</Link>
+          <Link style="light" className="opacity-40 group-hover:opacity-100 group-hover:underline group-active:text-light-1 group- ml-2">{showAnswer ? "Hide Correct Answer" : "Show Correct Answer"}</Link>
         }
       </span>
       <br />
