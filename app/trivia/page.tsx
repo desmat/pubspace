@@ -6,6 +6,8 @@ import useTrivia from "@/app/_hooks/trivia";
 import Link from "@/app/_components/Link"
 // import { Post } from "@/types/Post" // TODO trivia game and question types
 import Loading from "./loading";
+import { User } from 'firebase/auth';
+import useUser from '../_hooks/user';
 
 function GameEntry({ id, name, status, questions }: any) {
   const [deleteGame] = useTrivia((state: any) => [state.deleteGame]);
@@ -22,15 +24,23 @@ function GameEntry({ id, name, status, questions }: any) {
   );
 }
 
-async function handleCreateGame(createGameFn: any, router: any) {
+async function handleCreateGame(createGameFn: any, router: any, user: User) {
+  // console.log("*** handleCreateGame", { user, name: user.displayName?.split(/\s+/) });
+  const userName = (!user.isAnonymous && user.displayName)
+    ? `${user.displayName.split(/\s+/)[0]}'s`
+    : "A";
+
   const content = window.prompt("How many questions?", "10");
   if (content) {
     const num = Number(content);
     if (num > 0) {
-      const id = await createGameFn(num);
-      if (id) {
-        router.push(`/trivia/${id}`);
-        return true
+      const name = window.prompt("Name?", `${userName} trivia game with ${num} questions`);
+      if (name) {
+        const id = await createGameFn(num, name);
+        if (id) {
+          router.push(`/trivia/${id}`);
+          return true
+        }
       }
     }
   }
@@ -43,6 +53,7 @@ async function handleCreateGame(createGameFn: any, router: any) {
 export default function Page() {
   console.log('>> app.trivia.page.render()');
   const router = useRouter();
+  const { user } = useUser();
   const [games, loadGames, loaded, createGame] = useTrivia((state: any) => [state.games, state.loadGames, state.loaded, state.createGame]);
 
   useEffect(() => {
@@ -51,7 +62,7 @@ export default function Page() {
 
   const links = (
     <div className="flex flex-col lg:flex-row lg:gap-2 items-center justify-center mt-2 mb-4">
-      <Link onClick={() => handleCreateGame(createGame, router)} >Create New Game</Link>
+      <Link onClick={() => handleCreateGame(createGame, router, user)} >Create New Game</Link>
       {/* <Link>View Leaderboard</Link> */}
     </div>
   );

@@ -8,7 +8,7 @@ import { User } from 'firebase/auth';
 
 // TODO: move behind API
 
-function createGame(numQuestions: number, categories?: string[], name?: string) {
+function createGame(numQuestions: number, name?: string, categories?: string[]) {
   const parseQuestions = /(^\d+\.\s*.*$(?:\n^\s+.*$){4})+/gm;
   const parseQuestion = /^(\d+)\.\s*(.*[\?\:]\n)(?:^\s*(\w+\).*\s*$)\n)(?:^\s*(\w+\).*\s*$)\n)(?:^\s*(\w+\).*\s*$)\n)(?:^\s*(\w+\).*\s*$))/m;
   const parseAnswer = /(\w+)\)\s*(.+)/;
@@ -87,9 +87,9 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
     set({ /* games: [createGame(2), createGame(2)], */ loaded: true });
   },
 
-  createGame: async (numQuestions: number, categories?: string[]) => {
-    console.log("*** hooks.trivia.createGame", { categories });
-    const game = createGame(numQuestions)
+  createGame: async (numQuestions: number, name?: string, categories?: string[]) => {
+    console.log("*** hooks.trivia.createGame", { numQuestions, name, categories });
+    const game = createGame(numQuestions, name, categories);
     set({ games: [...get().games, game] });
     return game.id;
   },

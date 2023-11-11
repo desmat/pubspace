@@ -10,8 +10,14 @@ import Loading from "./loading";
 function QuestionEntry({ i, id, text, answers, category, showAnswers }: any) {
   const [showAnswer, setShowAnswer] = useState(false);
 
+  useEffect(() => {
+    if (showAnswers) {
+      setShowAnswer(false);
+    }
+  }, [showAnswers]);
+
   return (
-    <p className="group text-left pb-4 hover:cursor-pointer" onClick={() => setShowAnswer(!showAnswer)}>
+    <p className={"text-left pb-4" + (showAnswers ? "" : " group hover:cursor-pointer")} onClick={() => !showAnswers && setShowAnswer(!showAnswer)}>
       <span className="">
         {i + 1}. <span className="capitalize">[{category}]</span> {text}
         {!showAnswers &&
