@@ -1,16 +1,14 @@
 'use client'
 
-import Link from "next/link";
 import { useRouter } from 'next/navigation'
 import { useEffect } from "react";
+import Link from "@/app/_components/Link"
 import Post from "@/app/_components/Post";
 import { Post as PostType } from "@/types/Post"
 import usePosts from "@/app/_hooks/posts";
 import Loading from "./loading";
 
-function doEdit(e: any, post: PostType, editPost: any): any {
-  e.preventDefault();
-
+function doEdit(post: PostType, editPost: any): any {
   const content = window.prompt("Update content", post.content);
   if (content) {
     post.content = content;
@@ -19,9 +17,7 @@ function doEdit(e: any, post: PostType, editPost: any): any {
   }
 }
 
-function doDelete(e: any, post: PostType, router: any, deletePost: any) {
-  e.preventDefault();
-
+function doDelete(post: PostType, router: any, deletePost: any) {
   const response = confirm("Delete post?");
   if (response) {
     deletePost(post.id)
@@ -32,7 +28,7 @@ function doDelete(e: any, post: PostType, router: any, deletePost: any) {
 export default function Page({ params }: { params: { id: string } }) {
   console.log(`>> app.posts.[${params.id}].page.render()`);
   const [load, loaded, editPost, deletePost] = usePosts((state: any) => [state.load, state.loaded, state.edit, state.delete]);
-  const post = usePosts((state: any) => state.posts.filter((post:any) => post.id == params.id)[0]);
+  const post = usePosts((state: any) => state.posts.filter((post: any) => post.id == params.id)[0]);
   const router = useRouter();
 
   useEffect(() => {
@@ -50,16 +46,10 @@ export default function Page({ params }: { params: { id: string } }) {
   return (
     <main className="flex flex-col">
       <Post {...post} />
-      <div className="flex justify-center space-x-4 p-2">
-        {/* <div className="text-dark-2">
-          <Link href="/" onClick={(e) => router.back()}>Back</Link>
-        </div> */}
-        <div className="text-dark-2">
-          <Link href="/" onClick={(e) => doEdit(e, post, editPost)}>Edit</Link>
-        </div>
-        <div className="text-dark-2 hover:text-light-2">
-          <Link href="/" onClick={(e) => doDelete(e, post, router, deletePost)}>Delete</Link>
-        </div>
+      <div className="flex justify-center gap-2 p-2">
+        <Link onClick={() => router.back()}>Back</Link>
+        <Link onClick={() => doEdit(post, editPost)}>Edit</Link>
+        <Link style="warning" onClick={() => doDelete(post, router, deletePost)}>Delete</Link>
       </div>
     </main>
   );

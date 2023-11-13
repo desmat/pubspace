@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { BsFillPlusCircleFill } from "react-icons/bs"
 import { BsLightningFill } from "react-icons/bs"
 import { BsClipboardFill } from "react-icons/bs"
+import { BsFillQuestionSquareFill } from 'react-icons/bs'
 import NavLink from '@/app/_components/NavLink'
 import NavProfileLink from '@/app/_components/NavProfileLink'
 import NavPopup from '@/app/_components/NavPopup'
@@ -49,6 +50,12 @@ function menuItems({ pathname, user, addPost }: { pathname: string, user: User |
         return false;
       }
     },
+    {
+      name: "Trivia",
+      href: "/trivia",
+      icon: <BsFillQuestionSquareFill className="my-auto" />
+    },
+
   ].map((menuItem: any) => {
     menuItem.isActive = isActive(pathname, menuItem.href);
     return menuItem;

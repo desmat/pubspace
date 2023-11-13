@@ -1,11 +1,12 @@
 // 'use server'
 'use client'
 
-import Link from 'next/link';
+import { default as NextLink } from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react';
 import { BsPlusLg } from "react-icons/bs"
 import { User } from 'firebase/auth';
+import Link from "@/app/_components/Link"
 import { PostEntry } from "@/app/_components/Post";
 import { Post } from "@/types/Post"
 import usePosts from "@/app/_hooks/posts";
@@ -56,7 +57,7 @@ export default function Posts() {
   return (
     <main className="flex flex-col">
       {uidFilter &&
-        <Link href="/posts" className="flex flex-row-reverse pb-2 text-dark-2 hover:text-light-3 cursor-zoom-out">
+        <Link href="/posts" style="warning" className="flex flex-row-reverse pb-2 cursor-zoom-out">
           User: {uidFilter}
         </Link>
       }
@@ -79,9 +80,9 @@ export default function Posts() {
                   <PostEntry {...post} />
                 }
                 {!post.optimistic &&
-                  <Link href={`/posts/${post.id}`} className="no-link-style p-0">
+                  <NextLink href={`/posts/${post.id}`} className="no-link-style p-0">
                     <PostEntry {...post} />
-                  </Link>
+                  </NextLink>
                 }
               </div>
             )
