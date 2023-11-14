@@ -4,7 +4,51 @@ import * as firestore from "firebase/firestore"
 import moment from 'moment';
 import * as firebase from '@/services/firebase'
 import { Post } from "@/types/Post"
+import { Game } from "@/types/Trivia";
 import { samplePosts } from './samples';
+import * as memoryStore from "./memory"
+
+
+//
+// Trivia 
+//
+
+export async function getTriviaGames(): Promise<Game[]> {
+    console.log('>> services.stores.firestore.getTriviaGames()');
+
+    // TODO
+
+    return memoryStore.getTriviaGames();
+}
+
+export async function getTriviaGame(id: string): Promise<Game | null> {
+    console.log(`>> services.stores.firestore.getTriviaGame(${id})`, { id });
+
+    // TODO
+    
+    return memoryStore.getTriviaGame(id);
+}
+
+export async function addTriviaGame(game: Game): Promise<Game> {
+    console.log(">> services.stores.firestore.addTriviaGame", { game });
+
+    // TODO
+    
+    return memoryStore.addTriviaGame(game);
+}
+
+export async function deleteTriviaGame(id: string): Promise<void> {
+    console.log(">> services.stores.firestore.deleteTriviaGame", { id });
+
+    // TODO
+    
+    return memoryStore.deleteTriviaGame(id);
+}
+
+
+//
+// Posts
+//
 
 export async function getPosts(): Promise<Post[]> {
     console.log('>> services.stores.firestore.getPosts()');

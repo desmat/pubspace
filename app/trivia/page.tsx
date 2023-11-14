@@ -11,14 +11,20 @@ import useUser from '../_hooks/user';
 
 function GameEntry({ id, name, status, questions }: any) {
   const [deleteGame] = useTrivia((state: any) => [state.deleteGame]);
-  const categories = Array.from(new Set(questions.map((question: any) => question.category)))
+  const categories = Array.from(new Set(questions.map((question: any) => question.category))).filter(Boolean);
 
   return (
     <p className="text-left p-4">
-      <span className="m-0">
-        {name} ({questions.length} questions in the {categories.length > 1 ? "" : "category of "}<span className="capitalize">{categories.sort().join(", ")}</span> {categories.length > 1 ? "categories" : ""})
-        <Link style="light" className="ml-2" href={`/trivia/${id}`}>View</Link>
-        <Link style="light warning" onClick={() => deleteGame(id)}>Delete</Link>
+      <span className="m-0 group">
+        {name} ({questions.length} questions
+        {categories && categories.length > 0 &&
+          <>
+            {" " } in the {categories.length > 1 ? "" : "category of "}<span className="capitalize">{categories.sort().join(", ")}</span> {categories.length > 1 ? "categories" : ""}
+          </>
+        })
+        
+        <Link style="light" className="group-hover:opacity-100 ml-2" href={`/trivia/${id}`}>View</Link>
+        <Link style="light warning" className="group-hover:opacity-100" onClick={() => deleteGame(id)}>Delete</Link>
       </span>
     </p>
   );
@@ -47,7 +53,6 @@ async function handleCreateGame(createGameFn: any, router: any, user: User | und
 
   console.warn("Unable to create game with num questions", content);
   return false;
-
 }
 
 export default function Page() {

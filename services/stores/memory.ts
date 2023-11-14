@@ -1,10 +1,50 @@
 // 'use server'
 
 import moment from 'moment';
-import { Post } from "@/types/Post"
+import { Post } from "@/types/Post";
+import { Game } from "@/types/Trivia";
 import { samplePosts } from './samples';
 
 let inMemoryPosts = samplePosts;
+let inMemoryTriviaGames = [] as Game[];
+
+//
+// Trivia 
+//
+
+export async function getTriviaGames(): Promise<Game[]> {
+    console.log('>> services.stores.memory.getTriviaGames()');
+
+    return inMemoryTriviaGames;
+}
+
+export async function getTriviaGame(id: string): Promise<Game | null> {
+    console.log(`>> services.stores.memory.getTriviaGame(${id})`, { inMemoryTriviaGames });
+
+    return inMemoryTriviaGames.filter((g) => g.id === id)[0];
+}
+
+export async function addTriviaGame(game: Game): Promise<Game> {
+    console.log(">> services.stores.memory.addTriviaGame", { game });
+
+    inMemoryTriviaGames.push(game);
+    return game;
+}
+
+export async function deleteTriviaGame(id: string): Promise<void> {
+    console.log(">> services.stores.memory.deleteTriviaGame", { id });
+
+    if (!id) {
+        throw `Cannot delete trivia game with null id`;
+    }
+    
+    const games = inMemoryTriviaGames.filter((game: Game) => game.id != id);
+    inMemoryTriviaGames = games;
+}
+
+//
+// Posts
+//
 
 export async function getPosts(): Promise<Post[]> {
     console.log('>> services.stores.memory.getPosts()');

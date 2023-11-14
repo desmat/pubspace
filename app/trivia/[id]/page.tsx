@@ -62,15 +62,15 @@ export default function Page({ params }: { params: { id: string } }) {
   // console.log('>> app.trivia[id].page.render()', { id: params.id });
   const router = useRouter();
   const [showAnswers, setShowAnswers] = useState(false);
-  const [games, loadGames, loaded, deleteGame, startGame] = useTrivia((state: any) => [state.games, state.loadGames, state.loaded, state.deleteGame, state.startGame]);
+  const [games, loadGame, loaded, deleteGame, startGame] = useTrivia((state: any) => [state.games, state.loadGame, state.loaded, state.deleteGame, state.startGame]);
   const game = games.filter((game: any) => game.id == params.id)[0];
   const categories = game && Array.from(new Set(game.questions.map((question: any) => question.category)));
 
   console.log('>> app.trivia[id].page.render()', { id: params.id, game });
 
   useEffect(() => {
-    loadGames();
-  }, []);
+    loadGame(params.id);
+  }, [params.id]);
 
   if (!loaded) {
     return <Loading />
