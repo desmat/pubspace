@@ -1,9 +1,11 @@
 // 'use server'
 
-// import * as store from "./stores/firestore";
+import moment from 'moment';
+import { User } from "firebase/auth";
+import * as store from "./stores/firestore";
 // import * as store from "./stores/redis";
-import * as store from "./stores/memory";
-import { Game, Question, RawQuestions } from "@/types/Trivia";
+// import * as store from "./stores/memory";
+import { Game, Question, RawQuestion } from "@/types/Trivia";
 import { triviaQuestions as tampleTriviaQuestions } from '@/services/stores/samples';
 import shuffleArray from '@/utils/shuffleArray'
 
@@ -14,7 +16,7 @@ function getQuestions() {
   return tampleTriviaQuestions;
 }
 
-function parseQuestions(triviaQuestions: RawQuestions): Game {
+function parseQuestions(triviaQuestions: RawQuestion[]): Question[] {
   const parseQuestions = /(^\d+\.\s*.*$(?:\n^\s+.*$){4})+/gm;
   const parseQuestion = /^(\d+)\.\s*(.*[\?\:]\n)(?:^\s*(\w+\).*\s*$)\n)(?:^\s*(\w+\).*\s*$)\n)(?:^\s*(\w+\).*\s*$)\n)(?:^\s*(\w+\).*\s*$))/m;
   const parseAnswer = /(\w+)\)\s*(.+)/;
@@ -22,7 +24,7 @@ function parseQuestions(triviaQuestions: RawQuestions): Game {
 
   const parsedQuestions: Question[] = [];
 
-  triviaQuestions.forEach((triviaQuestion: any) => {
+  triviaQuestions.forEach((triviaQuestion: RawQuestion) => {
     // console.log("*** triviaQuestion", { triviaQuestion });
 
     const questions = triviaQuestion.text.match(parseQuestions);
@@ -87,15 +89,17 @@ export async function getGame(id: string): Promise<Game | null> {
   return new Promise((resolve, reject) => resolve(game));
 }
 
-export async function createGame(numQuestions: number, name?: string, categories?: string[]): Promise<Game> {
-  console.log(">> services.trivia.createGame", { numQuestions, name, categories });
+export async function createGame(createdBy: string, numQuestions: number, name?: string, categories?: string[]): Promise<Game> {
+  console.log(">> services.trivia.createGame", { createdBy, numQuestions, name, categories });
 
   const rawQuestions = getQuestions();
   const parsedQuestions = parseQuestions(rawQuestions);
   const game = {
     id: crypto.randomUUID(),
-    name: name || `Game with ${numQuestions} questions`,
     status: "created",
+    createdBy,
+    createdAt: moment().valueOf(),
+    name: name || `Game with ${numQuestions} questions`,
     questions: shuffleArray(parsedQuestions).slice(0, numQuestions),
   };
 

@@ -40,8 +40,8 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
     });
   },
 
-  createGame: async (numQuestions: number, name?: string, categories?: string[]) => {
-    console.log("*** hooks.trivia.createGame", { numQuestions, name, categories });
+  createGame: async (createdBy: string, numQuestions: number, name?: string, categories?: string[]) => {
+    console.log("*** hooks.trivia.createGame", { createdBy, numQuestions, name, categories });
 
     const tempId = crypto.randomUUID();
     // const postedBy = posterName;
@@ -49,7 +49,7 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
 
     fetch('/api/trivia/games', {
       method: "POST",
-      body: JSON.stringify({ numQuestions, name, categories }),
+      body: JSON.stringify({ createdBy, numQuestions, name, categories }),
     }).then(async (res) => {
       if (res.status != 200) {
         console.error(`Error creating game: ${res.status} (${res.statusText})`);

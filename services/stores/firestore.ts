@@ -16,33 +16,56 @@ import * as memoryStore from "./memory"
 export async function getTriviaGames(): Promise<Game[]> {
     console.log('>> services.stores.firestore.getTriviaGames()');
 
-    // TODO
+    const c = firestore.collection(firebase.db, "trivia-games")
+    const q = firestore.query(c);
+    let snapshot = await firestore.getDocs(q);
+    // console.log("*** snapshot: ", { snapshot });
 
-    return memoryStore.getTriviaGames();
+    const games: Game[] = [];
+    snapshot.forEach((result: any) => games.push({ ...result.data() as Game, id: result.id }));
+    // console.log("*** firestore games", JSON.stringify(posts));
+   return games;
 }
 
 export async function getTriviaGame(id: string): Promise<Game | null> {
     console.log(`>> services.stores.firestore.getTriviaGame(${id})`, { id });
 
-    // TODO
-    
-    return memoryStore.getTriviaGame(id);
+    const ref = firestore.doc(firebase.db, "trivia-games", id);
+    let snapshot = await firestore.getDoc(ref);
+    // console.log("*** snapshot: ", { snapshot });
+
+    if (!snapshot.exists()) {
+        console.warn('>> services.stores.firestore.getTriviaGame(): trivia game not found', id);
+        return null;
+    }
+
+    const game = { ...snapshot.data() as Game, id: snapshot.id };
+    return game;
 }
 
 export async function addTriviaGame(game: Game): Promise<Game> {
     console.log(">> services.stores.firestore.addTriviaGame", { game });
 
-    // TODO
-    
-    return memoryStore.addTriviaGame(game);
+    // TODO set createdAt
+    // TODO remove id
+
+    const c = firestore.collection(firebase.db, "trivia-games")
+    const ref = await firestore.addDoc(c, game);
+    const result = await firestore.getDoc(ref);
+    const newGame = { ...result.data() as Game, id: result.id };
+    // console.log("*** firestore new game", { id: result.id, post: JSON.stringify(newGame) });
+    return newGame;
 }
 
 export async function deleteTriviaGame(id: string): Promise<void> {
     console.log(">> services.stores.firestore.deleteTriviaGame", { id });
 
-    // TODO
-    
-    return memoryStore.deleteTriviaGame(id);
+    if (!id) {
+        throw `Cannot delete trivia game with null id`;
+    }
+
+    const ref = firestore.doc(firebase.db, "trivia-games", id);
+    await firestore.deleteDoc(ref);
 }
 
 

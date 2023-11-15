@@ -18,6 +18,6 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     console.log('>> app.api.trivia.games.POST', request);
     const data: any = await request.json();
-    const game = await createGame(data.numQuestions, data.name, data.categories);
+    const game = await createGame(data.createdBy, data.numQuestions, data.name, data.categories);
     return NextResponse.json({ game });
 }
