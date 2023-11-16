@@ -42,7 +42,7 @@ async function handleCreateGame(createGameFn: any, router: any, user: User | und
     if (num > 0) {
       const name = window.prompt("Name?", `${userName} trivia game with ${num} questions`);
       if (name) {
-        const id = await createGameFn(num, name);
+        const id = await createGameFn(user?.uid, num, name);
         if (id) {
           router.push(`/trivia/${id}`);
           return true
