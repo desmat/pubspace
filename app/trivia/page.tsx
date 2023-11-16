@@ -36,11 +36,11 @@ async function handleCreateGame(createGameFn: any, router: any, user: User | und
     ? `${user.displayName.split(/\s+/)[0]}'s`
     : "A";
 
-  const content = "2"; // TODO unclipple //window.prompt("How many questions?", "10");
+  const content = window.prompt("How many questions?", "10");
   if (content) {
     const num = Number(content);
     if (num > 0) {
-      const name = `${userName} trivia game with ${num} questions`; // TODO unclipple // window.prompt("Name?", `${userName} trivia game with ${num} questions`);
+      const name = window.prompt("Name?", `${userName} trivia game with ${num} questions`);
       if (name) {
         const id = await createGameFn(user?.uid, num, name);
         if (id) {
