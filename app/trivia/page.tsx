@@ -14,8 +14,8 @@ function GameEntry({ id, name, status, questions }: any) {
   const categories = Array.from(new Set(questions.map((question: any) => question.category))).filter(Boolean);
 
   return (
-    <p className="text-left p-4">
-      <span className="m-0 group">
+    <p className="text-left p-4 group">
+      <span className="m-0">
         {name} ({questions.length} questions
         {categories && categories.length > 0 &&
           <>

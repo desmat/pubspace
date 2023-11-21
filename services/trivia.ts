@@ -103,8 +103,7 @@ export async function createGame(createdBy: string, numQuestions: number, name?:
     questions: shuffleArray(parsedQuestions).slice(0, numQuestions),
   };
 
-  store.addTriviaGame(game);
-  return new Promise((resolve, reject) => resolve(game));
+  return store.addTriviaGame(game);
 }
 
 export async function deleteGame(id: string): Promise<void> {

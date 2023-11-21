@@ -53,8 +53,7 @@ export async function addPost(content: string, postedBy: string, postedByUID?: s
         post.position = nextPosition;
     }
 
-    store.addPost(content, postedBy, postedByUID, post.position);
-    return new Promise((resolve, reject) => resolve(post));
+    return store.addPost(content, postedBy, postedByUID, post.position);
 }
 
 export async function editPost(post: Post): Promise<Post> {
