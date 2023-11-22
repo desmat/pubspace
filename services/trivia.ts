@@ -1,74 +1,78 @@
 // 'use server'
 
 import moment from 'moment';
-import { User } from "firebase/auth";
 import * as store from "./stores/firestore";
 // import * as store from "./stores/redis";
 // import * as store from "./stores/memory";
-import { Game, Question, RawQuestion } from "@/types/Trivia";
-import { triviaQuestions as tampleTriviaQuestions } from '@/services/stores/samples';
-import shuffleArray from '@/utils/shuffleArray'
+import { Game, Question } from "@/types/Trivia";
+import shuffleArray from '@/utils/shuffleArray';
+import OpenAI from 'openai';
 
-// TODO: move behind API
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-function getQuestions() {
-  // TODO move to ChatGPT api
-  return tampleTriviaQuestions;
+ async function generateQuestions(category: string) {
+  // for testing
+  // return {category, "questions":[{"question":`TESTING: category '${category}': What is the national animal of Canada?`,"choices":["Beaver","b) Moose","c) Polar bear","d) Canada goose"],"correct_choice":0},{"question":"Which Canadian city is known as the 'City of Festivals'?","choices":["a) Montreal","b) Toronto","c) Vancouver","d) Ottawa"],"correct_choice":0}]};
+
+  const completion = await openai.chat.completions.create({
+    // model: 'gpt-3.5-turbo',
+    model: 'gpt-4',
+    // model: "gpt-3.5-turbo-1106",
+    // response_format: { type: "json_object" },    
+    messages: [
+      {
+        role: 'system',
+        content: `You are a bot that receives a topic and returns trivia questions with multiple choice answers, with the correct one indicated via its offset.
+        Please respond only with JSON data with keys "questions", "question", "choices" and "correct_choice".`
+      },
+      {
+        role: 'user',
+        content: `Please generate 10 trivia questions on the topic of ${category}.`
+      }
+    ],
+  });
+
+  try {
+    // console.log("*** RESULTS FROM API", JSON.stringify(JSON.parse(completion.choices[0].message.content || "{}")));
+    return { category, ...JSON.parse(completion.choices[0].message.content || "{}")};
+  } catch (error) {
+    console.error("Error reading results", { completion, error });
+  }
 }
 
-function parseQuestions(triviaQuestions: RawQuestion[]): Question[] {
-  const parseQuestions = /(^\d+\.\s*.*$(?:\n^\s+.*$){4})+/gm;
-  const parseQuestion = /^(\d+)\.\s*(.*[\?\:]\n)(?:^\s*(\w+\).*\s*$)\n)(?:^\s*(\w+\).*\s*$)\n)(?:^\s*(\w+\).*\s*$)\n)(?:^\s*(\w+\).*\s*$))/m;
-  const parseAnswer = /(\w+)\)\s*(.+)/;
-  const parseCorrectAnswer = /(\w+)\)\s*(.+)\s*\(Correct Answer\)/;
+function parseQuestions(category: string, questions: any): Question[] {
+  // console.log(">> parseQuestions", { category, questions });
 
-  const parsedQuestions: Question[] = [];
+  const parsedQuestions = questions.map((q: any, questionOffset: number) => {
+    // console.log(">> parseQuestions mapped questions", { q });
+    
+    const stripPrefix = ((answerText: string) => {
+      const parseAnswer = /(\w+)\)\s*(.+)/;
+      const answer = answerText.match(parseAnswer);
+      if (answer && answer.length > 2) {
+        return answer[2];
+      } else {
+        return answerText;
+      }
+    });
 
-  triviaQuestions.forEach((triviaQuestion: RawQuestion) => {
-    // console.log("*** triviaQuestion", { triviaQuestion });
+    const answers = q.choices.map((c: string, choiceOffset: number) => {
+      return {
+        text: stripPrefix(c),
+        // letter: String.fromCharCode(97 + choiceOffset),
+        isCorrect: choiceOffset == Number(q.correct_choice),
+      };
+    });
 
-    const questions = triviaQuestion.text.match(parseQuestions);
-
-    // console.log("*** Matches", { questions, len: questions.length });
-
-    if (questions && questions.length > 0) {
-      questions.forEach((question: any) => {
-        // console.log("*** Match", { question })
-        const questionAndAnswers = question.match(parseQuestion);
-
-        if (questionAndAnswers && questionAndAnswers.length > 2) {
-          const parsedQuestion: any = {
-            id: crypto.randomUUID(),
-            category: triviaQuestion.category,
-            number: questionAndAnswers[1],
-            text: questionAndAnswers[2].trim(),
-            answers: [],
-          }
-
-          for (var i = 3; i < questionAndAnswers.length; i++) {
-            const answer = questionAndAnswers[i].match(parseAnswer);
-            const correctAnswer = questionAndAnswers[i].match(parseCorrectAnswer);
-            // console.log("*** Match", { questionAndAnswer: questionAndAnswers[i], answer, correctAnswer });
-
-            if (correctAnswer && correctAnswer.length > 2) {
-              parsedQuestion.answers.push({ letter: correctAnswer[1], text: correctAnswer[2], isCorrect: true });
-            } else if (answer && answer.length > 2) {
-              parsedQuestion.answers.push({ letter: answer[1], text: answer[2] });
-            } else {
-              console.warn("Unable to parse answer text", questionAndAnswers[i]);
-            }
-          }
-
-          parsedQuestions.push(parsedQuestion);
-        } else {
-          console.warn("Unable to parse question and answer text", question);
-        }
-
-        // console.log("Parsed questions", parsedQuestions)
-      });
-    } else {
-      console.warn("Unable to parse questions text", triviaQuestion);
-    }
+    return {
+      id: crypto.randomUUID(),
+      category,
+      number: questionOffset,
+      text: q.question,
+      answers,
+    };
   });
 
   return parsedQuestions;
@@ -89,18 +93,41 @@ export async function getGame(id: string): Promise<Game | null> {
   return new Promise((resolve, reject) => resolve(game));
 }
 
+export async function getQuestionCategories(): Promise<string[]> {
+  console.log('>> services.trivia.getQuestionCategories()');
+
+  const questions = await store.getTriviaQuestions();
+  const categories = Array.from(new Set(questions.map((q: Question) => q.category)));
+  return new Promise((resolve, reject) => resolve(categories));
+}
+
 export async function createGame(createdBy: string, numQuestions: number, name?: string, categories?: string[]): Promise<Game> {
   console.log(">> services.trivia.createGame", { createdBy, numQuestions, name, categories });
 
-  const rawQuestions = getQuestions();
-  const parsedQuestions = parseQuestions(rawQuestions);
+  const triviaQuestions = await store.getTriviaQuestions();
+  const triviaQuestionsCategories = Array.from(new Set(triviaQuestions.map((q: Question) => q.category.toLowerCase())));
+  const cleanedCategories = categories && categories.length > 0 
+    ? categories.map((c: string) => c.toLowerCase())
+    : triviaQuestionsCategories;
+  const existingCategories = cleanedCategories.filter((c: string) => triviaQuestionsCategories.includes(c));
+  const missingCategories = cleanedCategories.filter((c: string) => !triviaQuestionsCategories.includes(c));
+
+  const savedQuestions = triviaQuestions.filter((q: Question) => existingCategories.includes(q.category)) as Question[];
+  let generatedQuestions = await Promise.all(missingCategories.map((c: string) => generateQuestions(c)));
+  generatedQuestions = generatedQuestions.map((q: any) => parseQuestions(q.category, q.questions)).flat();
+
+  // save to db for quicker ux next time
+  store.addTriviaQuestions(generatedQuestions);
+
+  // console.log("*** services.trivia.createGame", { triviaQuestions, triviaQuestionsCategories, cleanedCategories, existingCategories, missingCategories, savedQuestions, generatedQuestions });
+
   const game = {
     id: crypto.randomUUID(),
     status: "created",
     createdBy,
     createdAt: moment().valueOf(),
     name: name || `Game with ${numQuestions} questions`,
-    questions: shuffleArray(parsedQuestions).slice(0, numQuestions),
+    questions: shuffleArray(savedQuestions.concat(generatedQuestions)).slice(0, numQuestions),
   };
 
   return store.addTriviaGame(game);

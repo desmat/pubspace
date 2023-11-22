@@ -2,11 +2,13 @@
 
 import moment from 'moment';
 import { Post } from "@/types/Post";
-import { Game } from "@/types/Trivia";
+import { Game, Question } from "@/types/Trivia";
 import { samplePosts } from './samples';
 
 let inMemoryPosts = samplePosts;
 let inMemoryTriviaGames = [] as Game[];
+let inMemoryTriviaQuestions = [] as Question[];
+
 
 //
 // Trivia 
@@ -41,6 +43,20 @@ export async function deleteTriviaGame(id: string): Promise<void> {
     const games = inMemoryTriviaGames.filter((game: Game) => game.id != id);
     inMemoryTriviaGames = games;
 }
+
+export async function getTriviaQuestions(): Promise<Question[]> {
+    console.log('>> services.stores.memory.getTriviaQuestions()', { inMemoryTriviaQuestions });
+
+    return inMemoryTriviaQuestions;
+}
+
+export async function addTriviaQuestions(questions: Question[]): Promise<Question[]> {
+    console.log(">> services.stores.memory.addTriviaQuestions", { questions });
+
+    inMemoryTriviaQuestions = inMemoryTriviaQuestions.concat(questions);
+    return questions;
+}
+
 
 //
 // Posts

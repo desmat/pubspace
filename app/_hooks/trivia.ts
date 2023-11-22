@@ -6,6 +6,7 @@ import { User } from 'firebase/auth';
 
 const useTrivia: any = create(devtools((set: any, get: any) => ({
   games: [],
+  categories: [],
   loaded: false,
 
   loadGames: async () => {
@@ -18,7 +19,11 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
       }
 
       const data = await res.json();
-      set({ games: data.games || [], loaded: true });
+      set({
+        games: data.games || [], 
+        categories: data.categories || [], 
+        loaded: true 
+      });
     });
   },
 
@@ -68,6 +73,7 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
     // optimistic game
     const game = {
       id: tempId,
+      status: "generating",
       name,
       questions: new Array(numQuestions),
       optimistic: true,

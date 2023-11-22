@@ -4,7 +4,7 @@ import * as firestore from "firebase/firestore"
 import moment from 'moment';
 import * as firebase from '@/services/firebase'
 import { Post } from "@/types/Post"
-import { Game } from "@/types/Trivia";
+import { Game, Question } from "@/types/Trivia";
 import { samplePosts } from './samples';
 import * as memoryStore from "./memory"
 
@@ -47,7 +47,6 @@ export async function addTriviaGame(game: Game): Promise<Game> {
     console.log(">> services.stores.firestore.addTriviaGame", { game });
 
     // TODO set createdAt
-    // TODO remove id
 
     const c = firestore.collection(firebase.db, "trivia-games")
     const ref = await firestore.addDoc(c, game);
@@ -66,6 +65,33 @@ export async function deleteTriviaGame(id: string): Promise<void> {
 
     const ref = firestore.doc(firebase.db, "trivia-games", id);
     await firestore.deleteDoc(ref);
+}
+
+export async function getTriviaQuestions(): Promise<Question[]> {
+    console.log('>> services.stores.firestore.getTriviaQuestions()');
+
+    const c = firestore.collection(firebase.db, "trivia-questions")
+    const q = firestore.query(c);
+    let snapshot = await firestore.getDocs(q);
+    // console.log("*** snapshot: ", { snapshot });
+
+    const questions: Question[] = [];
+    snapshot.forEach((result: any) => questions.push({ ...result.data() as Question, id: result.id }));
+    // console.log("*** firestore questions", JSON.stringify(questions));
+   return questions;
+}
+
+export async function addTriviaQuestions(questions: Question[]): Promise<Question[]> {
+    console.log(">> services.stores.firestore.addTriviaQuestions", { questions });
+
+    // TODO set createdAt
+
+    const c = firestore.collection(firebase.db, "trivia-questions");
+
+    const refs = await Promise.all(questions.map((q: Question) => firestore.addDoc(c, q)));
+    console.log("*** firestore new questions", { refs });
+
+    return questions;
 }
 
 

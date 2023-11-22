@@ -7,7 +7,7 @@ import useTrivia from "@/app/_hooks/trivia";
 // import { Post } from "@/types/Post" // TODO trivia game and question types
 import Loading from "./loading";
 
-function QuestionEntry({ i, id, text, answers, category, showAnswers }: any) {
+function QuestionEntry({ questionOffset, id, text, answers, category, showAnswers }: any) {
   const [showAnswer, setShowAnswer] = useState(false);
 
   useEffect(() => {
@@ -19,14 +19,14 @@ function QuestionEntry({ i, id, text, answers, category, showAnswers }: any) {
   return (
     <p className={"text-left pb-4" + (showAnswers ? "" : " group hover:cursor-pointer")} onClick={() => !showAnswers && setShowAnswer(!showAnswer)}>
       <span className="">
-        {i + 1}. <span className="capitalize">[{category}]</span> {text}
+        {questionOffset + 1}. <span className="capitalize">[{category}]</span> {text}
         {!showAnswers &&
           <Link style="light" className="opacity-40 group-hover:opacity-100 group-hover:underline group-active:text-light-1 group- ml-2">{showAnswer ? "Hide Correct Answer" : "Show Correct Answer"}</Link>
         }
       </span>
       <br />
       {answers && answers.length > 0 &&
-        answers.map((answer: any) => <span key={`${id}-${answer.letter}`} className="ml-4">{answer.letter}) {answer.text}{(showAnswer || showAnswers) && answer.isCorrect ? " (Correct Answer)" : ""}<br /></span>)
+        answers.map((answer: any, answerOffset: number) => <span key={`${id}-${answerOffset}`} className="ml-4">{String.fromCharCode(97 + answerOffset)}) {answer.text}{(showAnswer || showAnswers) && answer.isCorrect ? " (Correct Answer)" : ""}<br /></span>)
       }
     </p>
   );
@@ -40,7 +40,7 @@ function GameEntry({ id, name, status, questions, showAnswers }: any) {
           {
             questions
               // .sort((a: Post, b: Post) => b.postedAt.valueOf() - a.postedAt.valueOf())
-              .map((question: any, i: number) => <div className="ml-2 flex" key={question.id}><QuestionEntry {...{ ...question, i, showAnswers }} /></div>)
+              .map((question: any, questionOffset: number) => <div className="ml-2 flex" key={question.id}><QuestionEntry {...{ ...question, questionOffset, showAnswers }} /></div>)
           }
         </div>
       }

@@ -1,4 +1,3 @@
-// TODO
 
 export type Game = {
   id?: string,
@@ -9,11 +8,19 @@ export type Game = {
   questions: Question[],
 };
 
+export const SampleCategories = ["Pop Culture, World History, Science, Canadiana, Americana"];
+
 export type Question = {
-  letter: string,
+  id?: string,
+  category: string,
+  text: string
+  answers: Answer[],
+};
+
+export type Answer = {
   text: string,
   isCorrect?: boolean,
-}
+};
 
 export type RawQuestion = {
   category: string,
