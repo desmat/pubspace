@@ -1,10 +1,8 @@
-export const maxDuration = 30; // This function can run for a maximum of 5 seconds
-export const dynamic = 'force-dynamic';
- 
+// export const maxDuration = 300;
+// export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server'
 import { getGames, getGame, createGame, getQuestionCategories } from '@/services/trivia';
-
 
 export async function GET(request: Request) {
   console.log('>> app.api.trivia.games.GET');
@@ -20,58 +18,25 @@ export async function GET(request: Request) {
   return NextResponse.json({ games, categories });
 }
 
-
-
-
-
-
-
-
-
-
-// https://developer.mozilla.org/docs/Web/API/ReadableStream#convert_async_iterator_to_stream
-function iteratorToStream(iterator: any) {
-  return new ReadableStream({
-    async pull(controller) {
-      const { value, done } = await iterator.next()
-
-      if (done) {
-        controller.close()
-      } else {
-        controller.enqueue(value)
-      }
-    },
-  })
-}
-
-function sleep(time: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, time)
-  })
-}
-
-
-const encoder = new TextEncoder()
- 
-async function* makeIterator() {
-  for (let i = 0; i < 100; i++) {
-    console.log('>> app.api.trivia.games.POST iterator iteratin\'', i);
-    yield encoder.encode(`<p>${i}</p>
-`);
-      await sleep(1000);
-    }
-}
-
 export async function POST(request: Request) {
   console.log('>> app.api.trivia.games.POST', request);
-  // const data: any = await request.json();
-  // const categories = data.categories && data.categories.split(/\s*,\s*/)
-  // const game = await createGame(data.createdBy, data.numQuestions, data.name, categories);
-  // return NextResponse.json({ game });
+  const data: any = await request.json();
+  const categories = data.categories && data.categories.split(/\s*,\s*/);
+  const encoder = new TextEncoder()
 
+  const stream = new ReadableStream({
+    async pull(controller) {
+      // const game = await createGamePromise;
+      const handleStatusUpdate = (status: string) => {
+        controller.enqueue(encoder.encode(JSON.stringify({ status }) + "\n"));
+      }      
 
-  const iterator = makeIterator()
-  const stream = iteratorToStream(iterator)
- 
-  return new Response(stream)  
+      const game = await createGame(data.createdBy, data.numQuestions, data.name, categories, handleStatusUpdate);
+      // console.log("game in stream pull", { game });
+      controller.enqueue(encoder.encode(JSON.stringify({ game }) + "\n"));
+      controller.close();
+    },
+  })
+
+  return new Response(stream)
 }
