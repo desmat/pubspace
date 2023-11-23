@@ -87,13 +87,14 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         const chunkValue = decoder.decode(value);      
-        // console.warn(chunkValue);
+        console.warn(chunkValue);
 
         const splitValues = chunkValue?.trim()?.split("\n"); // status updates and game record as newline separated json strings
-        const splitValue = splitValues[splitValues.length - 1];
+        const splitValue = splitValues[splitValues.length - 1];        
+        console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, splitValue });
+
         const jsonValue = splitValue && JSON.parse(splitValue);
-        
-        // console.log("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, jsonValue });
+        console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, splitValue, jsonValue });
         
         if (jsonValue && jsonValue.status) {
           // update game status
@@ -118,7 +119,6 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
 
   deleteGame: async (id: string) => {
     console.log("*** hooks.trivia.deleteGame", { id });
-
 
     if (!id) {
       throw `Cannot delete post with null id`;
