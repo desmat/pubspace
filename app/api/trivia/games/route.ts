@@ -1,7 +1,10 @@
+export const maxDuration = 30; // This function can run for a maximum of 5 seconds
+export const dynamic = 'force-dynamic';
+ 
+
 import { NextResponse } from 'next/server'
 import { getGames, getGame, createGame, getQuestionCategories } from '@/services/trivia';
 
-export const maxDuration = 5; // This function can run for a maximum of 5 seconds
 
 export async function GET(request: Request) {
   console.log('>> app.api.trivia.games.GET');
