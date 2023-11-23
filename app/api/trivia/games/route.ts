@@ -28,12 +28,12 @@ export async function POST(request: Request) {
     async pull(controller) {
       // const game = await createGamePromise;
       const handleStatusUpdate = (status: string) => {
-        controller.enqueue(encoder.encode(JSON.stringify({ status })));
+        controller.enqueue(encoder.encode(JSON.stringify({ status }) + "\n\n\n\n\n\n\n\n"));
       }      
 
       const game = await createGame(data.createdBy, data.numQuestions, data.name, categories, handleStatusUpdate);
       // console.log("game in stream pull", { game });
-      controller.enqueue(encoder.encode(JSON.stringify({ game })));
+      controller.enqueue(encoder.encode(JSON.stringify({ game }) + "\n\n\n\n\n\n\n\n"));
       controller.close();
     },
   })
