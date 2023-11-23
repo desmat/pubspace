@@ -82,16 +82,21 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
       const reader = data.getReader();
       const decoder = new TextDecoder();
       let done = false;
+      let chunkValues = "";
   
       while (!done) {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
-        const chunkValue = decoder.decode(value).trim();      
-        console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue });
+        const chunkValue = decoder.decode(value);
+        chunkValues += chunkValue;
+        const splitValues = chunkValues.trim().split(/\n+/);
+        const splitValue = splitValues[splitValues.length - 1].trim();
+
+        console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, chunkValues, splitValue });
 
         try {
-          const jsonValue = chunkValue && JSON.parse(chunkValue);
-          console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, jsonValue });
+          const jsonValue = splitValue && JSON.parse(splitValue);
+          console.warn("*** hooks.trivia.createGame streaming from api", { splitValue, jsonValue });
           
           if (jsonValue && jsonValue.status) {
             // update game status
