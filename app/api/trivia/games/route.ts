@@ -1,4 +1,4 @@
-// export const maxDuration = 300;
+export const maxDuration = 300;
 // export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server'
@@ -30,12 +30,12 @@ export async function POST(request: Request) {
       const handleStatusUpdate = (status: string) => {
         // padding heavily with \n's due to inconsistent chunking on Vercel
         controller.enqueue(encoder.encode("\n\n\n\n\n" + JSON.stringify({ status }) + "\n\n\n\n\n"));
-      }      
+      }
 
       const game = await createGame(data.createdBy, data.numQuestions, data.name, categories, handleStatusUpdate);
       // console.log("game in stream pull", { game });
-        // padding heavily with \n's due to inconsistent chunking on Vercel
-        controller.enqueue(encoder.encode("\n\n\n\n\n" + JSON.stringify({ game }) + "\n\n\n\n\n"));
+      // padding heavily with \n's due to inconsistent chunking on Vercel
+      controller.enqueue(encoder.encode("\n\n\n\n\n" + JSON.stringify({ game }) + "\n\n\n\n\n"));
       controller.close();
     },
   })
