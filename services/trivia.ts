@@ -14,6 +14,11 @@ const openai = new OpenAI({
 
  async function generateQuestions(category: string) {
   // for testing
+
+  // console.log('>> generateQuestions: waiting...');
+  // await new Promise((resolve) => setTimeout(() => resolve(42), 3000));
+  // console.log('>> generateQuestions: done waiting!');
+
   // return {category, "questions":[{"question":`TESTING: category '${category}': What is the national animal of Canada?`,"choices":["Beaver","b) Moose","c) Polar bear","d) Canada goose"],"correct_choice":0},{"question":"Which Canadian city is known as the 'City of Festivals'?","choices":["a) Montreal","b) Toronto","c) Vancouver","d) Ottawa"],"correct_choice":0}]};
 
   const completion = await openai.chat.completions.create({
@@ -101,8 +106,10 @@ export async function getQuestionCategories(): Promise<string[]> {
   return new Promise((resolve, reject) => resolve(categories));
 }
 
-export async function createGame(createdBy: string, numQuestions: number, name?: string, categories?: string[]): Promise<Game> {
+export async function createGame(createdBy: string, numQuestions: number, name?: string, categories?: string[], statusUpdateCallback?: (status: string) => void): Promise<Game> {
   console.log(">> services.trivia.createGame", { createdBy, numQuestions, name, categories });
+
+  statusUpdateCallback && statusUpdateCallback("retrieving saved questions");
 
   const triviaQuestions = await store.getTriviaQuestions();
   const triviaQuestionsCategories = Array.from(new Set(triviaQuestions.map((q: Question) => q.category.toLowerCase())));
@@ -113,11 +120,15 @@ export async function createGame(createdBy: string, numQuestions: number, name?:
   const missingCategories = cleanedCategories.filter((c: string) => !triviaQuestionsCategories.includes(c));
 
   const savedQuestions = triviaQuestions.filter((q: Question) => existingCategories.includes(q.category)) as Question[];
+
+  missingCategories.length == 1 && statusUpdateCallback && statusUpdateCallback(`generating questions for category ${missingCategories[0]}`);
+  missingCategories.length > 1 && statusUpdateCallback && statusUpdateCallback(`generating questions for categories ${missingCategories.join(', ')}`);
   let generatedQuestions = await Promise.all(missingCategories.map((c: string) => generateQuestions(c)));
   generatedQuestions = generatedQuestions.map((q: any) => parseQuestions(q.category, q.questions)).flat();
 
   // save to db for quicker ux next time
-  store.addTriviaQuestions(generatedQuestions);
+  // generatedQuestions.length > 0 && statusUpdateCallback && statusUpdateCallback("saving generated questions");
+  // store.addTriviaQuestions(generatedQuestions);
 
   // console.log("*** services.trivia.createGame", { triviaQuestions, triviaQuestionsCategories, cleanedCategories, existingCategories, missingCategories, savedQuestions, generatedQuestions });
 
@@ -130,6 +141,7 @@ export async function createGame(createdBy: string, numQuestions: number, name?:
     questions: shuffleArray(savedQuestions.concat(generatedQuestions)).slice(0, numQuestions),
   };
 
+  generatedQuestions.length > 0 && statusUpdateCallback && statusUpdateCallback("saving game");
   return store.addTriviaGame(game);
 }
 
