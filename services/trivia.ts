@@ -15,11 +15,11 @@ const openai = new OpenAI({
  async function generateQuestions(category: string) {
   // for testing
 
-  console.log('>> generateQuestions: waiting...');
-  await new Promise((resolve) => setTimeout(() => resolve(42), 3000));
-  console.log('>> generateQuestions: done waiting!');
+  // console.log('>> generateQuestions: waiting...');
+  // await new Promise((resolve) => setTimeout(() => resolve(42), 3000));
+  // console.log('>> generateQuestions: done waiting!');
 
-  return {category, "questions":[{"question":`TESTING: category '${category}': What is the national animal of Canada?`,"choices":["Beaver","b) Moose","c) Polar bear","d) Canada goose"],"correct_choice":0},{"question":"Which Canadian city is known as the 'City of Festivals'?","choices":["a) Montreal","b) Toronto","c) Vancouver","d) Ottawa"],"correct_choice":0}]};
+  // return {category, "questions":[{"question":`TESTING: category '${category}': What is the national animal of Canada?`,"choices":["Beaver","b) Moose","c) Polar bear","d) Canada goose"],"correct_choice":0},{"question":"Which Canadian city is known as the 'City of Festivals'?","choices":["a) Montreal","b) Toronto","c) Vancouver","d) Ottawa"],"correct_choice":0}]};
 
   const completion = await openai.chat.completions.create({
     // model: 'gpt-3.5-turbo',
