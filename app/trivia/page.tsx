@@ -55,7 +55,7 @@ async function handleCreateGame(createGameFn: any, router: any, user: User | und
       const name = window.prompt("Name?", `${userName} trivia game with ${num} questions`);
 
       if (name) {
-        const requestedCategories = window.prompt("Categories? (Comma-separated or leave empty)", SampleCategories?.join(", "));
+        const requestedCategories = undefined // window.prompt("Categories? (Comma-separated or leave empty)", SampleCategories?.join(", "));
         const id = await createGameFn(user?.uid, num, name, requestedCategories);
 
         if (id) {
