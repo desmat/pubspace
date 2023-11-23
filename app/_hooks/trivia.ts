@@ -110,6 +110,7 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
             // remove optimistic game and replace with created game from backend
             const games = get().games.filter((game: Game) => game.id != tempId);
             set({ games: [...games, jsonValue.game] });
+            done = true;
           }
         } catch (error) {
           console.warn("Unable to parse json", { error, val: splitValue.trim() })
