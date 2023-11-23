@@ -82,33 +82,38 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
       const reader = data.getReader();
       const decoder = new TextDecoder();
       let done = false;
-      let chunks = "";
+      let chunkValues = "";
   
       while (!done) {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         const chunkValue = decoder.decode(value);      
+        chunkValues += chunkValue;
         // console.warn(chunkValue);
 
-        const splitValues = chunkValue?.trim()?.split(/\n+/); // status updates and game record as newline separated json strings
+        const splitValues = chunkValues?.trim()?.split(/\n+/); // status updates and game record as newline separated json strings
         const splitValue = splitValues[splitValues.length - 1];        
-        console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, chunks, splitValue });
+        console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, chunkValues, splitValue });
 
-        // const jsonValue = splitValue && JSON.parse(splitValue.trim());
-        // console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, splitValue, jsonValue });
-        
-        // if (jsonValue && jsonValue.status) {
-        //   // update game status
-        //   const games = get().games.filter((game: Game) => game.id != tempId);
-        //   game.status = `${jsonValue.status}...`;
-        //   set({ games: [...games, game] });
-        // }
+        try {
+          const jsonValue = splitValue && JSON.parse(splitValue.trim());
+          console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, splitValue, jsonValue });
+          
+          if (jsonValue && jsonValue.status) {
+            // update game status
+            const games = get().games.filter((game: Game) => game.id != tempId);
+            game.status = `${jsonValue.status}...`;
+            set({ games: [...games, game] });
+          }
 
-        // if (jsonValue && jsonValue.game) {
-        //   // remove optimistic game and replace with created game from backend
-        //   const games = get().games.filter((game: Game) => game.id != tempId);
-        //   set({ games: [...games, jsonValue.game] });
-        // }
+          if (jsonValue && jsonValue.game) {
+            // remove optimistic game and replace with created game from backend
+            const games = get().games.filter((game: Game) => game.id != tempId);
+            set({ games: [...games, jsonValue.game] });
+          }
+        } catch (error) {
+          console.warn("Unable to parse json", { error, val: splitValue.trim() })
+        }
       }
     });
   },
