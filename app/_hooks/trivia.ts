@@ -93,21 +93,21 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
         const splitValue = splitValues[splitValues.length - 1];        
         console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, splitValue });
 
-        const jsonValue = splitValue && JSON.parse(splitValue);
-        console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, splitValue, jsonValue });
+        // const jsonValue = splitValue && JSON.parse(splitValue);
+        // console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, splitValue, jsonValue });
         
-        if (jsonValue && jsonValue.status) {
-          // update game status
-          const games = get().games.filter((game: Game) => game.id != tempId);
-          game.status = `${jsonValue.status}...`;
-          set({ games: [...games, game] });
-        }
+        // if (jsonValue && jsonValue.status) {
+        //   // update game status
+        //   const games = get().games.filter((game: Game) => game.id != tempId);
+        //   game.status = `${jsonValue.status}...`;
+        //   set({ games: [...games, game] });
+        // }
 
-        if (jsonValue && jsonValue.game) {
-          // remove optimistic game and replace with created game from backend
-          const games = get().games.filter((game: Game) => game.id != tempId);
-          set({ games: [...games, jsonValue.game] });
-        }
+        // if (jsonValue && jsonValue.game) {
+        //   // remove optimistic game and replace with created game from backend
+        //   const games = get().games.filter((game: Game) => game.id != tempId);
+        //   set({ games: [...games, jsonValue.game] });
+        // }
       }
     });
   },
