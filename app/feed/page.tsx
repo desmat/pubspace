@@ -9,7 +9,7 @@ import Loading from "./loading";
 
 function PostEntry({ postedBy, postedByUID, postedAt, content }: Post) {
   return (
-    <p className="text-left pb-4">
+    <p className="text-left lg:text-center pb-4">
 
       <span className="opacity-50 truncate">
         <span>Added </span>
@@ -41,7 +41,7 @@ export default function Feed() {
   }
 
   return (
-    <main className="flex flex-col">
+    <main className="flex flex-col items-left lg:max-w-4xl lg:mx-auto px-4">
       <h1  className="text-center">Latest Posts</h1>
       {posts && posts.length > 0 &&
         <>

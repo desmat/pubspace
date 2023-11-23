@@ -15,7 +15,7 @@ function GameEntry({ id, name, status, questions }: any) {
   const isReady = ["created"].includes(status);
 
   return (
-    <p className="text-left p-4 group">
+    <p className="text-left py-2.5 group">
       <span className="m-0">
         {name}
         {isReady &&
@@ -92,10 +92,10 @@ export default function Page() {
   }
 
   return (
-    <main className="flex flex-col">
+    <main className="flex flex-col items-left lg:max-w-4xl lg:mx-auto px-4">
       <h1 className="text-center">Trivia</h1>
       <p className='italic text-center'>
-        Create and host trivia games powered by ChatGPT
+        Create trivia games with the help of ChatGPT. Coming soon: play interactively with your friends!
       </p>
       {links}
       {games && games.length > 0 &&

@@ -95,7 +95,7 @@ export default function Page({ params }: { params: { id: string } }) {
   }
 
   return (
-    <main className="flex flex-col">
+    <main className="flex flex-col items-left lg:max-w-4xl lg:mx-auto px-4">
       <h1 className="text-center">{game.name}</h1>
       <p className='italic text-center'>
         Trivia game with {game.questions.length} questions in the {categories.length > 1 ? "" : "category of "}<span className="capitalize">{categories.sort().join(", ")}</span> {categories.length > 1 ? "categories" : ""}
