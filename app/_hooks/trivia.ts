@@ -82,22 +82,16 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
       const reader = data.getReader();
       const decoder = new TextDecoder();
       let done = false;
-      let chunkValues = "";
   
       while (!done) {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
-        const chunkValue = decoder.decode(value);      
-        chunkValues += chunkValue;
-        // console.warn(chunkValue);
-
-        const splitValues = chunkValues?.trim()?.split(/\n+/); // status updates and game record as newline separated json strings
-        const splitValue = splitValues[splitValues.length - 1];        
-        console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, chunkValues, splitValue });
+        const chunkValue = decoder.decode(value).trim();      
+        console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue });
 
         try {
-          const jsonValue = splitValue && JSON.parse(splitValue.trim());
-          console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, splitValue, jsonValue });
+          const jsonValue = chunkValue && JSON.parse(chunkValue);
+          console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, jsonValue });
           
           if (jsonValue && jsonValue.status) {
             // update game status
@@ -113,7 +107,7 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
             done = true;
           }
         } catch (error) {
-          console.warn("Unable to parse json", { error, val: splitValue.trim() })
+          console.warn("Unable to parse json", { error, chunkValue })
         }
       }
     });
