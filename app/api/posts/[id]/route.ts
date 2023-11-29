@@ -30,17 +30,12 @@ export async function PUT(request: Request) {
   }
 
   const { user } = await validateUserSession(request)
-  console.log('>> app.api.posts.PUT', { user });
+  // console.log('>> app.api.posts.PUT', { user });
   if (!user) {
-    return NextResponse.json({ isLoggedIn: false }, { status: 401 });
+    return NextResponse.json({ authenticated: false }, { status: 401 });
   }
 
-  if (!(post.postedByUID == user.uid || user.customClaims?.admin)) {
-    return NextResponse.json({ authorized: false }, { status: 403 });
-  }
-
-  const updatedPost = await editPost(post);
-
+  const updatedPost = await editPost(post, user);
   return NextResponse.json({ updatedPost });
 }
 
@@ -54,22 +49,13 @@ export async function DELETE(
     throw `Cannot delete post with null id`;
   }
 
-  const post = await getPost(params.id);
-  console.log('>> app.api.posts.DELETE', { post, byUUI: post?.postedByUID, userUID: user.uid, admin: user.customClaims?.admin });
-  if (!post) {
-    throw `Post not found: ${params.id}`;
-  }
 
   const { user } = await validateUserSession(request)
   console.log('>> app.api.posts.DELETE', { user });
   if (!user) {
-    return NextResponse.json({ isLoggedIn: false }, { status: 401 });
+    return NextResponse.json({ authenticated: false }, { status: 401 });
   }
 
-  if (!(post.postedByUID == user.uid || user.customClaims?.admin)) {
-    return NextResponse.json({ authorized: false }, { status: 403 });
-  }
-
-  await deletePost(params.id);
+  const post = await deletePost(params.id, user);
   return NextResponse.json({ post });
 }

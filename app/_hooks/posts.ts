@@ -49,10 +49,10 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
     const tempId = crypto.randomUUID();
     const postedBy = posterName;
     const postedByUID = posterUID;
-
+ 
     fetch('/api/posts', {
       method: "POST",
-      body: JSON.stringify({ content, postedBy, postedByUID, position }),
+      body: JSON.stringify({ content, position }),
     }).then(async (res) => {
       if (res.status != 200) {
         console.error(`Error adding post: ${res.status} (${res.statusText})`);

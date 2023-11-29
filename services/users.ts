@@ -3,6 +3,7 @@ import { getAuth } from 'firebase-admin/auth';
 import { getFirebaseAuth } from "next-firebase-auth-edge/lib/auth";
 import { firebaseAdminConfig } from "@/firestore-admin.config";
 import { firebaseConfig } from "@/firestore.config";
+import { User } from 'firebase/auth';
 
 if (getApps().length <= 0) {
   initializeApp({
@@ -19,6 +20,10 @@ export function getUser(uid: string): any {
 
     resolve(user);
   });
+}
+
+export function getUserName(user: User): string {
+  return user?.isAnonymous ? "Anonymous" : user?.displayName || user?.email || "Noname";
 }
 
 export async function validateUserSession(request: any) {
