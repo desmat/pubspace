@@ -49,7 +49,7 @@ export default function Page({ params }: { params: { uid?: string } }) {
         <h1>
           Profile
         </h1>
-        <p className='italic text-center animate-pulse'>Loading...</p>
+        {/* <p className='italic text-center animate-pulse'>Loading...</p> */}
         {/* TODO REMOVE */}
         <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
           <div className="text-dark-2">

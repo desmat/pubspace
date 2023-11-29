@@ -12,23 +12,7 @@ export default function useUser() {
       // // User is signed in, see docs for a list of available properties
       // // https://firebase.google.com/docs/reference/js/firebase.User
       // const uid = user.uid
-      console.log('>> hooks.User.useUser.onAuthStateChanged', { user, savedUser });
-      // const idToken = await user.getIdToken();
-      // setIdToken(idToken);
-
-      // fetch('/api/user', {
-      //   method: "POST",
-      //   body: JSON.stringify({ uid: user.uid, idToken }),
-      //   headers: {
-      //     Authorization: `Bearer ${idToken}`,
-      //   },        
-      // }).then(async (response: any) => {
-      //   const updatedUser = await response.json();
-      //   console.log('>> hooks.User.useUser.onAuthStateChanged', { user, updatedUser });
-      //   // user.customClaims = updatedUser.customClaims;
-      //   setUser({ ...user, admin: updatedUser.customClaims?.admin });
-      // });
-
+      // console.log('>> hooks.User.useUser.onAuthStateChanged', { user, savedUser });
       if (user.uid != savedUser?.uid) {
         fetch('/api/user', {
             method: "GET"
@@ -40,7 +24,7 @@ export default function useUser() {
             }
 
             const updatedUser = await response.json();
-            console.log('>> hooks.User.useUser.onAuthStateChanged', { user, updatedUser });
+            // console.log('>> hooks.User.useUser.onAuthStateChanged', { user, updatedUser });
             // user.customClaims = updatedUser.customClaims;
             setUser({ ...user, admin: updatedUser.customClaims?.admin });
           });
@@ -49,14 +33,7 @@ export default function useUser() {
       // setUser(user);
     } else {
       // // User is signed out
-      console.log('>> hooks.User.useUser.onAuthStateChanged signed out', { savedUser });
-      // if (savedUser) {
-      // setUser(undefined);
-      // setIdToken(undefined);
-      // fetch('/api/user', {
-      //   method: "DELETE",
-      // });
-      // }
+      // console.log('>> hooks.User.useUser.onAuthStateChanged signed out', { savedUser });
 
       // when not signed in or logged out sign in anonymously
       // doSignInAnonymously(); // TODO UNCRIPPLE
@@ -64,7 +41,7 @@ export default function useUser() {
   };
 
   useEffect(() => {
-    console.log('>> hooks.User.useUser.useEffect', { savedUser });
+    // console.log('>> hooks.User.useUser.useEffect', { savedUser });
     doInit({ onAuthStateChanged });
   }, []);
 
@@ -83,12 +60,12 @@ export default function useUser() {
     return new Promise((resolve, reject) => {
       signinFn()
         .then(async (user: any) => {
-          console.log(">> hooks.User.signin", { user });
+          // console.log(">> hooks.User.signin", { user });
           // setUser(user as User);
           // resolve(user);
 
           const authToken = await user.getIdToken();
-          console.log(">> hooks.User.signin", { authToken });
+          // console.log(">> hooks.User.signin", { authToken });
 
           fetch('/api/user', {
             method: "POST",
@@ -98,7 +75,7 @@ export default function useUser() {
             },
           }).then(async (response: any) => {
             const updatedUser = await response.json();
-            console.log('>> hooks.User.signin', { updatedUser });
+            // console.log('>> hooks.User.signin', { updatedUser });
             // user.customClaims = updatedUser.customClaims;
             setUser({ ...user, admin: updatedUser.customClaims?.admin });
             setIdToken(authToken);

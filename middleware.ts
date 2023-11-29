@@ -9,16 +9,15 @@ export async function middleware(request: NextRequest) {
   const method = request.method;
   const url = request.nextUrl.pathname;
 
-  // console.log("*** middleware", { request });
-  console.log("*** middleware", { url, method });
+  // console.log("*** middleware", { url, method });
 
   if (url == "/api/user" && ["POST", "DELETE"].includes(method)) {
-    console.log("*** middleware PUBLIC USER PATH");
+    // console.log("*** middleware PUBLIC USER PATH");
     return NextResponse.next();
   }
 
   if (!["POST", "PUT", "DELETE"].includes(method)) {
-    console.log("*** middleware PUBLIC NON-MUTATING PATH");
+    // console.log("*** middleware PUBLIC NON-MUTATING PATH");
     return NextResponse.next();
   }
 
@@ -33,19 +32,6 @@ export async function middleware(request: NextRequest) {
     },
     firebaseConfig.apiKey,
   );
-
-  // const sessionCookie = request.cookies.get("session")?.value || "";
-  // console.log("*** middleware", { sessionCookie });
-
-  // const tokens = await verifyIdToken(sessionCookie);
-  // console.log("*** middleware", { tokens });
-
-  // const authorization = request.headers.get("Authorization");
-  // const idToken = authorization?.split("Bearer ")[1];
-  // const sessionIdToken = request.cookies.get("sessionIdToken")?.value;
-  // const sessionToken = request.cookies.get("session")?.value;
-
-  // console.log("*** middleware", { method, url, idToken, sessionIdToken, sessionToken });
 
   const authToken = request.cookies.get("AuthToken")?.value;
   

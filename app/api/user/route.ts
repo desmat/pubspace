@@ -8,7 +8,6 @@ import * as users from "@/services/users"; // import just to make sure Firebase 
 // export const revalidate = 0
 // false | 'force-cache' | 0 | number
 
-
 export async function GET(request: Request) {
   // console.log('>> app.api.user.GET', request);  
   const { user: decodedToken } = await users.validateUserSession(request) as any;
@@ -24,17 +23,6 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  // console.log('>> app.api.user.POST', request);
-  // const authorization = headers().get("Authorization");
-
-  // console.log('>> app.api.user.POST', { authorization });
-
-  // if (!authorization?.startsWith("Bearer ")) {
-  //   return NextResponse.json({ authenticated: false }, { status: 401 });
-  // }
-
-  // const idToken = authorization.split("Bearer ")[1];
-  // // const decodedToken = await auth().verifyIdToken(idToken);
   const { user: decodedToken, authToken } = await users.validateUserSession(request) as any;
   const isAdmin = decodedToken && decodedToken.email == "desmat@gmail.com"; // just me for now
 
@@ -48,19 +36,8 @@ export async function POST(request: Request) {
     await auth().setCustomUserClaims(decodedToken.uid, { admin: true });
   }
 
-  //Generate session cookie
+  //Generate auth token cookie
   const expiresIn = 60 * 60 * 24 * 5 * 1000;
-  // const sessionCookie = await auth().createSessionCookie(idToken, {
-  //   expiresIn,
-  // });
-  // const options = {
-  //   name: "session",
-  //   value: sessionCookie,
-  //   maxAge: expiresIn,
-  //   httpOnly: true,
-  //   secure: false,
-  // };
-
   const options = {
     name: "AuthToken",
     value: authToken,
@@ -69,7 +46,7 @@ export async function POST(request: Request) {
     secure: false,
   };
 
-  console.log('>> app.api.user.POST', { options });
+  // console.log('>> app.api.user.POST', { options });
 
   //Add the cookie to the browser
   cookies().set(options);
@@ -79,10 +56,7 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  console.log('>> app.api.user.DELETE', request);
-  // const data: any = await request.json();
-  cookies().delete("sessionIdToken");
+  // console.log('>> app.api.user.DELETE', request);
   cookies().delete("AuthToken");
-  
   return NextResponse.json({ status: "ok" });
 }

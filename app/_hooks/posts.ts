@@ -13,19 +13,6 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
 
   load: async (id?: string) => {
     console.log(">> hooks.postStore.load", { id });
-    // // server action
-    // const posts = getPosts();
-
-    // rest api (blocking)
-    // const res = await fetch('/api/posts');
-    // if (res.status != 200) {
-    //     throw `Error fetching posts: ${res}`;
-    // }
-
-    // const data = await res.json();
-    // const posts = data.posts;
-    // set({ posts, loaded: true });
-    // return posts;
 
     // rest api (optimistic: all or just the one)
     if (id) {
