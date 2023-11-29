@@ -2,6 +2,8 @@ import moment from 'moment';
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { Post } from "@/types/Post"
+import { User, getIdToken, get } from 'firebase/auth';
+
 
 // TODO PostState type
 
@@ -9,8 +11,8 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
   posts: [],
   loaded: false,
 
-  load: async (id: string) => {
-    console.log(">> hooks.postStore.load");
+  load: async (id?: string) => {
+    console.log(">> hooks.postStore.load", { id });
     // // server action
     // const posts = getPosts();
 
@@ -69,6 +71,7 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
         console.error(`Error adding post: ${res.status} (${res.statusText})`);
         const posts = get().posts.filter((post: Post) => post.id != tempId);
         set({ posts });
+        return;
       }
 
       const data = await res.json();
@@ -111,7 +114,7 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
 
     const posts = get().posts.filter((p: Post) => p.id != post.id);
     posts.push(post);
-    set({ posts: posts});
+    set({ posts: posts });
   },
 
   delete: async (id: string) => {
@@ -126,9 +129,11 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
     }).then(async (res) => {
       if (res.status != 200) {
         console.error(`Error deleting post ${id}: ${res.status} (${res.statusText})`);
+        return;
+        // TODO bring back the thing here?
       }
 
-      // TODO bring back the thing here?
+      set({ posts: get().posts.filter((p: Post) => p.id != id) });
     });
 
     set({ posts: get().posts.filter((p: Post) => p.id != id) });

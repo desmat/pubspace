@@ -31,7 +31,7 @@ export default function Page({ params }: { params: { uid?: string } }) {
   const { user, signin, logout } = useUser();
   const [posts, loadPosts, postsLoaded] = usePosts((state: any) => [state.posts, state.load, state.loaded]);
   const { profiles, loaded, load } = useProfiles();
-  const profile =  params.uid && profiles && profiles[params.uid] as Profile;
+  const profile = params.uid && profiles && profiles[params.uid] as Profile;
   const profileUser = params.uid ? profile?.user : user;
 
   const myPosts = postsLoaded && loaded ? posts.filter((post: Post) => post.postedByUID == profileUser?.uid) : [];
@@ -43,6 +43,32 @@ export default function Page({ params }: { params: { uid?: string } }) {
     loadPosts();
   }, [params.uid]);
 
+  if (params.uid && !loaded || !params.uid && !profileUser) { // TODO UNCRIPPLE
+    return (
+      <main className="flex flex-col items-center _justify-between _p-24">
+        <h1>
+          Profile
+        </h1>
+        <p className='italic text-center animate-pulse'>Loading...</p>
+        {/* TODO REMOVE */}
+        <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
+          <div className="text-dark-2">
+            <Link href="/" onClick={(e) => doSigningAnonymously(e, signin)}>Signin Anonymously</Link>
+          </div>
+          <div className="text-dark-2">
+            <Link href="/auth?method=login-email">Login with Email</Link>
+          </div>
+          <div className="text-dark-2">
+            <Link href="/auth?method=signup-email">Signup with Email</Link>
+          </div>
+          <div className="text-dark-2">
+            <Link href="/" onClick={(e) => doSigninWithGoogle(e, signin)}>Signin with Google</Link>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main className="flex flex-col items-center _justify-between _p-24">
       <h1>
@@ -51,25 +77,23 @@ export default function Page({ params }: { params: { uid?: string } }) {
           <span>: {params.uid}</span>
         }
       </h1>
-      {(params.uid && !loaded || !params.uid && !profileUser) &&
-        <p className='italic text-center animate-pulse'>Loading...</p>
-      }
       {/* {params.uid && loaded && 
         <>
           <p>uid: {profileUser?.uid}</p>
         </>
       } */}
-      {profileUser && 
+      {true && // profileUser && TODO UNCRIPLE
         <>
           <p>uid: {profileUser?.uid}</p>
           <p>isAnonymous: {profileUser?.isAnonymous ? "true" : "false"}</p>
+          <p>isAdmin: {profileUser?.admin ? "true" : "false"}</p>
           <p>provider: {profileUser?.providerId}{profileUser?.providerData[0]?.providerId ? ` (${profileUser?.providerData[0]?.providerId})` : ''}</p>
           <p>email: {profileUser?.email}</p>
           <p>displayName: {profileUser?.displayName}</p>
           {/* <p className="flex whitespace-nowrap">photoURL: <img className="max-w-10 max-h-10" src={profileUser.photoURL as string | undefined}></img></p> */}
         </>
       }
-      {params.uid && loaded && 
+      {params.uid && loaded &&
         <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
           <div className="text-dark-2">
             <Link href={`/posts?uid=${params.uid}`}>View Posts ({myPosts.length})</Link>
@@ -78,11 +102,16 @@ export default function Page({ params }: { params: { uid?: string } }) {
       }
       {!params.uid &&
         <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
-          {/* {profileUser && !profileUser.isAnonymous &&
+          {!profileUser || !profileUser.isAnonymous && // TODO CRIPPLE
             <div className="text-dark-2">
               <Link href="/" onClick={(e) => doSigningAnonymously(e, signin)}>Signin Anonymously</Link>
             </div>
-          } */}
+          }
+          {profileUser && profileUser.isAnonymous && // TODO CRIPPLE
+            <div className="text-dark-2 hover:text-light-2">
+              <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
+            </div>
+          }
           {profileUser &&
             <div className="text-dark-2">
               <Link href={`/posts?uid=${profileUser.uid}`}>View Posts ({myPosts.length})</Link>

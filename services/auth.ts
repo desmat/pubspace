@@ -6,7 +6,7 @@ import { SigninMethod } from "@/types/SigninMethod";
 export let app: FirebaseApp; 
 export let auth: Auth;
 
-export function init(callbacks?: any) {
+export async function init(callbacks?: any) {
   console.log("*** services.auth.init firebaseConfig:", firebaseConfig);
 
   const authStateChanged = callbacks?.onAuthStateChanged || function(user: User) {
@@ -20,15 +20,18 @@ export function init(callbacks?: any) {
       console.log('onAuthStateChanged signed out');
     }
   };
-
-  // try to avoid warnings when running on server side
-  import("firebase/app").then((firebaseApp) => {
-    app = firebaseApp.initializeApp(firebaseConfig);
-    import("firebase/auth").then((firebaseAuth) => {
-      auth = firebaseAuth.getAuth();
-      firebaseAuth.onAuthStateChanged(auth, authStateChanged);
+  
+  return new Promise((resolve: any, reject: any) => {
+    // try to avoid warnings when running on server side
+    import("firebase/app").then((firebaseApp) => {
+      app = firebaseApp.initializeApp(firebaseConfig);
+      import("firebase/auth").then((firebaseAuth) => {
+        auth = firebaseAuth.getAuth();
+        firebaseAuth.onAuthStateChanged(auth, authStateChanged);
+        resolve(true);
+      });
     });
-  });
+  })
 }
 
 export function signInAnonymously() {
