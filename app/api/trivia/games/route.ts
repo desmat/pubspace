@@ -3,6 +3,8 @@ export const maxDuration = 300;
 
 import { NextResponse } from 'next/server'
 import { getGames, getGame, createGame, getQuestionCategories } from '@/services/trivia';
+import { validateUserSession } from '@/services/users';
+
 
 export async function GET(request: Request) {
   console.log('>> app.api.trivia.games.GET');
@@ -20,9 +22,17 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   console.log('>> app.api.trivia.games.POST', request);
+  const { user } = await validateUserSession(request);
+  if (!user) {
+    return NextResponse.json(
+      { success: false, message: 'authentication failed' },
+      { status: 401 }
+    );
+  }
+
   const data: any = await request.json();
   const categories = data.categories && data.categories.split(/\s*,\s*/);
-  const encoder = new TextEncoder()
+  const encoder = new TextEncoder();
 
   const stream = new ReadableStream({
     async pull(controller) {
@@ -32,7 +42,7 @@ export async function POST(request: Request) {
         controller.enqueue(encoder.encode("\n\n\n\n\n" + JSON.stringify({ status }) + "\n\n\n\n\n"));
       }
 
-      const game = await createGame(data.createdBy, data.numQuestions, data.name, categories, handleStatusUpdate);
+      const game = await createGame(user, data.numQuestions, data.name, categories, handleStatusUpdate);
       // console.log("game in stream pull", { game });
       // padding heavily with \n's due to inconsistent chunking on Vercel
       controller.enqueue(encoder.encode("\n\n\n\n\n" + JSON.stringify({ game }) + "\n\n\n\n\n"));

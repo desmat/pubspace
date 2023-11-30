@@ -27,12 +27,15 @@ export async function POST(request: Request) {
 
   const { user } = await validateUserSession(request);
   if (!user) {
-    return NextResponse.json({ isLoggedIn: false }, { status: 401 });
+    return NextResponse.json(
+      { success: false, message: 'authentication failed' },
+      { status: 401 }
+    );
   }
 
   const data: any = await request.json();
   const post = await addPost({
-    content: data.content, 
+    content: data.content,
     position: data.position,
   }, user as any);
   return NextResponse.json({ post });

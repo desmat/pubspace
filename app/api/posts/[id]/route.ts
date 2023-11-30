@@ -32,7 +32,10 @@ export async function PUT(request: Request) {
   const { user } = await validateUserSession(request)
   // console.log('>> app.api.posts.PUT', { user });
   if (!user) {
-    return NextResponse.json({ authenticated: false }, { status: 401 });
+    return NextResponse.json(
+      { success: false, message: 'authentication failed' },
+      { status: 401 }
+    );
   }
 
   const updatedPost = await editPost(post, user);
@@ -44,16 +47,16 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   console.log('>> app.api.posts.DELETE params', params);
+  const { user } = await validateUserSession(request)
+  if (!user) {
+    return NextResponse.json(
+      { success: false, message: 'authentication failed' },
+      { status: 401 }
+    );
+  } 
 
   if (!params.id) {
     throw `Cannot delete post with null id`;
-  }
-
-
-  const { user } = await validateUserSession(request)
-  console.log('>> app.api.posts.DELETE', { user });
-  if (!user) {
-    return NextResponse.json({ authenticated: false }, { status: 401 });
   }
 
   const post = await deletePost(params.id, user);

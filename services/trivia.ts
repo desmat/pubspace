@@ -106,8 +106,8 @@ export async function getQuestionCategories(): Promise<string[]> {
   return new Promise((resolve, reject) => resolve(categories));
 }
 
-export async function createGame(createdBy: string, numQuestions: number, name?: string, categories?: string[], statusUpdateCallback?: (status: string) => void): Promise<Game> {
-  console.log(">> services.trivia.createGame", { createdBy, numQuestions, name, categories });
+export async function createGame(user: any, numQuestions: number, name?: string, categories?: string[], statusUpdateCallback?: (status: string) => void): Promise<Game> {
+  console.log(">> services.trivia.createGame", { user, numQuestions, name, categories });
 
   statusUpdateCallback && statusUpdateCallback("retrieving saved questions");
 
@@ -135,7 +135,7 @@ export async function createGame(createdBy: string, numQuestions: number, name?:
   const game = {
     id: crypto.randomUUID(),
     status: "created",
-    createdBy,
+    createdBy: user.uid,
     createdAt: moment().valueOf(),
     name: name || `Game with ${numQuestions} questions`,
     questions: shuffleArray(savedQuestions.concat(generatedQuestions)).slice(0, numQuestions),
@@ -145,11 +145,20 @@ export async function createGame(createdBy: string, numQuestions: number, name?:
   return store.addTriviaGame(game);
 }
 
-export async function deleteGame(id: string): Promise<void> {
-  console.log(">> services.trivia.deleteGame", { id });
+export async function deleteGame(id: string, user: any): Promise<void> {
+  console.log(">> services.trivia.deleteGame", { id, user });
 
   if (!id) {
     throw `Cannot delete game with null id`;
+  }
+
+  const game = await getGame(id);
+  if (!game) {
+    throw `Game not found: ${id}`;
+  }
+
+  if (!(game.createdBy == user.uid || user.customClaims?.admin)) {
+    throw `Unauthorized`;
   }
 
   store.deleteTriviaGame(id);

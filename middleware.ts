@@ -1,9 +1,7 @@
 // middleware.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { getFirebaseAuth,  } from "next-firebase-auth-edge/lib/auth";
-import { firebaseAdminConfig } from "@/firestore-admin.config";
-import { firebaseConfig } from "@/firestore.config";
+import { validateUserSession } from "./services/users";
 
 export async function middleware(request: NextRequest) {
   const method = request.method;
@@ -21,31 +19,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const {
-    verifyIdToken,
-  } = getFirebaseAuth(
-    {
-      projectId: firebaseAdminConfig.projectId || "",
-      clientEmail: firebaseAdminConfig.clientEmail || "",
-      privateKey: firebaseAdminConfig.privateKey || ""
-    },
-    firebaseConfig.apiKey || "",
-  );
+  const { user } = await validateUserSession(request);
 
-  const authToken = request.cookies.get("AuthToken")?.value;
-  
-  if (authToken) {
-    const tokens = await verifyIdToken(authToken);
-    console.log("*** middleware", { tokens });
-    if (tokens) {
-      return NextResponse.next();
-    }
+  if (user) {
+    return NextResponse.next();
   }
 
   return NextResponse.json(
-    { success: false, message: 'authentication required' },
-    { status: 401 }
-  )
+    { success: false, message: 'authorization failed' },
+    { status: 403 }
+  );
 }
 
 // guard all api calls (logic will only look at mutating methods)

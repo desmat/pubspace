@@ -1,7 +1,7 @@
-import { auth } from 'firebase-admin';
-import { getAuth } from 'firebase-admin/auth';
+// import { auth } from 'firebase-admin';
+// import { getAuth } from 'firebase-admin/auth';
 import { NextResponse } from 'next/server'
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 // import { app, init } from "@/services/auth";
 import * as users from "@/services/users"; // import just to make sure Firebase Auth Admin has init'ed
 
@@ -10,31 +10,34 @@ import * as users from "@/services/users"; // import just to make sure Firebase 
 
 export async function GET(request: Request) {
   // console.log('>> app.api.user.GET', request);  
-  const { user: decodedToken } = await users.validateUserSession(request) as any;
+  const { user } = await users.validateUserSession(request) as any;
 
-  console.log('>> app.api.user.GET', { decodedToken });  
+  console.log('>> app.api.user.GET', { user });
 
-  let user = {};
-  if (decodedToken) {
-    user = await auth().getUser(decodedToken.uid);
+  if (!user) {
+    return NextResponse.json(
+      { success: false, message: 'authentication failed' },
+      { status: 401 }
+    );
   }
 
-  return NextResponse.json(user);  
+  return NextResponse.json(user);
 }
 
 export async function POST(request: Request) {
-  const { user: decodedToken, authToken } = await users.validateUserSession(request) as any;
-  const isAdmin = decodedToken && decodedToken.email == "desmat@gmail.com"; // just me for now
+  const { user: _user, authToken } = await users.validateUserSession(request) as any;
+  const isAdmin = _user && (process.env.ADMIN_USERS?.split(/\s*\,\s*/) || []).includes(_user.email);
 
-  console.log('>> app.api.user.POST', { decodedToken, isAdmin });
+  console.log('>> app.api.user.POST', { _user, isAdmin });
 
-  if (!decodedToken) {
-    return NextResponse.json({ authenticated: false }, { status: 401 });
+  if (!_user) {
+    return NextResponse.json(
+      { success: false, message: 'authentication failed' },
+      { status: 401 }
+    );
   }
 
-  if (isAdmin) {
-    await auth().setCustomUserClaims(decodedToken.uid, { admin: true });
-  }
+  const user = await users.setCustomUserClaims(_user.uid, { admin: isAdmin });
 
   //Generate auth token cookie
   const expiresIn = 60 * 60 * 24 * 5 * 1000;
@@ -46,12 +49,8 @@ export async function POST(request: Request) {
     secure: false,
   };
 
-  // console.log('>> app.api.user.POST', { options });
-
   //Add the cookie to the browser
   cookies().set(options);
-
-  const user = await auth().getUser(decodedToken.uid);
   return NextResponse.json(user);
 }
 
