@@ -2,7 +2,6 @@ import moment from 'moment';
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { Post } from "@/types/Post"
-import { User, getIdToken, get } from 'firebase/auth';
 
 
 // TODO PostState type
