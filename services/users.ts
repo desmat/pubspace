@@ -43,17 +43,16 @@ export async function validateUserSession(request: any) {
     return {};
   }
 
-  // @ts-ignore
   const {
     verifyIdToken,
     getUser: getFirebaseUser,
   } = getFirebaseAuth(
     {
-      projectId: firebaseAdminConfig.projectId,
-      clientEmail: firebaseAdminConfig.clientEmail,
-      privateKey: firebaseAdminConfig.privateKey
+      projectId: firebaseAdminConfig.projectId || "",
+      clientEmail: firebaseAdminConfig.clientEmail || "",
+      privateKey: firebaseAdminConfig.privateKey || ""
     },
-    firebaseConfig.apiKey,
+    firebaseConfig.apiKey || "",
   );
 
   let tokens;

@@ -21,16 +21,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // @ts-ignore
   const {
     verifyIdToken,
   } = getFirebaseAuth(
     {
-      projectId: firebaseAdminConfig.projectId,
-      clientEmail: firebaseAdminConfig.clientEmail,
-      privateKey: firebaseAdminConfig.privateKey
+      projectId: firebaseAdminConfig.projectId || "",
+      clientEmail: firebaseAdminConfig.clientEmail || "",
+      privateKey: firebaseAdminConfig.privateKey || ""
     },
-    firebaseConfig.apiKey,
+    firebaseConfig.apiKey || "",
   );
 
   const authToken = request.cookies.get("AuthToken")?.value;
