@@ -27,7 +27,7 @@ function doLogout(e: any, logoutFn: any) {
 }
 
 export default function Page({ params }: { params: { uid?: string } }) {
-  console.log('>> app.profile.page.render()', params.uid);
+  // console.log('>> app.profile.page.render()', params.uid);
   const { user, signin, logout } = useUser();
   const [posts, loadPosts, postsLoaded] = usePosts((state: any) => [state.posts, state.load, state.loaded]);
   const { profiles, loaded, load } = useProfiles();
@@ -35,12 +35,12 @@ export default function Page({ params }: { params: { uid?: string } }) {
   const profileUser = params.uid ? profile?.user : user;
 
   const myPosts = postsLoaded && loaded ? posts.filter((post: Post) => post.postedByUID == profileUser?.uid) : [];
-  console.log('>> app.profile.page.render() myPosts', myPosts);
+  console.log('>> app.profile.page.render()', { uid: params.uid, profile, loaded, user });
 
   useEffect(() => {
-    console.log("** app.profile.page.useEffect profileUser:", { uid: params.uid, profileUser });
-    load(params.uid);
-    loadPosts();
+    console.log("** app.profile.page.useEffect", { uid: params.uid, profileUser });
+    if (!loaded) load(params.uid);
+    if (!postsLoaded) loadPosts();
   }, [params.uid]);
 
   if (params.uid && !loaded || !params.uid && !profileUser) { // TODO UNCRIPPLE

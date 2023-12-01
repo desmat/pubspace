@@ -39,15 +39,19 @@ function menuItems({ pathname, user, addPost }: { pathname: string, user: User |
     {
       name: "Post",
       icon: <BsFillPlusCircleFill className="my-auto" />,
+      title: user ? "Add a post" : "Login to add a post",
+      className: user ? "" : "cursor-not-allowed",
       onClick: function () {
-        const content = window.prompt("Enter content", placeHolderPost);
-        if (content) {
-          const userName = getUsername(user);
-          const post = addPost(content, userName, user?.uid);
-          return post as boolean;
-        }
+        if (user) {
+          const content = window.prompt("Enter content", placeHolderPost);
+          if (content) {
+            const userName = getUsername(user);
+            const post = addPost(content, userName, user?.uid);
+            return post as boolean;
+          }
 
-        return false;
+          return false;
+        }
       }
     },
     {
@@ -78,7 +82,8 @@ export default function Nav() {
         {menuItems({ pathname, user, addPost }).map((menuItem: any) => (
           <div key={menuItem.name}>
             <NavLink
-              className="_bg-pink-300 hidden md:flex"
+              className={`_bg-pink-300 hidden md:flex ${menuItem.className}`}
+              title={menuItem.title}
               href={menuItem.href}
               isActive={menuItem.isActive}
               onClick={menuItem.onClick}

@@ -10,22 +10,29 @@ import * as users from "@/services/users"; // import just to make sure Firebase 
 
 export async function GET(request: Request) {
   // console.log('>> app.api.user.GET', request);  
-  const { user } = await users.validateUserSession(request) as any;
+  const { user, error } = await users.validateUserSession(request) as any;
 
-  console.log('>> app.api.user.GET', { user });
+  console.log('>> app.api.user.GET', { user, error});
 
   if (!user) {
-    return NextResponse.json(
-      { success: false, message: 'authentication failed' },
-      { status: 401 }
-    );
+    if (error) {
+      // if (error.code == "TOKEN_EXPIRED") {
+      //   console.warn("TOKEN EXPIRED");
+      // }
+      return NextResponse.json(
+        { success: false, message: 'authentication failed', error: error.message },
+        { status: 401 }
+      );
+    } 
+    
+    return NextResponse.json({});
   }
 
   return NextResponse.json(user);
 }
 
 export async function POST(request: Request) {
-  const { user: _user, authToken } = await users.validateUserSession(request) as any;
+  const { user: _user, refreshToken } = await users.authenticateUser(request) as any;
   const isAdmin = _user && (process.env.ADMIN_USERS?.split(/\s*\,\s*/) || []).includes(_user.email);
 
   console.log('>> app.api.user.POST', { _user, isAdmin });
@@ -41,21 +48,19 @@ export async function POST(request: Request) {
 
   //Generate auth token cookie
   const expiresIn = 60 * 60 * 24 * 5 * 1000;
-  const options = {
-    name: "AuthToken",
-    value: authToken,
+  cookies().set({
+    name: "session",
+    value: refreshToken,
     maxAge: expiresIn,
     httpOnly: true,
     secure: false,
-  };
-
-  //Add the cookie to the browser
-  cookies().set(options);
+  });
+  
   return NextResponse.json(user);
 }
 
 export async function DELETE(request: Request) {
   // console.log('>> app.api.user.DELETE', request);
-  cookies().delete("AuthToken");
+  cookies().delete("session");
   return NextResponse.json({ status: "ok" });
 }

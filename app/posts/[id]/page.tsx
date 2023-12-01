@@ -54,7 +54,7 @@ export default function Page({ params }: { params: { id: string } }) {
       <Post {...post} />
       <div className="flex justify-center gap-2 p-2">
         <Link onClick={() => router.back()}>Back</Link>
-        {true && // post.postedByUID == user?.uid || user?.admin &&
+        {post.postedByUID == user?.uid || user?.admin &&
           <>
             <Link onClick={() => doEdit(post, editPost)}>Edit</Link>
             <Link style="warning" onClick={() => doDelete(post, router, deletePost)}>Delete</Link>

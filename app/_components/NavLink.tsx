@@ -3,11 +3,12 @@
 import Link from 'next/link'
 
 export default function NavLink({
-  children, href, className, isMenu, isActive, onClick,
+  children, href, className, title, isMenu, isActive, onClick,
 }: {
   children: React.ReactNode,
   href?: string,
   className?: string,
+  title?: string
   isMenu?: boolean,
   isActive?: boolean
   onClick?: () => void,
@@ -15,7 +16,7 @@ export default function NavLink({
   // console.log('>> components.NavLink.render()', { isActive });
 
   return (
-    <div className="flex w-max" onClick={() => onClick && onClick()}>
+    <div className="flex w-max" title={title} onClick={() => onClick && onClick()}>
       <Link
         href={href || "#"}
         className={(

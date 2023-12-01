@@ -5,6 +5,9 @@ import { User } from 'firebase/auth';
 
 const {
   verifyIdToken,
+  // verifyAndRefreshExpiredIdToken,
+  getCustomIdAndRefreshTokens,
+  handleTokenRefresh,
   getUser: _getUser,
   setCustomUserClaims: _setCustomUserClaims,
 } = getFirebaseAuth(
@@ -27,42 +30,57 @@ export function getUserName(user: User): string {
 
 export async function setCustomUserClaims(uid: string, obj: any) {
   const ret = await _setCustomUserClaims(uid, obj)
-  console.log("*** setUserCustomClaim", { ret });
+  // console.log("*** setUserCustomClaim", { ret });
 
   return getUser(uid);
 }
 
-export async function validateUserSession(request: any) {
-  let authToken;
-
+export async function authenticateUser(request: any) {
   const authorization = request.headers.get("Authorization");
+
+  let idToken;
   if (authorization?.startsWith("Bearer ")) {
-    authToken = authorization.split("Bearer ")[1];
-  }
-  
-  if (!authToken) {
-    authToken = request.cookies.get("AuthToken")?.value;    
-  }
-
-  // console.log("*** validateUserSession ***", { authToken });
-
-  if (!authToken) {
-    return {};
+    idToken = authorization.split("Bearer ")[1];
   }
 
   let tokens;
-  if (authToken) {
+  if (idToken) {
     try {
-      tokens = await verifyIdToken(authToken);
-      // console.log("*** validateUserSession", { tokens });
+      tokens = await verifyIdToken(idToken);
+      console.log("*** validateUserSession", { tokens, idToken });
       const user = await getUser(tokens.uid);
-      // console.log("*** validateUserSession ***", { user });
-      return { user, authToken };
-    } catch (error) {
-      console.warn("*** validateUserSession ***", { error });
+      const refreshAndIdTokens = await getCustomIdAndRefreshTokens(idToken, firebaseConfig.apiKey || "");
+      // console.log("*** validateUserSession ***", { user, idToken });
+      return { user, refreshToken: refreshAndIdTokens.refreshToken };
+    } catch (error: any) {
+      console.warn("*** validateUserSession ***", { code: error.code, message: error.message, error });
       // throw 'authentication failed';
+      return { error };
+    }
+  }  
+
+  return {}
+}
+
+export async function validateUserSession(request: any) {
+  const refreshToken = request.cookies.get("session")?.value;
+  console.log("*** validateUserSession ***", { refreshToken });
+
+  if (refreshToken) {
+    try {
+      // const tokens = await verifyIdToken(authToken);
+      const handleredRefreshToken = await handleTokenRefresh(refreshToken, firebaseConfig.apiKey || "");
+      console.log("*** validateUserSession", { refreshToken, handleredRefreshToken });
+
+      const user = await getUser(handleredRefreshToken.decodedToken.uid);
+      // console.log("*** validateUserSession ***", { user, refreshToken });
+      return { user };
+    } catch (error: any) {
+      console.warn("*** validateUserSession ***", { code: error.code, message: error.message, error });
+      // throw 'authentication failed';
+      return { error };
     }
   }
 
-  return { authToken }
+  return {}
 }
