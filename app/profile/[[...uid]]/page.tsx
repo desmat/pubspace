@@ -4,8 +4,6 @@ import Link from "next/link";
 import { useEffect } from "react";
 import useUser from "@/app/_hooks/user";
 import usePosts from "@/app/_hooks/posts";
-import useProfiles from "@/app/_hooks/profiles";
-import { Profile } from "@/types/Profile";
 import { Post } from "@/types/Post";
 
 function doSigninWithGoogle(e: any, signinFn: any) {
@@ -30,15 +28,11 @@ export default function Page({ params }: { params: { uid?: string } }) {
   // console.log('>> app.profile.page.render()', params.uid);
   const [user, userLoaded, signin, logout] = useUser((state: any) => [state.user, state.loaded, state.load, state.signin, state.logout]);
   const [posts, loadPosts, postsLoaded] = usePosts((state: any) => [state.posts, state.load, state.loaded]);
-  const { profiles, loaded, load } = useProfiles();
-  const profile = params.uid && profiles && profiles[params.uid] as Profile;
-  const profileUser = params.uid ? profile?.user : user;
-
-  const myPosts = postsLoaded && loaded ? posts.filter((post: Post) => post.postedByUID == profileUser?.uid) : [];
-  // console.log('>> app.profile.page.render()', { uid: params.uid, profile, loaded, user, userLoaded });
+  const myPosts = postsLoaded && posts.filter((post: Post) => post.postedByUID == user?.uid);
+  // console.log('>> app.profile.page.render()', { uid: params.uid, user, userLoaded });
 
   useEffect(() => {
-    // console.log("** app.profile.page.useEffect", { uid: params.uid, profileUser });
+    // console.log("** app.profile.page.useEffect", { uid: params.uid, user });
     // if (!loaded) load(params.uid);
     if (!postsLoaded) loadPosts();
   }, [params.uid]);
@@ -54,7 +48,7 @@ export default function Page({ params }: { params: { uid?: string } }) {
     );
   }
 
-  if (params.uid && !loaded || !params.uid && !profileUser) { // TODO UNCRIPPLE
+  if (params.uid || !params.uid && !user) { // TODO UNCRIPPLE
     return (
       <main className="flex flex-col items-center _justify-between _p-24">
         <h1>
@@ -90,21 +84,21 @@ export default function Page({ params }: { params: { uid?: string } }) {
       </h1>
       {/* {params.uid && loaded && 
         <>
-          <p>uid: {profileUser?.uid}</p>
+          <p>uid: {user?.uid}</p>
         </>
       } */}
-      {true && // profileUser && TODO UNCRIPLE
+      {true && // user && TODO UNCRIPLE
         <>
-          <p>uid: {profileUser?.uid}</p>
-          <p>isAnonymous: {profileUser?.isAnonymous ? "true" : "false"}</p>
-          <p>isAdmin: {profileUser?.admin ? "true" : "false"}</p>
-          <p>provider: {profileUser?.providerId}{profileUser?.providerData[0]?.providerId ? ` (${profileUser?.providerData[0]?.providerId})` : ''}</p>
-          <p>email: {profileUser?.email}</p>
-          <p>displayName: {profileUser?.displayName}</p>
-          {/* <p className="flex whitespace-nowrap">photoURL: <img className="max-w-10 max-h-10" src={profileUser.photoURL as string | undefined}></img></p> */}
+          <p>uid: {user?.uid}</p>
+          <p>isAnonymous: {user?.isAnonymous ? "true" : "false"}</p>
+          <p>isAdmin: {user?.admin ? "true" : "false"}</p>
+          <p>provider: {user?.providerId}{user?.providerData[0]?.providerId ? ` (${user?.providerData[0]?.providerId})` : ''}</p>
+          <p>email: {user?.email}</p>
+          <p>displayName: {user?.displayName}</p>
+          {/* <p className="flex whitespace-nowrap">photoURL: <img className="max-w-10 max-h-10" src={user.photoURL as string | undefined}></img></p> */}
         </>
       }
-      {params.uid && loaded &&
+      {params.uid &&
         <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
           <div className="text-dark-2">
             <Link href={`/posts?uid=${params.uid}`}>View Posts ({myPosts.length})</Link>
@@ -113,37 +107,37 @@ export default function Page({ params }: { params: { uid?: string } }) {
       }
       {!params.uid &&
         <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
-          {/* {!profileUser || !profileUser.isAnonymous && // TODO CRIPPLE
+          {/* {!user || !user.isAnonymous && // TODO CRIPPLE
             <div className="text-dark-2">
               <Link href="/" onClick={(e) => doSigningAnonymously(e, signin)}>Signin Anonymously</Link>
             </div>
           } */}
-          {profileUser &&
+          {user &&
             <div className="text-dark-2">
-              <Link href={`/posts?uid=${profileUser.uid}`}>View Posts ({myPosts.length})</Link>
+              <Link href={`/posts?uid=${user.uid}`}>View Posts ({myPosts.length})</Link>
             </div>
           }
-          {profileUser && profileUser.isAnonymous &&
+          {user && user.isAnonymous &&
             <div className="text-dark-2">
               <Link href="/auth?method=login-email">Login with Email</Link>
             </div>
           }
-          {profileUser && profileUser.isAnonymous &&
+          {user && user.isAnonymous &&
             <div className="text-dark-2">
               <Link href="/auth?method=signup-email">Signup with Email</Link>
             </div>
           }
-          {profileUser && profileUser.isAnonymous &&
+          {user && user.isAnonymous &&
             <div className="text-dark-2">
               <Link href="/" onClick={(e) => doSigninWithGoogle(e, signin)}>Signin with Google</Link>
             </div>
           }
-          {profileUser && !profileUser.isAnonymous &&
+          {user && !user.isAnonymous &&
             <div className="text-dark-2 hover:text-light-2">
               <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
             </div>
           }
-          {profileUser && profileUser.isAnonymous && // TODO CRIPPLE
+          {user && user.isAnonymous && // TODO CRIPPLE
             <div className="text-dark-2 hover:text-light-2">
               <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
             </div>
