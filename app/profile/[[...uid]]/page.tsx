@@ -26,7 +26,7 @@ function doLogout(e: any, logoutFn: any) {
 
 export default function Page({ params }: { params: { uid?: string } }) {
   // console.log('>> app.profile.page.render()', params.uid);
-  const [user, userLoaded, signin, logout] = useUser((state: any) => [state.user, state.loaded, state.load, state.signin, state.logout]);
+  const [user, userLoaded, signin, logout] = useUser((state: any) => [state.user, state.loaded, state.signin, state.logout]);
   const [posts, loadPosts, postsLoaded] = usePosts((state: any) => [state.posts, state.load, state.loaded]);
   const myPosts = postsLoaded && posts.filter((post: Post) => post.postedByUID == user?.uid);
   // console.log('>> app.profile.page.render()', { uid: params.uid, user, userLoaded });

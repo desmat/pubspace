@@ -70,11 +70,7 @@ function menuItems({ pathname, user, addPost }: { pathname: string, user: User |
 export default function Nav() {
   const pathname = usePathname();
   const addPost = usePosts((state: any) => state.add);
-  const [user, userLoaded, loadUser] = useUser((state: any) => [state.user, state.loaded, state.load]);
-
-  useEffect(() => {
-    if (!userLoaded) loadUser();
-  }, []);
+  const [user] = useUser((state: any) => [state.user]);
 
   return (
     <div className="bg-teal-600 text-slate-300 fixed z-10 w-full h-10 lg:w-32 lg:h-screen flex flex-row lg:flex-col">

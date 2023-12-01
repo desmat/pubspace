@@ -105,9 +105,11 @@ const useUser: any = create(devtools((set: any, get: any) => ({
           fetch('/api/user', {
             method: "DELETE",
           }).then(() => {
+            console.warn(">> hooks.User.logout success")
             set({ user: undefined });
             resolve(true);
           }).catch((error) => {
+            console.warn(">> hooks.User.logout error", { error })
             reject(error);
           })
         }
