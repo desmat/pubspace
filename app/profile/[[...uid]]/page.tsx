@@ -28,20 +28,32 @@ function doLogout(e: any, logoutFn: any) {
 
 export default function Page({ params }: { params: { uid?: string } }) {
   // console.log('>> app.profile.page.render()', params.uid);
-  const { user, signin, logout } = useUser();
+  const [user, userLoaded, loadUser, signin, logout] = useUser((state: any) => [state.user, state.loaded, state.load, state.signin, state.logout]);
   const [posts, loadPosts, postsLoaded] = usePosts((state: any) => [state.posts, state.load, state.loaded]);
   const { profiles, loaded, load } = useProfiles();
   const profile = params.uid && profiles && profiles[params.uid] as Profile;
   const profileUser = params.uid ? profile?.user : user;
 
   const myPosts = postsLoaded && loaded ? posts.filter((post: Post) => post.postedByUID == profileUser?.uid) : [];
-  console.log('>> app.profile.page.render()', { uid: params.uid, profile, loaded, user });
+  // console.log('>> app.profile.page.render()', { uid: params.uid, profile, loaded, user, userLoaded });
 
   useEffect(() => {
-    console.log("** app.profile.page.useEffect", { uid: params.uid, profileUser });
-    if (!loaded) load(params.uid);
+    // console.log("** app.profile.page.useEffect", { uid: params.uid, profileUser });
+    // if (!loaded) load(params.uid);
+    if (!userLoaded) loadUser();
     if (!postsLoaded) loadPosts();
   }, [params.uid]);
+
+  if (!userLoaded || !postsLoaded) {
+    return (
+      <main className="flex flex-col items-center _justify-between _p-24">
+        <h1>
+          Profile
+        </h1>
+        <p className='italic text-center animate-pulse'>Loading...</p>
+      </main>
+    );
+  }
 
   if (params.uid && !loaded || !params.uid && !profileUser) { // TODO UNCRIPPLE
     return (
@@ -102,16 +114,11 @@ export default function Page({ params }: { params: { uid?: string } }) {
       }
       {!params.uid &&
         <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
-          {!profileUser || !profileUser.isAnonymous && // TODO CRIPPLE
+          {/* {!profileUser || !profileUser.isAnonymous && // TODO CRIPPLE
             <div className="text-dark-2">
               <Link href="/" onClick={(e) => doSigningAnonymously(e, signin)}>Signin Anonymously</Link>
             </div>
-          }
-          {profileUser && profileUser.isAnonymous && // TODO CRIPPLE
-            <div className="text-dark-2 hover:text-light-2">
-              <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
-            </div>
-          }
+          } */}
           {profileUser &&
             <div className="text-dark-2">
               <Link href={`/posts?uid=${profileUser.uid}`}>View Posts ({myPosts.length})</Link>
@@ -133,6 +140,11 @@ export default function Page({ params }: { params: { uid?: string } }) {
             </div>
           }
           {profileUser && !profileUser.isAnonymous &&
+            <div className="text-dark-2 hover:text-light-2">
+              <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
+            </div>
+          }
+          {profileUser && profileUser.isAnonymous && // TODO CRIPPLE
             <div className="text-dark-2 hover:text-light-2">
               <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
             </div>

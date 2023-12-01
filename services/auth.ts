@@ -28,6 +28,7 @@ export async function init(callbacks?: any) {
       import("firebase/auth").then((firebaseAuth) => {
         auth = firebaseAuth.getAuth();
         firebaseAuth.onAuthStateChanged(auth, authStateChanged);
+        // console.log("*** services.auth.init", { currentUser: auth.currentUser });
         resolve(true);
       });
     });

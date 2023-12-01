@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation'
+import { useEffect } from 'react';
 import { FaRegUserCircle, FaUserCircle } from 'react-icons/fa';
 import useUser from '@/app/_hooks/user';
 
@@ -13,11 +14,15 @@ export default function NavProfileLink({
 }) {
   console.log('>> components.PostNaProfileNavLinkvLink.render()');
   const pathname = usePathname();
-  const { user } = useUser();
-  
+  const [user, userLoaded, loadUser] = useUser((state: any) => [state.user, state.loaded, state.load]);
+
   const isActive = href && (href == "/" && pathname == "/") || (href && href != "/" && pathname.startsWith(href));
   const isLoggedIn = user && user.uid && !user.isAnonymous;
   const photoURL = isLoggedIn && user.photoURL;
+
+  useEffect(() => {
+    if (!userLoaded) loadUser();
+  }, []);
 
   return (
     <Link 
