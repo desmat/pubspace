@@ -28,7 +28,7 @@ function doLogout(e: any, logoutFn: any) {
 
 export default function Page({ params }: { params: { uid?: string } }) {
   // console.log('>> app.profile.page.render()', params.uid);
-  const [user, userLoaded, loadUser, signin, logout] = useUser((state: any) => [state.user, state.loaded, state.load, state.signin, state.logout]);
+  const [user, userLoaded, signin, logout] = useUser((state: any) => [state.user, state.loaded, state.load, state.signin, state.logout]);
   const [posts, loadPosts, postsLoaded] = usePosts((state: any) => [state.posts, state.load, state.loaded]);
   const { profiles, loaded, load } = useProfiles();
   const profile = params.uid && profiles && profiles[params.uid] as Profile;
@@ -40,7 +40,6 @@ export default function Page({ params }: { params: { uid?: string } }) {
   useEffect(() => {
     // console.log("** app.profile.page.useEffect", { uid: params.uid, profileUser });
     // if (!loaded) load(params.uid);
-    if (!userLoaded) loadUser();
     if (!postsLoaded) loadPosts();
   }, [params.uid]);
 

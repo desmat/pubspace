@@ -64,14 +64,13 @@ export default function Page({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [showAnswers, setShowAnswers] = useState(false);
   const [games, loadGame, loaded, deleteGame, startGame] = useTrivia((state: any) => [state.games, state.loadGame, state.loaded, state.deleteGame, state.startGame]);
-  const [user, userLoaded, loadUser] = useUser((state: any) => [state.user, state.loaded, state.load]);
+  const [user] = useUser((state: any) => [state.user]);
   const game = games.filter((game: any) => game.id == params.id)[0];
   const categories = game && Array.from(new Set(game.questions.map((question: any) => question.category)));
 
   console.log('>> app.trivia[id].page.render()', { id: params.id, game });
 
   useEffect(() => {
-    if (!userLoaded) loadUser();
     loadGame(params.id);
   }, [params.id]);
 

@@ -2,7 +2,9 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react';
+import Auth from '@/app/_components/Auth'
 import Nav from '@/app/_components/Nav'
+import User from '@/app/_components/User'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,6 +28,8 @@ export default function RootLayout({
           </div>
         </div>
       </body>
+      <Auth />
+      <User />
       <Analytics />
     </html>
   )

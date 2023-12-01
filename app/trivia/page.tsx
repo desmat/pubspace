@@ -76,11 +76,10 @@ async function handleCreateGame(createGameFn: any, router: any, user: User | und
 export default function Page() {
   console.log('>> app.trivia.page.render()');
   const router = useRouter();
-  const [user, userLoaded, loadUser] = useUser((state: any) => [state.user, state.loaded, state.load]);
+  const [user] = useUser((state: any) => [state.user]);
   const [games, categories, loadGames, loaded, createGame] = useTrivia((state: any) => [state.games, state.categories, state.loadGames, state.loaded, state.createGame]);
 
   useEffect(() => {
-    if (!userLoaded) loadUser();
     loadGames();
   }, []);
 

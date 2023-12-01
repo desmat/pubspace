@@ -29,14 +29,13 @@ function doDelete(post: PostType, router: any, deletePost: any) {
 export default function Page({ params }: { params: { id: string } }) {
   console.log(`>> app.posts.[${params.id}].page.render()`);
   const [load, loaded, editPost, deletePost] = usePosts((state: any) => [state.load, state.loaded, state.edit, state.delete]);
-  const [user, userLoaded, loadUser] = useUser((state: any) => [state.user, state.loaded, state.load]);
+  const [user, userLoaded] = useUser((state: any) => [state.user, state.loaded]);
   const post = usePosts((state: any) => state.posts.filter((post: any) => post.id == params.id)[0]);
   const router = useRouter();
 
   console.log(`>> app.posts.[${params.id}].page.render()`, { user, userLoaded });
 
   useEffect(() => {
-    if (!userLoaded) loadUser();
     load(params.id); // pull again if new data available
   }, []);
 

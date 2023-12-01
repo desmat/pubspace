@@ -57,7 +57,7 @@ function FormInput({
 
 export default function Page() {
   console.log('>> app.profile.auth.page.render()');
-  const [user, userLoaded, loadUser, signin] = useUser((state: any) => [state.user, state.loaded, state.load, state.signin]);
+  const [user, signin] = useUser((state: any) => [state.user, state.signin]);
   const router = useRouter();
   const params = useSearchParams();
   const method = params.get("method") as SigninMethod;
@@ -65,7 +65,6 @@ export default function Page() {
 
   useEffect(() => {
     console.log("** app.profile.auth.page.useEffect", { method });
-    if (!userLoaded) loadUser();
   }, []);
 
   return (

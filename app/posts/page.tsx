@@ -55,7 +55,7 @@ function EmptySlot({ addPostFn, user, position }: any) {
 export default function Posts() {
   console.log('>> app.posts.page.render()');
   const [posts, load, loaded, addPost] = usePosts((state: any) => [state.posts, state.load, state.loaded, state.add]);
-  const [user, userLoaded, loadUser] = useUser((state: any) => [state.user, state.loaded, state.load]);
+  const [user] = useUser((state: any) => [state.user]);
   const params = useSearchParams();
   const uidFilter = params.get("uid");
   const filteredPosts = uidFilter ? posts.filter((post: Post) => post.postedByUID == uidFilter) : posts
@@ -65,7 +65,6 @@ export default function Posts() {
   const maxPosition = mappedPosts && mappedPosts.size > 0 ? Math.max.apply(0, mappedPostKeys) : 0;
 
   useEffect(() => {
-    if (!userLoaded) loadUser();
     load(); // pull again if new data available
   }, []);
 
