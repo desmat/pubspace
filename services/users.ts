@@ -3,7 +3,8 @@ import { firebaseAdminConfig } from "@/firestore-admin.config";
 import { firebaseConfig } from "@/firestore.config";
 import { User } from 'firebase/auth';
 
-// NOTE: can't use firebase-auth in middleware and so using alternative: https://github.com/awinogrodzki/next-firebase-auth-edge
+// NOTE: can't use firebase-auth in middleware and so using alternative next-firebase-auth-edge
+// see https://github.com/vercel/next.js/discussions/33586
 
 const {
   verifyIdToken,
