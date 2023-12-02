@@ -34,7 +34,7 @@ const openai = new OpenAI({
       },
       {
         role: 'user',
-        content: `Please generate 10 trivia questions on the topic of ${category}.`
+        content: `Please generate 20 trivia questions on the topic of ${category}.`
       }
     ],
   });
@@ -127,8 +127,8 @@ export async function createGame(user: any, numQuestions: number, name?: string,
   generatedQuestions = generatedQuestions.map((q: any) => parseQuestions(q.category, q.questions)).flat();
 
   // save to db for quicker ux next time
-  // generatedQuestions.length > 0 && statusUpdateCallback && statusUpdateCallback("saving generated questions");
-  // store.addTriviaQuestions(generatedQuestions);
+  generatedQuestions.length > 0 && statusUpdateCallback && statusUpdateCallback("saving generated questions");
+  store.addTriviaQuestions(generatedQuestions);
 
   // console.log("*** services.trivia.createGame", { triviaQuestions, triviaQuestionsCategories, cleanedCategories, existingCategories, missingCategories, savedQuestions, generatedQuestions });
 

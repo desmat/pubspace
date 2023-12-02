@@ -6,6 +6,8 @@ import useUser from "@/app/_hooks/user";
 import usePosts from "@/app/_hooks/posts";
 import * as users from "@/services/users";
 import { Post } from "@/types/Post";
+import useTrivia from "@/app/_hooks/trivia";
+import { Game } from "@/types/Trivia";
 
 function doSigninWithGoogle(e: any, signinFn: any) {
   console.log("** app.profile.page.doSigninWithGoogle");
@@ -29,13 +31,16 @@ export default function Page({ params }: { params: { uid?: string } }) {
   // console.log('>> app.profile.page.render()', params.uid);
   const [user, userLoaded, loadUser, signin, logout] = useUser((state: any) => [state.user, state.loaded, state.load, state.signin, state.logout]);
   const [posts, loadPosts, postsLoaded] = usePosts((state: any) => [state.posts, state.load, state.loaded]);
+  const [games, gamesLoaded, loadGames] = useTrivia((state: any) => [state.games, state.loaded, state.loadGames]);
   const myPosts = postsLoaded && posts.filter((post: Post) => post.postedByUID == user?.uid);
+  const myGames = gamesLoaded && games.filter((game: Game) => game.createdBy == user?.uid);
   console.log('>> app.profile.page.render()', { uid: params.uid, user, userLoaded });
 
   useEffect(() => {
     // console.log("** app.profile.page.useEffect", { uid: params.uid, user });
     if (!userLoaded) loadUser();
     if (!postsLoaded) loadPosts();
+    if (!gamesLoaded) loadGames();
   }, [params.uid]);
 
   if (!userLoaded || !postsLoaded) {
@@ -120,9 +125,14 @@ export default function Page({ params }: { params: { uid?: string } }) {
       }
       {!params.uid &&
         <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
-          {user &&
+          {user && myPosts.length > 0 && 
             <div className="text-dark-2">
-              <Link href={`/posts?uid=${user.uid}`}>View Posts ({myPosts.length})</Link>
+              <Link href={`/posts?uid=${user.uid}`}>Posts ({myPosts.length})</Link>
+            </div>
+          }
+          {user && myGames.length > 0 && 
+            <div className="text-dark-2">
+              <Link href={`/trivia?uid=${user.uid}`}>Trivia games ({myGames.length})</Link>
             </div>
           }
           {user && user.isAnonymous &&

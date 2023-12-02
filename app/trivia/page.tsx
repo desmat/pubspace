@@ -1,10 +1,10 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from "react";
 import useTrivia from "@/app/_hooks/trivia";
 import Link from "@/app/_components/Link"
-import { SampleCategories } from "@/types/Trivia"
+import { Game, SampleCategories } from "@/types/Trivia"
 import Loading from "./loading";
 import { User } from 'firebase/auth';
 import useUser from '../_hooks/user';
@@ -78,6 +78,9 @@ export default function Page() {
   const router = useRouter();
   const [user] = useUser((state: any) => [state.user]);
   const [games, categories, loadGames, loaded, createGame] = useTrivia((state: any) => [state.games, state.categories, state.loadGames, state.loaded, state.createGame]);
+  const params = useSearchParams();
+  const uidFilter = params.get("uid");
+  const filteredGames = uidFilter ? games.filter((game: Game) => game.createdBy == uidFilter) : games;
 
   useEffect(() => {
     loadGames();
@@ -99,26 +102,35 @@ export default function Page() {
   }
 
   return (
-    <main className="flex flex-col items-left lg:max-w-4xl lg:mx-auto px-4">
-      <h1 className="text-center">Trivia</h1>
-      <p className='italic text-center'>
-        Create trivia games with the help of ChatGPT. Coming soon: play interactively with your friends!
-      </p>
-      {links}
-      {games && games.length > 0 &&
-        <>
-          {
-            games
-              // .filter(...)
-              // .sort(...)
-              .map((game: any) => <div key={game.id}><GameEntry game={game} user={user} /></div>)
-          }
-        </>
+    <>
+      {uidFilter &&
+        <Link href="/trivia" style="warning" className="absolute top-2 right-2 cursor-zoom-out">
+          Filtered by user: {uidFilter}
+        </Link>
       }
-      {(!games || games.length == 0) &&
-        <p className='italic text-center'>No trivia games yet :(</p>
-      }
-      {games && games.length > 4 && links}
-    </main>
+
+      <main className="flex flex-col items-left lg:max-w-4xl lg:mx-auto px-4">
+        <h1 className="text-center">Trivia</h1>
+
+        <p className='italic text-center'>
+          Create trivia games with the help of ChatGPT. Coming soon: play interactively with your friends!
+        </p>
+        {links}
+        {filteredGames && filteredGames.length > 0 &&
+          <>
+            {
+              filteredGames
+                // .filter(...)
+                .sort((game: Game) => game.createdAt)
+                .map((game: any) => <div key={game.id}><GameEntry game={game} user={user} /></div>)
+            }
+          </>
+        }
+        {(!filteredGames || filteredGames.length == 0) &&
+          <p className='italic text-center'>No trivia games yet :(</p>
+        }
+        {filteredGames && filteredGames.length > 4 && links}
+      </main>
+    </>
   )
 }

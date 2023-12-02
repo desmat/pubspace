@@ -18,7 +18,7 @@ export default function Link({
   return (
     <NextLink
       href={href || "#"}
-      onClick={(e) => { if (onClick) { e.preventDefault(); onClick(e); } }}
+      onClick={(e) => { if (onClick) {e.preventDefault(); onClick(e);} else if (!href) {e.preventDefault();} }}
       className={
         className + " text-dark-2 active:text-light-1 px-1" + (
           styleSet.has("warning")

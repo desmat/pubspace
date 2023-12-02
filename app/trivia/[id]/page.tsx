@@ -83,7 +83,7 @@ export default function Page({ params }: { params: { id: string } }) {
       <Link href="/trivia">Back</Link>
       {game && <Link onClick={() => setShowAnswers(!showAnswers)}>{showAnswers ? "Hide Correct Answers" : "Show Correct Answers"}</Link>}
       {/* {game && <Link onClick={() => handlePlayGame(params.id, startGame, router)}>Play</Link>} */}
-      {game && user && (user.uid == game.id || user.admin) && <Link style="warning" onClick={() => handleDeleteGame(params.id, deleteGame, router)}>Delete</Link>}
+      {game && user && (user.uid == game.createdBy || user.admin) && <Link style="warning" onClick={() => handleDeleteGame(params.id, deleteGame, router)}>Delete</Link>}
     </div>
   );
 
