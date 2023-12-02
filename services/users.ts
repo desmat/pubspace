@@ -24,9 +24,29 @@ export async function getUser(uid: string) {
 }
 
 export function getUserName(user: User): string {
-  return user?.isAnonymous ? "Anonymous" : user?.displayName || user?.email || "Noname";
+  return user?.isAnonymous
+    ? "Anonymous"
+    : user?.displayName
+    || (user?.email && user.email.split("@")?.length > 0 && user.email.split("@")[0])
+    || "Noname";
 }
 
+export function getProviderType(user: User): string | undefined {
+  const providerId = user?.providerData[0]?.providerId;
+  return !user.isAnonymous && providerId == "password" ? "email" : providerId;
+    
+}
+
+export function getProviderName(user: User): string {
+  const providerId = user?.providerData[0]?.providerId;
+  const providerEmail = user?.providerData[0]?.email;
+
+  return user?.isAnonymous
+    ? "(anonymous)"
+    : providerEmail && providerId && (providerId != "password") 
+      ? `${providerEmail} via ${providerId}` 
+      : providerEmail || providerId || "(unknown)";
+}
 
 export async function setCustomUserClaims(uid: string, obj: any) {
   const ret = await _setCustomUserClaims(uid, obj)
@@ -57,7 +77,7 @@ export async function authenticateUser(request: any) {
       // throw 'authentication failed';
       return { error };
     }
-  }  
+  }
 
   return {}
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import useUser from "@/app/_hooks/user";
 import usePosts from "@/app/_hooks/posts";
+import * as users from "@/services/users";
 import { Post } from "@/types/Post";
 
 function doSigninWithGoogle(e: any, signinFn: any) {
@@ -26,14 +27,14 @@ function doLogout(e: any, logoutFn: any) {
 
 export default function Page({ params }: { params: { uid?: string } }) {
   // console.log('>> app.profile.page.render()', params.uid);
-  const [user, userLoaded, signin, logout] = useUser((state: any) => [state.user, state.loaded, state.signin, state.logout]);
+  const [user, userLoaded, loadUser, signin, logout] = useUser((state: any) => [state.user, state.loaded, state.load, state.signin, state.logout]);
   const [posts, loadPosts, postsLoaded] = usePosts((state: any) => [state.posts, state.load, state.loaded]);
   const myPosts = postsLoaded && posts.filter((post: Post) => post.postedByUID == user?.uid);
-  // console.log('>> app.profile.page.render()', { uid: params.uid, user, userLoaded });
+  console.log('>> app.profile.page.render()', { uid: params.uid, user, userLoaded });
 
   useEffect(() => {
     // console.log("** app.profile.page.useEffect", { uid: params.uid, user });
-    // if (!loaded) load(params.uid);
+    if (!userLoaded) loadUser();
     if (!postsLoaded) loadPosts();
   }, [params.uid]);
 
@@ -54,8 +55,6 @@ export default function Page({ params }: { params: { uid?: string } }) {
         <h1>
           Profile
         </h1>
-        {/* <p className='italic text-center animate-pulse'>Loading...</p> */}
-        {/* TODO REMOVE */}
         <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
           <div className="text-dark-2">
             <Link href="/" onClick={(e) => doSigningAnonymously(e, signin)}>Signin Anonymously</Link>
@@ -82,19 +81,33 @@ export default function Page({ params }: { params: { uid?: string } }) {
           <span>: {params.uid}</span>
         }
       </h1>
-      {/* {params.uid && loaded && 
+      {user &&
         <>
-          <p>uid: {user?.uid}</p>
-        </>
-      } */}
-      {true && // user && TODO UNCRIPLE
-        <>
-          <p>uid: {user?.uid}</p>
-          <p>isAnonymous: {user?.isAnonymous ? "true" : "false"}</p>
-          <p>isAdmin: {user?.admin ? "true" : "false"}</p>
-          <p>provider: {user?.providerId}{user?.providerData[0]?.providerId ? ` (${user?.providerData[0]?.providerId})` : ''}</p>
-          <p>email: {user?.email}</p>
-          <p>displayName: {user?.displayName}</p>
+          <h2>{users.getUserName(user)}{user.isAnonymous ? "" : ` (${users.getProviderName(user)})`}</h2>
+
+          <div className="p-0.5">
+            <span className="text-dark-3">User ID:</span> {user.uid}{user?.isAnonymous && " (Anonymous)"}{user.admin && " (Administrator)"}
+          </div>
+          {user.email &&
+            <div className="p-0.5">
+              <span className="text-dark-3">Email:</span> {user.email}
+            </div>
+          }
+          {!user.isAnonymous &&
+            <div className="p-0.5">
+              <span className="text-dark-3">Provider:</span> {users.getProviderType(user)}
+            </div>
+          }
+
+          {/* <p>isAnonymous: {user?.isAnonymous ? "true" : "false"}</p> */}
+          {/* <p>isAdmin: {user?.admin ? "true" : "false"}</p> */}
+          {/* <p>provider: {user?.providerId}{user?.providerData[0]?.providerId ? ` (${user?.providerData[0]?.providerId})` : ''}</p>
+          <p>providerId: {user?.providerId}</p>
+          <p>providerData: {JSON.stringify(user?.providerData)}</p> */}
+          {/* <p>provider: {users.getProviderName(user)}</p> */}
+          {/* <p>email: {user?.email}</p> */}
+          {/* <p>displayName: {user?.displayName}</p> */}
+          {/* <p>username: {users.getUserName(user)}</p> */}
           {/* <p className="flex whitespace-nowrap">photoURL: <img className="max-w-10 max-h-10" src={user.photoURL as string | undefined}></img></p> */}
         </>
       }
@@ -107,11 +120,6 @@ export default function Page({ params }: { params: { uid?: string } }) {
       }
       {!params.uid &&
         <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
-          {/* {!user || !user.isAnonymous && // TODO CRIPPLE
-            <div className="text-dark-2">
-              <Link href="/" onClick={(e) => doSigningAnonymously(e, signin)}>Signin Anonymously</Link>
-            </div>
-          } */}
           {user &&
             <div className="text-dark-2">
               <Link href={`/posts?uid=${user.uid}`}>View Posts ({myPosts.length})</Link>
@@ -137,11 +145,11 @@ export default function Page({ params }: { params: { uid?: string } }) {
               <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
             </div>
           }
-          {user && user.isAnonymous && // TODO CRIPPLE
+          {/* {user && user.isAnonymous && // TODO CRIPPLE
             <div className="text-dark-2 hover:text-light-2">
               <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
             </div>
-          }
+          } */}
         </div>
       }
     </main>

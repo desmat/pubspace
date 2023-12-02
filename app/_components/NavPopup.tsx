@@ -69,6 +69,7 @@ export default function NavPopup({
                         className={`_bg-pink-300 ${menuItem.className}`}                       
                         isMenu={true}
                         isActive={menuItem.isActive}
+                        href={menuItem.href || ""}
                         onClick={() => {
                           if (menuItem.onClick) {
                             if (menuItem.onClick()) {

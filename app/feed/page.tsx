@@ -11,7 +11,7 @@ function PostEntry({ postedBy, postedByUID, postedAt, content }: Post) {
   return (
     <p className="text-left lg:text-center pb-4">
 
-      <span className="opacity-50 truncate">
+      <span className="text-dark-3 truncate">
         <span>Added </span>
         <span title={moment(postedAt).format("LLLL")} className="truncate text-ellipsis">{moment(postedAt).fromNow()}</span>
         <span> by </span>
