@@ -10,13 +10,13 @@ import { User } from 'firebase/auth';
 import useUser from '../_hooks/user';
 
 function GameEntry({ game, user }: any) {
-  const [deleteGame] = useTrivia((state: any) => [state.deleteGame]);
+  const router = useRouter();
   const categories = Array.from(new Set(game.questions.map((question: any) => question.category))).filter(Boolean);
   const isReady = ["created"].includes(game.status);
   console.log('>> app.trivia.page.GameEntry.render()', { game, user });
 
   return (
-    <p className="text-left py-2.5 group">
+    <p className="text-left py-2.5 group hover:cursor-pointer" onClick={() => router.push(`/trivia/${game.id}`)}>
       <span className="m-0">
         {game.name}
         {isReady &&
@@ -27,10 +27,7 @@ function GameEntry({ game, user }: any) {
                 {" "}in the {categories.length > 1 ? "" : "category of "}<span className="capitalize">{categories.sort().join(", ")}</span>{categories.length > 1 ? " categories" : ""}
               </>
             })
-            <Link style="light" className="group-hover:opacity-100 ml-2" href={`/trivia/${game.id}`}>View</Link>
-            {user && (user.uid == game.createdBy || user.admin) &&
-              <Link style="light warning" className="group-hover:opacity-100" onClick={() => deleteGame(game.id)}>Delete</Link>
-            }
+            <Link style="light" className="group-hover:opacity-100 group-hover:underline ml-2" href={`/trivia/${game.id}`}>View</Link>
           </>
         }
         {!isReady &&
