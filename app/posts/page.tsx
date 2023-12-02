@@ -23,8 +23,26 @@ function addPostAction(addPostFn: any, user: User | undefined, position: number,
 }
 
 function EmptySlot({ addPostFn, user, position }: any) {
+  if (!user) {
+    return (
+      <div
+          className="relative cursor-not-allowed opacity-0 hover:opacity-30 p-0 border border-dashed border-black"
+        title="Login to add a Post"
+      >
+        <BsPlusLg className="m-auto absolute left-0 right-0 top-0 bottom-0" />
+        {/* just to keep the right shape */}
+        <div className="invisible">
+          <PostEntry id="" postedBy="" postedByUID="" postedAt={0} content="ASDF" />
+        </div>
+      </div>
+    )
+  }
   return (
-    <div onClick={() => addPostAction(addPostFn, user, position)} className="relative cursor-pointer opacity-0 hover:opacity-30 p-0 border border-dashed border-black">
+    <div
+      className="relative cursor-pointer opacity-0 hover:opacity-30 p-0 border border-dashed border-black"
+      onClick={() => addPostAction(addPostFn, user, position)}
+      title="Add a Post"
+    >
       <BsPlusLg className="m-auto absolute left-0 right-0 top-0 bottom-0" />
       {/* just to keep the right shape */}
       <div className="invisible">
@@ -37,7 +55,7 @@ function EmptySlot({ addPostFn, user, position }: any) {
 export default function Posts() {
   console.log('>> app.posts.page.render()');
   const [posts, load, loaded, addPost] = usePosts((state: any) => [state.posts, state.load, state.loaded, state.add]);
-  const { user } = useUser();
+  const [user] = useUser((state: any) => [state.user]);
   const params = useSearchParams();
   const uidFilter = params.get("uid");
   const filteredPosts = uidFilter ? posts.filter((post: Post) => post.postedByUID == uidFilter) : posts

@@ -9,30 +9,33 @@ import Loading from "./loading";
 import { User } from 'firebase/auth';
 import useUser from '../_hooks/user';
 
-function GameEntry({ id, name, status, questions }: any) {
+function GameEntry({ game, user }: any) {
   const [deleteGame] = useTrivia((state: any) => [state.deleteGame]);
-  const categories = Array.from(new Set(questions.map((question: any) => question.category))).filter(Boolean);
-  const isReady = ["created"].includes(status);
+  const categories = Array.from(new Set(game.questions.map((question: any) => question.category))).filter(Boolean);
+  const isReady = ["created"].includes(game.status);
+  console.log('>> app.trivia.page.GameEntry.render()', { game, user });
 
   return (
     <p className="text-left py-2.5 group">
       <span className="m-0">
-        {name}
+        {game.name}
         {isReady &&
           <>
-            {` (${questions.length} questions`}
+            {` (${game.questions.length} questions`}
             {categories && categories.length > 0 &&
               <>
                 {" "}in the {categories.length > 1 ? "" : "category of "}<span className="capitalize">{categories.sort().join(", ")}</span>{categories.length > 1 ? " categories" : ""}
               </>
             })
-            <Link style="light" className="group-hover:opacity-100 ml-2" href={`/trivia/${id}`}>View</Link>
-            <Link style="light warning" className="group-hover:opacity-100" onClick={() => deleteGame(id)}>Delete</Link>
+            <Link style="light" className="group-hover:opacity-100 ml-2" href={`/trivia/${game.id}`}>View</Link>
+            {user && (user.uid == game.createdBy || user.admin) &&
+              <Link style="light warning" className="group-hover:opacity-100" onClick={() => deleteGame(game.id)}>Delete</Link>
+            }
           </>
         }
         {!isReady &&
           <>
-            {` (${status})`}
+            {` (${game.status})`}
           </>
         }
       </span>
@@ -73,7 +76,7 @@ async function handleCreateGame(createGameFn: any, router: any, user: User | und
 export default function Page() {
   console.log('>> app.trivia.page.render()');
   const router = useRouter();
-  const { user } = useUser();
+  const [user] = useUser((state: any) => [state.user]);
   const [games, categories, loadGames, loaded, createGame] = useTrivia((state: any) => [state.games, state.categories, state.loadGames, state.loaded, state.createGame]);
 
   useEffect(() => {
@@ -82,7 +85,11 @@ export default function Page() {
 
   const links = (
     <div className="flex flex-col lg:flex-row lg:gap-2 items-center justify-center mt-2 mb-4">
-      <Link onClick={() => handleCreateGame(createGame, router, user, categories)} >Create New Game</Link>
+      <div title={user ? "" : "Login to create new game"}>
+        <Link className={user ? "" : "cursor-not-allowed"} onClick={() => /* user && */ handleCreateGame(createGame, router, user, categories)}>
+          Create New Game
+        </Link>
+      </div>
       {/* <Link>View Leaderboard</Link> */}
     </div>
   );
@@ -104,7 +111,7 @@ export default function Page() {
             games
               // .filter(...)
               // .sort(...)
-              .map((game: any) => <div key={game.id}><GameEntry {...game} /></div>)
+              .map((game: any) => <div key={game.id}><GameEntry game={game} user={user} /></div>)
           }
         </>
       }

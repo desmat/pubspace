@@ -3,27 +3,15 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { Post } from "@/types/Post"
 
+
 // TODO PostState type
 
 const usePosts: any = create(devtools((set: any, get: any) => ({
   posts: [],
   loaded: false,
 
-  load: async (id: string) => {
-    console.log(">> hooks.postStore.load");
-    // // server action
-    // const posts = getPosts();
-
-    // rest api (blocking)
-    // const res = await fetch('/api/posts');
-    // if (res.status != 200) {
-    //     throw `Error fetching posts: ${res}`;
-    // }
-
-    // const data = await res.json();
-    // const posts = data.posts;
-    // set({ posts, loaded: true });
-    // return posts;
+  load: async (id?: string) => {
+    console.log(">> hooks.postStore.load", { id });
 
     // rest api (optimistic: all or just the one)
     if (id) {
@@ -60,15 +48,16 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
     const tempId = crypto.randomUUID();
     const postedBy = posterName;
     const postedByUID = posterUID;
-
+ 
     fetch('/api/posts', {
       method: "POST",
-      body: JSON.stringify({ content, postedBy, postedByUID, position }),
+      body: JSON.stringify({ content, position }),
     }).then(async (res) => {
       if (res.status != 200) {
         console.error(`Error adding post: ${res.status} (${res.statusText})`);
         const posts = get().posts.filter((post: Post) => post.id != tempId);
         set({ posts });
+        return;
       }
 
       const data = await res.json();
@@ -111,7 +100,7 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
 
     const posts = get().posts.filter((p: Post) => p.id != post.id);
     posts.push(post);
-    set({ posts: posts});
+    set({ posts: posts });
   },
 
   delete: async (id: string) => {
@@ -126,9 +115,11 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
     }).then(async (res) => {
       if (res.status != 200) {
         console.error(`Error deleting post ${id}: ${res.status} (${res.statusText})`);
+        return;
+        // TODO bring back the thing here?
       }
 
-      // TODO bring back the thing here?
+      set({ posts: get().posts.filter((p: Post) => p.id != id) });
     });
 
     set({ posts: get().posts.filter((p: Post) => p.id != id) });

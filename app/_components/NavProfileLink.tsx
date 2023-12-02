@@ -13,8 +13,8 @@ export default function NavProfileLink({
 }) {
   console.log('>> components.PostNaProfileNavLinkvLink.render()');
   const pathname = usePathname();
-  const { user } = useUser();
-  
+  const [user] = useUser((state: any) => [state.user]);
+
   const isActive = href && (href == "/" && pathname == "/") || (href && href != "/" && pathname.startsWith(href));
   const isLoggedIn = user && user.uid && !user.isAnonymous;
   const photoURL = isLoggedIn && user.photoURL;

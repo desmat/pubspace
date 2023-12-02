@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from "react";
 import Link from "@/app/_components/Link"
 import useTrivia from "@/app/_hooks/trivia";
+import useUser from "@/app/_hooks/user";
 // import { Post } from "@/types/Post" // TODO trivia game and question types
 import Loading from "./loading";
 
@@ -63,6 +64,7 @@ export default function Page({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [showAnswers, setShowAnswers] = useState(false);
   const [games, loadGame, loaded, deleteGame, startGame] = useTrivia((state: any) => [state.games, state.loadGame, state.loaded, state.deleteGame, state.startGame]);
+  const [user] = useUser((state: any) => [state.user]);
   const game = games.filter((game: any) => game.id == params.id)[0];
   const categories = game && Array.from(new Set(game.questions.map((question: any) => question.category)));
 
@@ -81,7 +83,7 @@ export default function Page({ params }: { params: { id: string } }) {
       <Link href="/trivia">Back</Link>
       {game && <Link onClick={() => setShowAnswers(!showAnswers)}>{showAnswers ? "Hide Correct Answers" : "Show Correct Answers"}</Link>}
       {/* {game && <Link onClick={() => handlePlayGame(params.id, startGame, router)}>Play</Link>} */}
-      {game && <Link style="warning" onClick={() => handleDeleteGame(params.id, deleteGame, router)}>Delete</Link>}
+      {game && user && (user.uid == game.id || user.admin) && <Link style="warning" onClick={() => handleDeleteGame(params.id, deleteGame, router)}>Delete</Link>}
     </div>
   );
 

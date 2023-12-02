@@ -2,6 +2,7 @@
 
 import { User } from "firebase/auth";
 import { usePathname } from 'next/navigation'
+import { useEffect } from 'react';
 import { BsFillPlusCircleFill } from "react-icons/bs"
 import { BsLightningFill } from "react-icons/bs"
 import { BsClipboardFill } from "react-icons/bs"
@@ -39,15 +40,19 @@ function menuItems({ pathname, user, addPost }: { pathname: string, user: User |
     {
       name: "Post",
       icon: <BsFillPlusCircleFill className="my-auto" />,
+      title: user ? "Add a post" : "Login to add a post",
+      className: user ? "" : "cursor-not-allowed",
       onClick: function () {
-        const content = window.prompt("Enter content", placeHolderPost);
-        if (content) {
-          const userName = getUsername(user);
-          const post = addPost(content, userName, user?.uid);
-          return post as boolean;
-        }
+        if (user) {
+          const content = window.prompt("Enter content", placeHolderPost);
+          if (content) {
+            const userName = getUsername(user);
+            const post = addPost(content, userName, user?.uid);
+            return post as boolean;
+          }
 
-        return false;
+          return false;
+        }
       }
     },
     {
@@ -65,7 +70,7 @@ function menuItems({ pathname, user, addPost }: { pathname: string, user: User |
 export default function Nav() {
   const pathname = usePathname();
   const addPost = usePosts((state: any) => state.add);
-  const { user } = useUser();
+  const [user] = useUser((state: any) => [state.user]);
 
   return (
     <div className="bg-teal-600 text-slate-300 fixed z-10 w-full h-10 lg:w-32 lg:h-screen flex flex-row lg:flex-col">
@@ -78,7 +83,8 @@ export default function Nav() {
         {menuItems({ pathname, user, addPost }).map((menuItem: any) => (
           <div key={menuItem.name}>
             <NavLink
-              className="_bg-pink-300 hidden md:flex"
+              className={`_bg-pink-300 hidden md:flex ${menuItem.className}`}
+              title={menuItem.title}
               href={menuItem.href}
               isActive={menuItem.isActive}
               onClick={menuItem.onClick}

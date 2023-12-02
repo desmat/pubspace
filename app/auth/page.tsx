@@ -57,7 +57,7 @@ function FormInput({
 
 export default function Page() {
   console.log('>> app.profile.auth.page.render()');
-  const { user, signin } = useUser();
+  const [user, signin] = useUser((state: any) => [state.user, state.signin]);
   const router = useRouter();
   const params = useSearchParams();
   const method = params.get("method") as SigninMethod;

@@ -1,46 +1,64 @@
 import { NextResponse } from 'next/server'
 import { getPost, editPost, deletePost } from '@/services/posts';
+import { validateUserSession } from '@/services/users';
 import { Post } from "@/types/Post"
 
 export async function GET(
-    request: Request,
-    { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: { id: string } }
 ) {
-    console.log('>> app.api.posts.[id].GET', params);
+  console.log('>> app.api.posts.[id].GET', params);
 
-    const post = await getPost(params.id);
-    if (!post) {
-        return NextResponse.json({ post: {} }, {status: 404});
-    }
-    
-    return NextResponse.json({ post });
+  const post = await getPost(params.id);
+  if (!post) {
+    return NextResponse.json({ post: {} }, { status: 404 });
+  }
+
+  console.log('>> app.api.posts.DELETE', { post, byUUI: post?.postedByUID });
+
+  return NextResponse.json({ post });
 }
 
 export async function PUT(request: Request) {
-    console.log('>> app.api.posts.[id].PUT', request);
+  console.log('>> app.api.posts.[id].PUT', request);
 
-    const data: any = await request.json();
-    const post = data as Post;
+  const data: any = await request.json();
+  const post = data as Post;
 
-    if (!post.id) {
-        throw `Cannot update post with null id`;
-    }
+  if (!post.id) {
+    throw `Cannot update post with null id`;
+  }
 
-    const updatedPost = await editPost(post);
-    
-    return NextResponse.json({ updatedPost });
+  const { user } = await validateUserSession(request)
+  // console.log('>> app.api.posts.PUT', { user });
+  if (!user) {
+    return NextResponse.json(
+      { success: false, message: 'authentication failed' },
+      { status: 401 }
+    );
+  }
+
+  const updatedPost = await editPost(post, user);
+  return NextResponse.json({ updatedPost });
 }
 
 export async function DELETE(
-    request: Request,
-    { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: { id: string } }
 ) {
-    console.log('>> app.api.posts.DELETE params', params);
+  console.log('>> app.api.posts.DELETE params', params);
+  const { user } = await validateUserSession(request)
+  if (!user) {
+    return NextResponse.json(
+      { success: false, message: 'authentication failed' },
+      { status: 401 }
+    );
+  } 
 
-    if (!params.id) {
-        throw `Cannot delete post with null id`;
-    }
+  if (!params.id) {
+    throw `Cannot delete post with null id`;
+  }
 
-    const post = await deletePost(params.id);
-    return NextResponse.json({ post });
+  const post = await deletePost(params.id, user);
+  return NextResponse.json({ post });
 }

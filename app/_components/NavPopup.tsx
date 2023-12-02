@@ -8,6 +8,7 @@ import { Fragment } from 'react'
 import { usePathname } from 'next/navigation'
 import classNames from '@/utils/classNames'
 import NavLink from './NavLink'
+import Link from 'next/link'
 
 function isActive(pathname: string, href: string): boolean {
   return (href && (href == "/" && pathname == "/") || (href && href != "/" && pathname.startsWith(href))) as boolean;
@@ -42,20 +43,33 @@ export default function NavPopup({
         <Menu.Items className="absolute -left-16 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1" >
             {menuItems && menuItems.map((menuItem: any) => (
-              <div key={menuItem.name}>
+              <div 
+                key={menuItem.name} 
+                className="_bg-yellow-300">
                 <Menu.Item>
                   {({ active, close }) => (
-                    <div
+                    <Link
                       className={classNames(
                         active ? 'bg-gray-100' : '',
                         'block px-4 py-2 text-sm'
                       )}
+                      title={menuItem.title}
+                      href={menuItem.href || ""}
+                      onClick={() => {
+                        if (menuItem.onClick) {
+                          if (menuItem.onClick()) {
+                            close();
+                          }
+                        } else {
+                          close();
+                        }
+                      }}                      
                     >
                       <NavLink
-                        className="_bg-pink-300"
-                        href={menuItem.href}
+                        className={`_bg-pink-300 ${menuItem.className}`}                       
                         isMenu={true}
                         isActive={menuItem.isActive}
+                        href={menuItem.href || ""}
                         onClick={() => {
                           if (menuItem.onClick) {
                             if (menuItem.onClick()) {
@@ -64,12 +78,12 @@ export default function NavPopup({
                           } else {
                             close();
                           }
-                        }}
+                        }}                        
                       >
                         {menuItem.icon}
                         <div className="my-auto">{menuItem.name}</div>
                       </NavLink>
-                    </div>
+                    </Link>
                   )}
                 </Menu.Item>
               </div>

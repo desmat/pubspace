@@ -4,8 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import useUser from "@/app/_hooks/user";
 import usePosts from "@/app/_hooks/posts";
-import useProfiles from "@/app/_hooks/profiles";
-import { Profile } from "@/types/Profile";
+import * as users from "@/services/users";
 import { Post } from "@/types/Post";
 
 function doSigninWithGoogle(e: any, signinFn: any) {
@@ -27,21 +26,52 @@ function doLogout(e: any, logoutFn: any) {
 }
 
 export default function Page({ params }: { params: { uid?: string } }) {
-  console.log('>> app.profile.page.render()', params.uid);
-  const { user, signin, logout } = useUser();
+  // console.log('>> app.profile.page.render()', params.uid);
+  const [user, userLoaded, loadUser, signin, logout] = useUser((state: any) => [state.user, state.loaded, state.load, state.signin, state.logout]);
   const [posts, loadPosts, postsLoaded] = usePosts((state: any) => [state.posts, state.load, state.loaded]);
-  const { profiles, loaded, load } = useProfiles();
-  const profile =  params.uid && profiles && profiles[params.uid] as Profile;
-  const profileUser = params.uid ? profile?.user : user;
-
-  const myPosts = postsLoaded && loaded ? posts.filter((post: Post) => post.postedByUID == profileUser?.uid) : [];
-  console.log('>> app.profile.page.render() myPosts', myPosts);
+  const myPosts = postsLoaded && posts.filter((post: Post) => post.postedByUID == user?.uid);
+  console.log('>> app.profile.page.render()', { uid: params.uid, user, userLoaded });
 
   useEffect(() => {
-    console.log("** app.profile.page.useEffect profileUser:", { uid: params.uid, profileUser });
-    load(params.uid);
-    loadPosts();
+    // console.log("** app.profile.page.useEffect", { uid: params.uid, user });
+    if (!userLoaded) loadUser();
+    if (!postsLoaded) loadPosts();
   }, [params.uid]);
+
+  if (!userLoaded || !postsLoaded) {
+    return (
+      <main className="flex flex-col items-center _justify-between _p-24">
+        <h1>
+          Profile
+        </h1>
+        <p className='italic text-center animate-pulse'>Loading...</p>
+      </main>
+    );
+  }
+
+  if (params.uid || !params.uid && !user) { // TODO UNCRIPPLE
+    return (
+      <main className="flex flex-col items-center _justify-between _p-24">
+        <h1>
+          Profile
+        </h1>
+        <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
+          <div className="text-dark-2">
+            <Link href="/" onClick={(e) => doSigningAnonymously(e, signin)}>Signin Anonymously</Link>
+          </div>
+          <div className="text-dark-2">
+            <Link href="/auth?method=login-email">Login with Email</Link>
+          </div>
+          <div className="text-dark-2">
+            <Link href="/auth?method=signup-email">Signup with Email</Link>
+          </div>
+          <div className="text-dark-2">
+            <Link href="/" onClick={(e) => doSigninWithGoogle(e, signin)}>Signin with Google</Link>
+          </div>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="flex flex-col items-center _justify-between _p-24">
@@ -51,25 +81,37 @@ export default function Page({ params }: { params: { uid?: string } }) {
           <span>: {params.uid}</span>
         }
       </h1>
-      {(params.uid && !loaded || !params.uid && !profileUser) &&
-        <p className='italic text-center animate-pulse'>Loading...</p>
-      }
-      {/* {params.uid && loaded && 
+      {user &&
         <>
-          <p>uid: {profileUser?.uid}</p>
-        </>
-      } */}
-      {profileUser && 
-        <>
-          <p>uid: {profileUser?.uid}</p>
-          <p>isAnonymous: {profileUser?.isAnonymous ? "true" : "false"}</p>
-          <p>provider: {profileUser?.providerId}{profileUser?.providerData[0]?.providerId ? ` (${profileUser?.providerData[0]?.providerId})` : ''}</p>
-          <p>email: {profileUser?.email}</p>
-          <p>displayName: {profileUser?.displayName}</p>
-          {/* <p className="flex whitespace-nowrap">photoURL: <img className="max-w-10 max-h-10" src={profileUser.photoURL as string | undefined}></img></p> */}
+          <h2>{users.getUserName(user)}{user.isAnonymous ? "" : ` (${users.getProviderName(user)})`}</h2>
+
+          <div className="p-0.5">
+            <span className="text-dark-3">User ID:</span> {user.uid}{user?.isAnonymous && " (Anonymous)"}{user.admin && " (Administrator)"}
+          </div>
+          {user.email &&
+            <div className="p-0.5">
+              <span className="text-dark-3">Email:</span> {user.email}
+            </div>
+          }
+          {!user.isAnonymous &&
+            <div className="p-0.5">
+              <span className="text-dark-3">Provider:</span> {users.getProviderType(user)}
+            </div>
+          }
+
+          {/* <p>isAnonymous: {user?.isAnonymous ? "true" : "false"}</p> */}
+          {/* <p>isAdmin: {user?.admin ? "true" : "false"}</p> */}
+          {/* <p>provider: {user?.providerId}{user?.providerData[0]?.providerId ? ` (${user?.providerData[0]?.providerId})` : ''}</p>
+          <p>providerId: {user?.providerId}</p>
+          <p>providerData: {JSON.stringify(user?.providerData)}</p> */}
+          {/* <p>provider: {users.getProviderName(user)}</p> */}
+          {/* <p>email: {user?.email}</p> */}
+          {/* <p>displayName: {user?.displayName}</p> */}
+          {/* <p>username: {users.getUserName(user)}</p> */}
+          {/* <p className="flex whitespace-nowrap">photoURL: <img className="max-w-10 max-h-10" src={user.photoURL as string | undefined}></img></p> */}
         </>
       }
-      {params.uid && loaded && 
+      {params.uid &&
         <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
           <div className="text-dark-2">
             <Link href={`/posts?uid=${params.uid}`}>View Posts ({myPosts.length})</Link>
@@ -78,36 +120,36 @@ export default function Page({ params }: { params: { uid?: string } }) {
       }
       {!params.uid &&
         <div className="flex flex-col lg:flex-row lg:space-x-4 items-center justify-center mt-4">
-          {/* {profileUser && !profileUser.isAnonymous &&
+          {user &&
             <div className="text-dark-2">
-              <Link href="/" onClick={(e) => doSigningAnonymously(e, signin)}>Signin Anonymously</Link>
-            </div>
-          } */}
-          {profileUser &&
-            <div className="text-dark-2">
-              <Link href={`/posts?uid=${profileUser.uid}`}>View Posts ({myPosts.length})</Link>
+              <Link href={`/posts?uid=${user.uid}`}>View Posts ({myPosts.length})</Link>
             </div>
           }
-          {profileUser && profileUser.isAnonymous &&
+          {user && user.isAnonymous &&
             <div className="text-dark-2">
               <Link href="/auth?method=login-email">Login with Email</Link>
             </div>
           }
-          {profileUser && profileUser.isAnonymous &&
+          {user && user.isAnonymous &&
             <div className="text-dark-2">
               <Link href="/auth?method=signup-email">Signup with Email</Link>
             </div>
           }
-          {profileUser && profileUser.isAnonymous &&
+          {user && user.isAnonymous &&
             <div className="text-dark-2">
               <Link href="/" onClick={(e) => doSigninWithGoogle(e, signin)}>Signin with Google</Link>
             </div>
           }
-          {profileUser && !profileUser.isAnonymous &&
+          {user && !user.isAnonymous &&
             <div className="text-dark-2 hover:text-light-2">
               <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
             </div>
           }
+          {/* {user && user.isAnonymous && // TODO CRIPPLE
+            <div className="text-dark-2 hover:text-light-2">
+              <Link href="/" onClick={(e) => doLogout(e, logout)}>Logout</Link>
+            </div>
+          } */}
         </div>
       }
     </main>
