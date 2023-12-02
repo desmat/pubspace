@@ -16,7 +16,7 @@ function GameEntry({ game, user }: any) {
   console.log('>> app.trivia.page.GameEntry.render()', { game, user });
 
   return (
-    <p className="text-left py-2.5 group hover:cursor-pointer" onClick={() => router.push(`/trivia/${game.id}`)}>
+    <p className="text-left py-2.5 group hover:cursor-pointer active:text-light-1" onClick={() => router.push(`/trivia/${game.id}`)}>
       <span className="m-0">
         {game.name}
         {isReady &&
@@ -27,7 +27,7 @@ function GameEntry({ game, user }: any) {
                 {" "}in the {categories.length > 1 ? "" : "category of "}<span className="capitalize">{categories.sort().join(", ")}</span>{categories.length > 1 ? " categories" : ""}
               </>
             })
-            <Link style="light" className="group-hover:opacity-100 group-hover:underline ml-2" href={`/trivia/${game.id}`}>View</Link>
+            <Link style="light" className="group-hover:opacity-100 group-hover:underline group-active:text-light-1 ml-2" href={`/trivia/${game.id}`}>View</Link>
           </>
         }
         {!isReady &&
@@ -118,7 +118,7 @@ export default function Page() {
             {
               filteredGames
                 // .filter(...)
-                .sort((game: Game) => game.createdAt)
+                .sort((a: Game, b: Game) => (a.createdAt || 0) - (b.createdAt || 0))
                 .map((game: any) => <div key={game.id}><GameEntry game={game} user={user} /></div>)
             }
           </>
