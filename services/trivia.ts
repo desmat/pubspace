@@ -1,8 +1,8 @@
 // 'use server'
 
 import moment from 'moment';
-import * as store from "./stores/firestore";
-// import * as store from "./stores/redis";
+// import * as store from "./stores/firestore";
+import * as store from "./stores/redis";
 // import * as store from "./stores/memory";
 import { Game, Question } from "@/types/Trivia";
 import shuffleArray from '@/utils/shuffleArray';
@@ -13,12 +13,10 @@ const openai = new OpenAI({
 });
 
  async function generateQuestions(category: string) {
-  // for testing
-
+  // // for testing
   // console.log('>> generateQuestions: waiting...');
-  // await new Promise((resolve) => setTimeout(() => resolve(42), 3000));
+  // await new Promise((resolve) => setTimeout(() => resolve(42), 2000));
   // console.log('>> generateQuestions: done waiting!');
-
   // return {category, "questions":[{"question":`TESTING: category '${category}': What is the national animal of Canada?`,"choices":["Beaver","b) Moose","c) Polar bear","d) Canada goose"],"correct_choice":0},{"question":"Which Canadian city is known as the 'City of Festivals'?","choices":["a) Montreal","b) Toronto","c) Vancouver","d) Ottawa"],"correct_choice":0}]};
 
   const completion = await openai.chat.completions.create({
@@ -141,7 +139,7 @@ export async function createGame(user: any, numQuestions: number, name?: string,
     questions: shuffleArray(savedQuestions.concat(generatedQuestions)).slice(0, numQuestions),
   };
 
-  generatedQuestions.length > 0 && statusUpdateCallback && statusUpdateCallback("saving game");
+  // generatedQuestions.length > 0 && statusUpdateCallback && statusUpdateCallback("saving game");
   return store.addTriviaGame(game);
 }
 
