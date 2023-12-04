@@ -3,9 +3,26 @@
 import moment from 'moment';
 import { kv } from "@vercel/kv";
 import { Post } from "@/types/Post"
-import { Game } from "@/types/Trivia";
+import { Game, Question } from "@/types/Trivia";
 import { samplePosts } from './samples';
-import * as memoryStore from "./memory"
+
+const postsKey = "posts";
+const triviaGamesKey = "trivia-games";
+const triviaQuestionsKey = "trivia-questions";
+const jsonGetNotDeleted = "$[?((@.deletedAt > 0) == false)]";
+const jsonGetById = (id: string) => `$[?(@.id=='${id}')]`;
+
+/*
+    Some useful commands
+
+    keys *
+    json.get posts $
+    json.get posts '$[?((@.deletedAt > 0) == false)]'
+    json.get posts '$[?((@.deletedAt > 0) == true)]'
+    json.get posts '$[?(@.postedBy=="Mathieu Desjarlais")]'
+    json.get posts '$[?(@.content ~= "(?i)lorem")]'
+    del posts
+*/
 
 
 //
@@ -13,35 +30,75 @@ import * as memoryStore from "./memory"
 //
 
 export async function getTriviaGames(): Promise<Game[]> {
-    console.log('>> services.stores.firestore.getTriviaGames()');
+    console.log('>> services.stores.redis.getTriviaGames()');
 
-    // TODO
+    let response = await kv.json.get(triviaGamesKey, jsonGetNotDeleted);
+    console.log("REDIS response", JSON.stringify(response));
 
-    return memoryStore.getTriviaGames();
+    if (!response || !response.length) {
+        console.log('>> services.stores.redis.getTriviaGames(): empty redis key, creating empty list');
+        await kv.json.set(triviaGamesKey, "$", "[]");
+        response = await kv.json.get(triviaGamesKey, jsonGetNotDeleted);
+    }
+
+    return response as Game[];
 }
 
 export async function getTriviaGame(id: string): Promise<Game | null> {
-    console.log(`>> services.stores.firestore.getTriviaGame(${id})`, { id });
+    console.log(`>> services.stores.redis.getTriviaGame(${id})`, { id });
 
-    // TODO
-    
-    return memoryStore.getTriviaGame(id);
+    const response = await kv.json.get(triviaGamesKey, jsonGetById(id));
+
+    let game: Game | null = null;
+    if (response) {
+        game = response[0] as Game;
+    }
+
+    return game;
 }
 
 export async function addTriviaGame(game: Game): Promise<Game> {
-    console.log(">> services.stores.firestore.addTriviaGame", { game });
+    console.log(">> services.stores.redis.addTriviaGame", { game });
 
-    // TODO
-    
-    return memoryStore.addTriviaGame(game);
+    const response = await kv.json.arrappend(triviaGamesKey, "$", game);
+    console.log("REDIS response", response);
+
+    return game;
 }
 
 export async function deleteTriviaGame(id: string): Promise<void> {
-    console.log(">> services.stores.firestore.deleteTriviaGame", { id });
+    console.log(">> services.stores.redis.deleteTriviaGame", { id });
 
-    // TODO
-    
-    return memoryStore.deleteTriviaGame(id);
+    if (!id) {
+        throw `Cannot delete trivia game with null id`;
+    }
+
+    const response = await kv.json.set(triviaGamesKey, `${jsonGetById(id)}.deletedAt`, moment().valueOf());
+    console.log("REDIS response", response);
+}
+
+export async function getTriviaQuestions(): Promise<Question[]> {
+    console.log('>> services.stores.redis.getTriviaQuestions()', {});
+
+    let response = await kv.json.get(triviaQuestionsKey, jsonGetNotDeleted);
+    console.log("REDIS response", JSON.stringify(response));
+
+    if (!response || !response.length) {
+        console.log('>> services.stores.redis.getTriviaQuestions(): empty redis key, creating empty list');
+        await kv.json.set(triviaQuestionsKey, "$", "[]");
+        response = await kv.json.get(triviaQuestionsKey, jsonGetNotDeleted);
+    }
+
+    return response as Question[];
+}
+
+export async function addTriviaQuestions(questions: Question[]): Promise<Question[]> {
+    console.log(">> services.stores.redis.addTriviaQuestions", { questions });
+
+    const response = await kv.json.arrappend(triviaQuestionsKey, "$", ...questions);
+    console.log("REDIS response", response);
+
+    return questions;
 }
 
 
@@ -52,30 +109,26 @@ export async function deleteTriviaGame(id: string): Promise<void> {
 export async function getPosts(): Promise<Post[]> {
     console.log('>> services.stores.redis.getPosts()');
 
-    let response = await kv.json.get("posts", "$[*]"); // y this not work? $[?(@.deletedAt==null)]
+    let response = await kv.json.get(postsKey, jsonGetNotDeleted);
     console.log("REDIS response", JSON.stringify(response));
 
     if (!response || !response.length) {
         console.log('>> services.stores.redis.getPosts(): empty redis key, uploading samples');
-        await kv.json.set("posts", "$", "[]");
-        samplePosts.forEach(async (post: Post) => await kv.json.arrappend("posts", `$`, post));
-        response = await kv.json.get("posts", "$[*]");
+        await kv.json.set(postsKey, "$", "[]");
+        samplePosts.forEach(async (post: Post) => await kv.json.arrappend(postsKey, `$`, post));
+        response = await kv.json.get(postsKey, jsonGetNotDeleted);
     }
 
-    const posts = (response as Post[]).filter((post: Post) => post && !post.deletedAt);
-    return posts;
+    return response as Post[];
 }
 
 export async function getPost(id: string): Promise<Post | null> {
     console.log(`>> services.stores.redis.getPost(${id})`);
 
-    // let response = await kv.json.get("posts", "$");
-    const response = await kv.json.get("posts", `$[?(@.id=='${id}')]`);
+    const response = await kv.json.get(postsKey, jsonGetById(id));
 
     let post: Post | null = null;
     if (response) {
-        // const posts = response[0];
-        // post = posts.filter((p: Post) => p.id == id)[0];
         post = response[0] as Post;
     }
 
@@ -94,7 +147,7 @@ export async function addPost(content: string, postedBy: string, postedByUID?: s
         content
     };
 
-    const response = await kv.json.arrappend("posts", "$", post);
+    const response = await kv.json.arrappend(postsKey, "$", post);
     console.log("REDIS response", response);
 
     return post;
@@ -107,7 +160,7 @@ export async function editPost(post: Post): Promise<Post> {
         throw `Cannot delete post with null id`;
     } 
 
-    const response = await kv.json.set("posts", `$[?(@.id=='${post.id}')]`, post);
+    const response = await kv.json.set(postsKey, jsonGetById(post.id), post);
     console.log("REDIS response", response);
     
     return post
@@ -121,6 +174,6 @@ export async function deletePost(id: string): Promise<void> {
     }
 
 
-    const response = await kv.json.set("posts", `$[?(@.id=='${id}')].deletedAt`, moment().valueOf());
+    const response = await kv.json.set(postsKey, `${jsonGetById(id)}.deletedAt`, moment().valueOf());
     console.log("REDIS response", response);
 }
