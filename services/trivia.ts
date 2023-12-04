@@ -103,7 +103,7 @@ export async function getQuestionCategories(): Promise<string[]> {
 
   const questions = await store.getTriviaQuestions();
   const categories = Array.from(new Set(questions.map((q: Question) => q.category)));
-  return new Promise((resolve, reject) => resolve(categories));
+  return new Promise((resolve, reject) => resolve(categories as string[]));
 }
 
 export async function createGame(user: any, numQuestions: number, name?: string, categories?: string[], statusUpdateCallback?: (status: string) => void): Promise<Game> {
@@ -115,7 +115,7 @@ export async function createGame(user: any, numQuestions: number, name?: string,
   const triviaQuestionsCategories = Array.from(new Set(triviaQuestions.map((q: Question) => q.category.toLowerCase())));
   const cleanedCategories = categories && categories.length > 0 
     ? categories.map((c: string) => c.toLowerCase())
-    : triviaQuestionsCategories;
+    : triviaQuestionsCategories as string[];
   const existingCategories = cleanedCategories.filter((c: string) => triviaQuestionsCategories.includes(c));
   const missingCategories = cleanedCategories.filter((c: string) => !triviaQuestionsCategories.includes(c));
 
