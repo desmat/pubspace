@@ -12,6 +12,18 @@ const triviaQuestionsKey = "trivia-questions";
 const jsonGetNotDeleted = "$[?((@.deletedAt > 0) == false)]";
 const jsonGetById = (id: string) => `$[?(@.id=='${id}')]`;
 
+/*
+    Some useful commands
+
+    keys *
+    json.get posts $
+    json.get posts '$[?((@.deletedAt > 0) == false)]'
+    json.get posts '$[?((@.deletedAt > 0) == true)]'
+    json.get posts '$[?(@.postedBy=="Mathieu Desjarlais")]'
+    json.get posts '$[?(@.content ~= "(?i)lorem")]'
+    del posts
+*/
+
 
 //
 // Trivia 

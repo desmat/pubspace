@@ -1,12 +1,14 @@
 // 'use server'
 
 import moment from 'moment';
-// import * as store from "./stores/firestore";
-import * as store from "./stores/redis";
-// import * as store from "./stores/memory";
 import { Game, Question } from "@/types/Trivia";
 import shuffleArray from '@/utils/shuffleArray';
 import OpenAI from 'openai';
+
+let store: any;
+import(`@/services/stores/${process.env.STORE_TYPE}`).then((importedStore) => {
+  store = importedStore;
+});
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

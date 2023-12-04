@@ -1,12 +1,14 @@
 // 'use server'
 
 import moment from 'moment';
-// import * as store from "./stores/firestore";
-import * as store from "./stores/redis";
-// import * as store from "./stores/memory";
 import { Post } from "@/types/Post";
 import { User } from 'firebase/auth';
 import { getUserName } from './users';
+
+let store: any;
+import(`@/services/stores/${process.env.STORE_TYPE}`).then((importedStore) => {
+  store = importedStore;
+});
 
 export async function getPosts(): Promise<Post[]> {
   console.log('>> services.post.getPosts()');
