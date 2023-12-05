@@ -97,7 +97,7 @@ export default function Nav() {
           </div>
         ))}
         <div className="md:hidden mt-1">
-          <NavPopup menuItems={menuItems({ pathname, user, addPost })} />
+          <NavPopup menuItems={menuItems({ pathname, user, addPost, router })} />
         </div>
       </div>
       <div className="flex flex-col p-2 -mr-1 lg:mr-0 lg:-mb-1">
