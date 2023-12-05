@@ -22,7 +22,7 @@ function QuestionEntry({ questionOffset, id, text, answers, category, showAnswer
       <span className="">
         {questionOffset + 1}. <span className="capitalize">[{category}]</span> {text}
         {!showAnswers &&
-          <Link style="light" className="opacity-40 group-hover:opacity-100 group-hover:underline group-active:text-light-1 group- ml-2">{showAnswer ? "Hide Correct Answer" : "Show Correct Answer"}</Link>
+          <Link style="light" className="opacity-40 group-hover:opacity-100 group-hover:underline group-active:text-light-1 group- ml-2">{showAnswer ? "Hide answer" : "Show answer"}</Link>
         }
       </span>
       <br />
@@ -79,7 +79,7 @@ export default function Page({ params }: { params: { id: string } }) {
   const links = (
     <div className="flex flex-col lg:flex-row lg:gap-2 items-center justify-center mt-2 mb-4">
       <Link href="/trivia">Back</Link>
-      {game && <Link onClick={() => setShowAnswers(!showAnswers)}>{showAnswers ? "Hide Correct Answers" : "Show Correct Answers"}</Link>}
+      {game && <Link onClick={() => setShowAnswers(!showAnswers)}>{showAnswers ? "Hide answers" : "Show answers"}</Link>}
       {/* {game && <Link onClick={() => handlePlayGame(params.id, startGame, router)}>Play</Link>} */}
       {game && user && (user.uid == game.createdBy || user.admin) && <Link style="warning" onClick={() => handleDeleteGame(params.id, deleteGame, router)}>Delete</Link>}
     </div>

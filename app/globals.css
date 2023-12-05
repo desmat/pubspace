@@ -71,6 +71,10 @@ a:hover {
   @apply underline;
 }
 
+ul {
+  list-style-type: circle;
+}
+
 .no-link-style {
   @apply no-underline;
   _color: var(--color-scheme-dark-1);

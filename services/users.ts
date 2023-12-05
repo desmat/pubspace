@@ -85,7 +85,7 @@ export async function authenticateUser(request: any) {
   return {}
 }
 
-export async function validateUserSession(request: any) {
+export async function validateUserSession(request: any): Promise<any> {
   const refreshToken = request.cookies.get("session")?.value;
   // console.log("*** validateUserSession ***", { refreshToken });
 
