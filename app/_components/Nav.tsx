@@ -1,7 +1,7 @@
 'use client'
 
 import { User } from "firebase/auth";
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react';
 import { BsFillPlusCircleFill } from "react-icons/bs"
 import { BsLightningFill } from "react-icons/bs"
@@ -25,7 +25,7 @@ function getUsername(user: User | undefined) {
   return user?.isAnonymous ? "Anonymous" : user?.displayName || user?.email || "Noname";
 }
 
-function menuItems({ pathname, user, addPost }: { pathname: string, user: User | undefined, addPost: any | undefined, postOnClick?: () => boolean }) {
+function menuItems({ pathname, user, addPost, router }: { pathname: string, user: User | undefined, addPost: any | undefined, router: any | undefined }) {
   return [
     {
       name: "Feed",
@@ -42,12 +42,13 @@ function menuItems({ pathname, user, addPost }: { pathname: string, user: User |
       icon: <BsFillPlusCircleFill className="my-auto" />,
       title: user ? "Add a post" : "Login to add a post",
       className: user ? "" : "cursor-not-allowed",
-      onClick: function () {
+      onClick: async function () {
         if (user) {
           const content = window.prompt("Enter content", placeHolderPost);
           if (content) {
             const userName = getUsername(user);
-            const post = addPost(content, userName, user?.uid);
+            const post = await addPost(content, userName, user?.uid);
+            router.push("/posts");
             return post as boolean;
           }
 
@@ -71,6 +72,7 @@ export default function Nav() {
   const pathname = usePathname();
   const addPost = usePosts((state: any) => state.add);
   const [user] = useUser((state: any) => [state.user]);
+  const router = useRouter();
 
   return (
     <div className="bg-teal-600 text-slate-300 fixed z-10 w-full h-10 lg:w-32 lg:h-screen flex flex-row lg:flex-col">
@@ -80,7 +82,7 @@ export default function Nav() {
         </NavLink>
       </div>
       <div className="flex flex-grow flex-row lg:flex-col space-x-4 lg:space-x-0 pl-2 pr-0 py-2 lg:py-0 lg:px-2 -mx-2 -my-0 lg:mx-0 lg:-my-2 _bg-yellow-100">
-        {menuItems({ pathname, user, addPost }).map((menuItem: any) => (
+        {menuItems({ pathname, user, addPost, router }).map((menuItem: any) => (
           <div key={menuItem.name}>
             <NavLink
               className={`_bg-pink-300 hidden md:flex ${menuItem.className}`}
