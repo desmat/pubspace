@@ -50,13 +50,11 @@ function GameEntry({ id, name, status, questions, showAnswers }: any) {
 }
 
 async function handleDeleteGame(id: string, deleteGameFn: any, router: any) {
-  await deleteGameFn(id);
-  router.push("/trivia");
-}
-
-async function handlePlayGame(id: string, startGameFn: any, router: any) {
-  await startGameFn(id);
-  // router.push("/trivia");
+  const response = confirm("Delete game?");
+  if (response) {
+    deleteGameFn(id);
+    router.back();
+  }
 }
 
 export default function Page({ params }: { params: { id: string } }) {

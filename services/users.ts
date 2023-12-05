@@ -70,13 +70,13 @@ export async function authenticateUser(request: any) {
   if (idToken) {
     try {
       tokens = await verifyIdToken(idToken);
-      console.log("*** validateUserSession", { tokens, idToken });
+      // console.log("*** authenticateUser", { tokens, idToken });
       const user = await getUser(tokens.uid);
       const refreshAndIdTokens = await getCustomIdAndRefreshTokens(idToken, firebaseConfig.apiKey || "");
-      // console.log("*** validateUserSession ***", { user, idToken });
+      // console.log("*** authenticateUser ***", { user, idToken });
       return { user, refreshToken: refreshAndIdTokens.refreshToken };
     } catch (error: any) {
-      console.warn("*** validateUserSession ***", { code: error.code, message: error.message, error });
+      // console.warn("*** authenticateUser ***", { code: error.code, message: error.message, error });
       // throw 'authentication failed';
       return { error };
     }
@@ -87,7 +87,7 @@ export async function authenticateUser(request: any) {
 
 export async function validateUserSession(request: any) {
   const refreshToken = request.cookies.get("session")?.value;
-  console.log("*** validateUserSession ***", { refreshToken });
+  // console.log("*** validateUserSession ***", { refreshToken });
 
   if (refreshToken) {
     try {
@@ -99,7 +99,7 @@ export async function validateUserSession(request: any) {
       // console.log("*** validateUserSession ***", { user, refreshToken });
       return { user };
     } catch (error: any) {
-      console.warn("*** validateUserSession ***", { code: error.code, message: error.message, error });
+      // console.warn("*** validateUserSession ***", { code: error.code, message: error.message, error });
       // throw 'authentication failed';
       return { error };
     }

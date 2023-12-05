@@ -3,6 +3,7 @@ export type Game = {
   id?: string,
   createdBy?: string,
   createdAt?: number,
+  deletedAt?: number,
   status: string,
   name: string,
   questions: Question[],

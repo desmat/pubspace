@@ -73,7 +73,8 @@ export async function deleteTriviaGame(id: string): Promise<void> {
         throw `Cannot delete trivia game with null id`;
     }
 
-    const response = await kv.json.set(triviaGamesKey, `${jsonGetById(id)}.deletedAt`, moment().valueOf());
+    // const response = await kv.json.set(triviaGamesKey, `${jsonGetById(id)}.deletedAt`, moment().valueOf());
+    const response = await kv.json.del(triviaGamesKey, `${jsonGetById(id)}`);
     console.log("REDIS response", response);
 }
 
@@ -174,6 +175,7 @@ export async function deletePost(id: string): Promise<void> {
     }
 
 
-    const response = await kv.json.set(postsKey, `${jsonGetById(id)}.deletedAt`, moment().valueOf());
+    // const response = await kv.json.set(postsKey, `${jsonGetById(id)}.deletedAt`, moment().valueOf());
+    const response = await kv.json.del(postsKey, `${jsonGetById(id)}`);
     console.log("REDIS response", response);
 }

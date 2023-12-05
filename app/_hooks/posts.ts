@@ -8,6 +8,7 @@ import { Post } from "@/types/Post"
 
 const usePosts: any = create(devtools((set: any, get: any) => ({
   posts: [],
+  deletedPosts: [], // to smooth out visual glitches when deleting
   loaded: false,
 
   load: async (id?: string) => {
@@ -36,8 +37,11 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
         }
 
         const data = await res.json();
-        const posts = data.posts;
-        set({ posts, loaded: true });
+        const deleted = get().deletedPosts.map((post: Post) => post.id);
+        set({
+          posts: data.posts.filter((post: Post) => !deleted.includes(post.id)),
+          loaded: true
+        });
       });
     }
   },
@@ -45,10 +49,19 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
   add: async (content: string, posterName: string, posterUID: string, position?: number) => {
     console.log(">> hooks.postStore.add content:", content);
 
+    // optimistic
     const tempId = crypto.randomUUID();
-    const postedBy = posterName;
-    const postedByUID = posterUID;
- 
+    const post = {
+      id: tempId,
+      postedBy: posterName,
+      postedByUID: posterUID,
+      postedAt: moment().valueOf(),
+      content,
+      position,
+      optimistic: true,
+    };
+    set({ posts: [...get().posts, post] });
+
     fetch('/api/posts', {
       method: "POST",
       body: JSON.stringify({ content, position }),
@@ -66,18 +79,6 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
       const posts = get().posts.filter((post: Post) => post.id != tempId);
       set({ posts: [...posts, post] });
     });
-
-    // optimistic post
-    const post = {
-      id: tempId,
-      postedBy,
-      postedByUID,
-      postedAt: moment().valueOf(),
-      content,
-      optimistic: true,
-    };
-
-    set({ posts: [...get().posts, post] });
   },
 
   edit: async (post: Post) => {
@@ -86,6 +87,11 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
     if (!post.id) {
       throw `Cannot edit post with null id`;
     }
+
+    // optimistic
+    const posts = get().posts.filter((post: Post) => post.id != post.id);
+    posts.push(post);
+    set({ posts });
 
     fetch(`/api/posts/${post.id}`, {
       method: "PUT",
@@ -97,10 +103,6 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
 
       // TODO bring back the thing here?
     });
-
-    const posts = get().posts.filter((p: Post) => p.id != post.id);
-    posts.push(post);
-    set({ posts: posts });
   },
 
   delete: async (id: string) => {
@@ -110,19 +112,25 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
       throw `Cannot delete post with null id`;
     }
 
+    const { posts, deletedPosts } = get();
+
+    // optimistic
+    set({
+      posts: posts.filter((p: Post) => p.id != id),
+      deletedPosts: [...deletedPosts, posts.filter((post: Post) => post.id == id)[0]],
+    });
+
     fetch(`/api/posts/${id}`, {
       method: "DELETE",
     }).then(async (res) => {
       if (res.status != 200) {
         console.error(`Error deleting post ${id}: ${res.status} (${res.statusText})`);
+        set({ posts, deletedPosts });
         return;
-        // TODO bring back the thing here?
       }
 
-      set({ posts: get().posts.filter((p: Post) => p.id != id) });
+      set({ deletedPosts: deletedPosts.filter((post: Post) => post.id == id) });
     });
-
-    set({ posts: get().posts.filter((p: Post) => p.id != id) });
   },
 })));
 

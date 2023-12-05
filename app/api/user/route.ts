@@ -12,7 +12,7 @@ export async function GET(request: Request) {
   // console.log('>> app.api.user.GET', request);  
   const { user, error } = await users.validateUserSession(request) as any;
 
-  console.log('>> app.api.user.GET', { user, error});
+  // console.log('>> app.api.user.GET', { user, error});
 
   if (!user) {
     if (error) {

@@ -6,6 +6,7 @@ import { User } from 'firebase/auth';
 
 const useTrivia: any = create(devtools((set: any, get: any) => ({
   games: [],
+  deletedGames: [], // to smooth out visual glitches when deleting
   categories: [],
   loaded: false,
 
@@ -19,9 +20,11 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
       }
 
       const data = await res.json();
+      const deleted = get().deletedGames.map((game: Game) => game.id);
+
       set({
-        games: data.games || [], 
-        categories: data.categories || [], 
+        games: data.games.filter((game: Game) => !deleted.includes(game.id)),
+        categories: data.categories,
         loaded: true 
       });
     });
@@ -40,7 +43,7 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
       const data = await res.json();
       // console.log(">> hooks.trivia.get: RETURNED FROM FETCH, returning!", { data });
       const game = data.game;
-      const games = get().games.filter((g: Game) => g.id != id);
+      const games = get().games.filter((game: Game) => game.id != id);
       set({ games: [...games, game], loaded: true });
     });
   },
@@ -48,21 +51,17 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
   createGame: async (createdBy: string, numQuestions: number, name?: string, categories?: string[]) => {
     console.log("*** hooks.trivia.createGame", { createdBy, numQuestions, name, categories });
 
-    const tempId = crypto.randomUUID();
-    // const postedBy = posterName;
-    // const postedByUID = posterUID;
-
-
     // optimistic game
+    const tempId = crypto.randomUUID();
     const game = {
       id: tempId,
+      createdBy,
+      createdAt: moment().valueOf(),
       status: "generating",
       name,
       questions: new Array(numQuestions),
       optimistic: true,
     };
-
-    // set optimistic game 
     set({ games: [...get().games, game] });
 
     fetch('/api/trivia/games', {
@@ -130,18 +129,25 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
       throw `Cannot delete post with null id`;
     }
 
+    const { games, deletedGames } = get();
+
+    // optimistic
+    set({
+      games: games.filter((game: Game) => game.id != id),
+      deletedGames: [...deletedGames, games.filter((game: Game) => game.id == id)[0]],
+    });
+
     fetch(`/api/trivia/games/${id}`, {
       method: "DELETE",
     }).then(async (res) => {
       if (res.status != 200) {
         console.error(`Error deleting post ${id}: ${res.status} (${res.statusText})`);
+        set({ games, deletedGames });
         return;
       }
-    });
 
-    // optimistic
-    const filteredGames = get().games.filter((game: Game) => game.id != id);
-    set({ games: filteredGames });
+      set({ deletedGames: deletedGames.filter((game: Game) => game.id == id) });
+    });
   },
 
 })));
