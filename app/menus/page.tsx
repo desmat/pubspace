@@ -3,6 +3,7 @@
 import { User } from 'firebase/auth';
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from "react";
+import FilterButton from '@/app/_components/FilterButton';
 import Link from "@/app/_components/Link"
 import useMenus from '@/app/_hooks/menus';
 import useUser from '@/app/_hooks/user';
@@ -98,13 +99,9 @@ export default function Page() {
 
   return (
     <>
-      {uidFilter &&
-        <Link href="/menus" style="warning" className="absolute top-2 right-2 cursor-zoom-out">
-          Filtered by user: {uidFilter}
-        </Link>
-      }
-
       <main className="flex flex-col items-left lg:max-w-4xl lg:mx-auto px-4">
+        <FilterButton href="/menus" userId={user?.uid} isFiltered={!!uidFilter} />
+
         <h1 className="text-center">Menus</h1>
 
         <p className='italic text-center'>

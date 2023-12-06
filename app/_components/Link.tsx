@@ -1,7 +1,7 @@
 import { default as NextLink } from 'next/link'
 
 export default function Link({
-  children, href, className, isActive, onClick, style
+  children, href, className, isActive, onClick, style, title
 }: {
   children: React.ReactNode,
   href?: string,
@@ -9,7 +9,8 @@ export default function Link({
   isMenu?: boolean,
   isActive?: boolean
   onClick?: (e?: any) => void,
-  style?: string
+  style?: string,
+  title?: string
 }) {
   // console.log('>> components.NavLink.render()', { isActive });
 
@@ -19,8 +20,9 @@ export default function Link({
     <NextLink
       href={href || "#"}
       onClick={(e) => { if (onClick) {e.preventDefault(); onClick(e);} else if (!href) {e.preventDefault();} }}
+      title={title || ""}
       className={
-        className + " text-dark-2 active:text-light-1 px-1" + (
+        className + " text-dark-2 active:text-light-1 mx-1" + (
           styleSet.has("warning")
             ? " text-dark-2 hover:text-light-2 active:text-light-1 px-1"
             : "") + (

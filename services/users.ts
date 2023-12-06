@@ -96,7 +96,7 @@ export async function validateUserSession(request: any): Promise<any> {
       // console.log("*** validateUserSession", { refreshToken, handleredRefreshToken });
 
       const user = await getUser(handleredRefreshToken.decodedToken.uid);
-      console.log("*** validateUserSession ***", { user, refreshToken });
+      // console.log("*** validateUserSession ***", { user, refreshToken });
       return { user };
     } catch (error: any) {
       // console.warn("*** validateUserSession ***", { code: error.code, message: error.message, error });

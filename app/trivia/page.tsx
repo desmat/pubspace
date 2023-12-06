@@ -1,12 +1,13 @@
 'use client'
 
+import { User } from 'firebase/auth';
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from "react";
-import useTrivia from "@/app/_hooks/trivia";
+import FilterButton from '@/app/_components/FilterButton';
 import Link from "@/app/_components/Link"
+import useTrivia from "@/app/_hooks/trivia";
 import { Game, SampleCategories } from "@/types/Trivia"
 import Loading from "./loading";
-import { User } from 'firebase/auth';
 import useUser from '../_hooks/user';
 
 function GameEntry({ game, user }: any) {
@@ -100,13 +101,9 @@ export default function Page() {
 
   return (
     <>
-      {uidFilter &&
-        <Link href="/trivia" style="warning" className="absolute top-2 right-2 cursor-zoom-out">
-          Filtered by user: {uidFilter}
-        </Link>
-      }
-
       <main className="flex flex-col items-left lg:max-w-4xl lg:mx-auto px-4">
+        <FilterButton href="/trivia" userId={user?.uid} isFiltered={!!uidFilter} />
+
         <h1 className="text-center">Trivia</h1>
 
         <p className='italic text-center'>
