@@ -19,7 +19,7 @@ function stripIngredientQuantity(ingredient: string) {
 
 function MenuItem({ name, description, ingredients, preparation, showDetails }: any) {
   const [showDetail, setshowDetail] = useState(false);
-  const maxShortIngredients = 5;
+  const maxShortIngredients = 4;
   const shortIngredients = ingredients.length > maxShortIngredients
     ? ingredients.map(stripIngredientQuantity).slice(0, maxShortIngredients).join(", ")
     : ingredients.map(stripIngredientQuantity).join(", ");
@@ -138,7 +138,9 @@ export default function Page({ params }: { params: { id: string } }) {
       </p> */}
       {links}
       {menu && menu.items && (menu.items.length as number) > 0 &&
-        <Menu {...{ ...menu, showDetails }} />
+        <div className="md:self-center">
+          <Menu {...{ ...menu, showDetails }} />
+        </div>
       }
       {links}
     </main>

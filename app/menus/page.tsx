@@ -21,7 +21,7 @@ function MenuEntry({ menu, user }: any) {
   return (
     <p className="text-left py-2.5 group hover:cursor-pointer active:text-light-1" onClick={() => router.push(`/menus/${menu.id}`)}>
       <span className="m-0">
-        <span className="capitalize">{menu.name}</span>
+        <span className="capitalize font-semibold">{menu.name}</span>
         {isReady &&
           <>
             {` (${summary})`}
@@ -115,14 +115,14 @@ export default function Page() {
         </p>
         {links}
         {filteredMenus && filteredMenus.length > 0 &&
-          <>
+          <div className="md:self-center">
             {
               filteredMenus
                 // .filter(...)
                 .sort((a: Menu, b: Menu) => (a.createdAt || 0) - (b.createdAt || 0))
-                .map((menu: any) => <div key={menu.id}><MenuEntry menu={menu} user={user} /></div>)
+                .map((menu: any) => <span key={menu.id}><MenuEntry menu={menu} user={user} /></span>)
             }
-          </>
+          </div>
         }
         {(!filteredMenus || filteredMenus.length == 0) &&
           <p className='italic text-center'>No menus yet :(</p>

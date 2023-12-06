@@ -3,12 +3,10 @@
 import { User } from 'firebase/auth';
 import moment from 'moment';
 import OpenAI from 'openai';
-import { Menu, MenuItem } from "@/types/Menus";
-import shuffleArray from '@/utils/shuffleArray';
+import { Menu } from "@/types/Menus";
 
 let store: any;
-// import(`@/services/stores/${process.env.STORE_TYPE}`).then((importedStore) => {
-import(`@/services/stores/redis`).then((importedStore) => {
+import(`@/services/stores/${process.env.STORE_TYPE}`).then((importedStore) => {
     store = importedStore;
 });
 
@@ -55,6 +53,13 @@ Please respond ONLY with JSON data containing name, a short description, ingredi
 
 export async function getMenus(user?: User): Promise<Menu[]> {
   const menus = await store.getMenus();
+  // const menus = [
+  //   {id: "1", name: "NAME 1", status: "created", items: SAMPLE_MENU.menu},
+  //   {id: "2", name: "NAME 2", status: "created", items: SAMPLE_MENU.menu},
+  //   {id: "3", name: "NAME 3247973432842", status: "created", items: SAMPLE_MENU.menu},
+  //   {id: "3", status: "created", name: "Italian Pasta", items: SAMPLE_MENU.menu},
+  //   {id: "3", status: "generating", name: "New brunch menu", items: SAMPLE_MENU.menu},
+  // ];
   return new Promise((resolve, reject) => resolve(menus));
 }
 
