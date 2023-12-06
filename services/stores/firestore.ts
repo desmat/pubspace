@@ -5,8 +5,65 @@ import moment from 'moment';
 import * as firebase from '@/services/firebase'
 import { Post } from "@/types/Post"
 import { Game, Question } from "@/types/Trivia";
+import { Menu } from "@/types/Menus";
 import { samplePosts } from './samples';
-import * as memoryStore from "./memory"
+
+
+//
+// Menus 
+//
+
+export async function getMenus(): Promise<Menu[]> {
+    console.log('>> services.stores.firebase.getMenus()');
+
+    const c = firestore.collection(firebase.db, "menus")
+    const q = firestore.query(c);
+    let snapshot = await firestore.getDocs(q);
+    // console.log("*** snapshot: ", { snapshot });
+
+    const menus: Menu[] = [];
+    snapshot.forEach((result: any) => menus.push({ ...result.data() as Menu, id: result.id }));
+    // console.log("*** firestore menus", JSON.stringify(posts));
+   return menus;
+}
+
+export async function getMenu(id: string): Promise<Menu | null> {
+    console.log(`>> services.stores.firebase.getMenu(${id})`, { id });
+
+    const ref = firestore.doc(firebase.db, "menus", id);
+    let snapshot = await firestore.getDoc(ref);
+    // console.log("*** snapshot: ", { snapshot });
+
+    if (!snapshot.exists()) {
+        console.warn('>> services.stores.firestore.getMenu(): menu not found', id);
+        return null;
+    }
+
+    const menu = { ...snapshot.data() as Menu, id: snapshot.id };
+    return menu;
+}
+
+export async function addMenu(menu: Menu): Promise<Menu> {
+    console.log(">> services.stores.firebase.addMenu", { menu });
+
+    const c = firestore.collection(firebase.db, "menus")
+    const ref = await firestore.addDoc(c, menu);
+    const result = await firestore.getDoc(ref);
+    const newMenu = { ...result.data() as Menu, id: result.id };
+    // console.log("*** firestore new menu", { id: result.id, post: JSON.stringify(newMenu) });
+    return newMenu;
+}
+
+export async function deleteMenu(id: string): Promise<void> {
+    console.log(">> services.stores.firebase.deleteMenu", { id });
+
+    if (!id) {
+        throw `Cannot delete trivia menu with null id`;
+    }
+
+    const ref = firestore.doc(firebase.db, "menus", id);
+    await firestore.deleteDoc(ref);
+}
 
 
 //

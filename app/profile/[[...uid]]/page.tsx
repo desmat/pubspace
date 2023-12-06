@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useEffect } from "react";
 import useUser from "@/app/_hooks/user";
 import usePosts from "@/app/_hooks/posts";
-import * as users from "@/services/users";
-import { Post } from "@/types/Post";
 import useTrivia from "@/app/_hooks/trivia";
+import useMenus from "@/app/_hooks/menus";
+import * as users from "@/services/users";
 import { Game } from "@/types/Trivia";
+import { Menu } from "@/types/Menus";
+import { Post } from "@/types/Post";
 
 function doSigninWithGoogle(e: any, signinFn: any) {
   console.log("** app.profile.page.doSigninWithGoogle");
@@ -32,8 +34,10 @@ export default function Page({ params }: { params: { uid?: string } }) {
   const [user, userLoaded, loadUser, signin, logout] = useUser((state: any) => [state.user, state.loaded, state.load, state.signin, state.logout]);
   const [posts, loadPosts, postsLoaded] = usePosts((state: any) => [state.posts, state.load, state.loaded]);
   const [games, gamesLoaded, loadGames] = useTrivia((state: any) => [state.games, state.loaded, state.loadGames]);
+  const [menus, menusLoaded, loadMenus] = useMenus((state: any) => [state.menus, state.loaded, state.load]);
   const myPosts = postsLoaded && posts.filter((post: Post) => post.postedByUID == user?.uid);
   const myGames = gamesLoaded && games.filter((game: Game) => game.createdBy == user?.uid);
+  const myMenus = menusLoaded && menus.filter((menu: Menu) => menu.createdBy == user?.uid);
   console.log('>> app.profile.page.render()', { uid: params.uid, user, userLoaded });
 
   useEffect(() => {
@@ -41,6 +45,7 @@ export default function Page({ params }: { params: { uid?: string } }) {
     if (!userLoaded) loadUser();
     if (!postsLoaded) loadPosts();
     if (!gamesLoaded) loadGames();
+    if (!menusLoaded) loadMenus();
   }, [params.uid]);
 
   if (!userLoaded || !postsLoaded) {
@@ -133,6 +138,11 @@ export default function Page({ params }: { params: { uid?: string } }) {
           {user && myGames.length > 0 && 
             <div className="text-dark-2">
               <Link href={`/trivia?uid=${user.uid}`}>Trivia games ({myGames.length})</Link>
+            </div>
+          }
+          {user && myMenus.length > 0 && 
+            <div className="text-dark-2">
+              <Link href={`/menus?uid=${user.uid}`}>Menus ({myMenus.length})</Link>
             </div>
           }
           {user && user.isAnonymous &&

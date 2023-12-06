@@ -6,8 +6,8 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react';
 import { BsPlusLg } from "react-icons/bs"
 import { User } from 'firebase/auth';
-import Link from "@/app/_components/Link"
 import { PostEntry } from "@/app/_components/Post";
+import FilterButton from '@/app/_components/FilterButton';
 import { Post } from "@/types/Post"
 import usePosts from "@/app/_hooks/posts";
 import Loading from './loading';
@@ -74,11 +74,8 @@ export default function Posts() {
 
   return (
     <main className="flex flex-col">
-      {uidFilter &&
-        <Link href="/posts" style="warning" className="flex flex-row-reverse pb-2 cursor-zoom-out">
-          User: {uidFilter}
-        </Link>
-      }
+      <FilterButton href="/posts" userId={user?.uid} isFiltered={!!uidFilter}  />
+
       {mappedPosts && mappedPosts.size > 0 &&
         <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-2">
           {Array.from(Array(maxPosition + 2).keys()).map((position: number) => {

@@ -85,7 +85,7 @@ export async function authenticateUser(request: any) {
   return {}
 }
 
-export async function validateUserSession(request: any) {
+export async function validateUserSession(request: any): Promise<any> {
   const refreshToken = request.cookies.get("session")?.value;
   // console.log("*** validateUserSession ***", { refreshToken });
 
@@ -93,7 +93,7 @@ export async function validateUserSession(request: any) {
     try {
       // const tokens = await verifyIdToken(authToken);
       const handleredRefreshToken = await handleTokenRefresh(refreshToken, firebaseConfig.apiKey || "");
-      console.log("*** validateUserSession", { refreshToken, handleredRefreshToken });
+      // console.log("*** validateUserSession", { refreshToken, handleredRefreshToken });
 
       const user = await getUser(handleredRefreshToken.decodedToken.uid);
       // console.log("*** validateUserSession ***", { user, refreshToken });

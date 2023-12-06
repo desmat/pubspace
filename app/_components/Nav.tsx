@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { BsFillPlusCircleFill } from "react-icons/bs"
 import { BsLightningFill } from "react-icons/bs"
 import { BsClipboardFill } from "react-icons/bs"
+import { BsCupHotFill } from "react-icons/bs";
 import { BsFillQuestionSquareFill } from 'react-icons/bs'
 import NavLink from '@/app/_components/NavLink'
 import NavProfileLink from '@/app/_components/NavProfileLink'
@@ -57,11 +58,15 @@ function menuItems({ pathname, user, addPost, router }: { pathname: string, user
       }
     },
     {
+      name: "Menus",
+      href: "/menus",
+      icon: <BsCupHotFill className="my-auto" />
+    },
+    {
       name: "Trivia",
       href: "/trivia",
       icon: <BsFillQuestionSquareFill className="my-auto" />
     },
-
   ].map((menuItem: any) => {
     menuItem.isActive = isActive(pathname, menuItem.href);
     return menuItem;

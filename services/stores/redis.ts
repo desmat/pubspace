@@ -2,10 +2,12 @@
 
 import moment from 'moment';
 import { kv } from "@vercel/kv";
-import { Post } from "@/types/Post"
+import { Menu, MenuItem } from "@/types/Menus";
+import { Post } from "@/types/Post";
 import { Game, Question } from "@/types/Trivia";
 import { samplePosts } from './samples';
 
+const menusKey = "menus";
 const postsKey = "posts";
 const triviaGamesKey = "trivia-games";
 const triviaQuestionsKey = "trivia-questions";
@@ -23,6 +25,61 @@ const jsonGetById = (id: string) => `$[?(@.id=='${id}')]`;
     json.get posts '$[?(@.content ~= "(?i)lorem")]'
     del posts
 */
+
+
+
+//
+// Menus 
+//
+
+export async function getMenus(): Promise<Menu[]> {
+    console.log('>> services.stores.redis.getMenus()');
+
+    let response = await kv.json.get(menusKey, jsonGetNotDeleted);
+    console.log("REDIS response", JSON.stringify(response));
+
+    if (!response || !response.length) {
+        console.log('>> services.stores.redis.getMenus(): empty redis key, creating empty list');
+        await kv.json.set(menusKey, "$", "[]");
+        response = await kv.json.get(menusKey, jsonGetNotDeleted);
+    }
+
+    return response as Menu[];
+}
+
+export async function getMenu(id: string): Promise<Menu | null> {
+    console.log(`>> services.stores.redis.getMenu(${id})`, { id });
+
+    const response = await kv.json.get(menusKey, jsonGetById(id));
+
+    let menu: Menu | null = null;
+    if (response) {
+        menu = response[0] as Menu;
+    }
+
+    return menu;
+}
+
+export async function addMenu(menu: Menu): Promise<Menu> {
+    console.log(">> services.stores.redis.addMenu", { menu });
+
+    const response = await kv.json.arrappend(menusKey, "$", menu);
+    console.log("REDIS response", response);
+
+    return new Promise((resolve) => resolve(menu));
+}
+
+export async function deleteMenu(id: string): Promise<void> {
+    console.log(">> services.stores.redis.deleteMenu", { id });
+
+    if (!id) {
+        throw `Cannot delete trivia menu with null id`;
+    }
+
+    // const response = await kv.json.set(menusKey, `${jsonGetById(id)}.deletedAt`, moment().valueOf());
+    const response = await kv.json.del(menusKey, `${jsonGetById(id)}`);
+    console.log("REDIS response", response);
+}
 
 
 //
