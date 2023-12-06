@@ -1,7 +1,7 @@
 import { BsFilterCircle, BsFilterCircleFill } from "react-icons/bs"
 import Link from "./Link"
 
-export default function ({ href, userId, isFiltered }: any) {
+export default function FilterButton({ href, userId, isFiltered }: any) {
   return (
     <>
       {isFiltered &&
