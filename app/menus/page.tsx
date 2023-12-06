@@ -11,17 +11,17 @@ import Loading from "./loading";
 
 function MenuEntry({ menu, user }: any) {
   const router = useRouter();
-  const isReady = true // ["created"].includes(game.status);
+  const isReady = ["created"].includes(menu.status);
   const maxSummaryItems = 3;
-  const summary = menu.items.length > maxSummaryItems
+  const summary = menu?.items?.length > maxSummaryItems
     ? menu.items.slice(0, maxSummaryItems).map((item: MenuItem) => item.name).join(", ") + ` and ${menu.items.length - maxSummaryItems} more`
-    : menu.items.map((item: MenuItem) => item.name).join(", ");
+    : menu?.items?.map((item: MenuItem) => item.name).join(", ") || "";
   console.log('>> app.menus.page.GameEntry.render()', { menu, user, summary });
 
   return (
     <p className="text-left py-2.5 group hover:cursor-pointer active:text-light-1" onClick={() => router.push(`/menus/${menu.id}`)}>
       <span className="m-0">
-        {menu.name}
+        <span className="capitalize">{menu.name}</span>
         {isReady &&
           <>
             {` (${summary})`}
@@ -44,27 +44,26 @@ async function handleCreateMenu(createMenu: any, router: any, user: User | undef
     ? `${user.displayName.split(/\s+/)[0]}'s`
     : "A";
 
-  // const content = window.prompt("How many questions?", "10");
+  const type = window.prompt("What type of menu? Examples: Italian Pasta, Classic Cocktails, Fast Food", "");
 
-  // if (content) {
-  //   const num = Number(content);
+  if (type) {
+    const name = window.prompt("Name?", `${type}`);
 
-  //   if (num > 0) {
-  //     const name = window.prompt("Name?", `${userName} trivia game with ${num} questions`);
+    if (name) {
+      const numString = window.prompt("How many items?", "5");
 
-  //     if (name) {
-  //       const requestedCategories = window.prompt("Categories? (Comma-separated or leave empty)", SuggestedMenuTypes?.join(", "));
-  //       const id = await createGameFn(user?.uid, num, name, requestedCategories);
+      if (numString) {
+        const num = Number(numString);
+        const id = await createMenu(user, name, type, num);
 
-  //       if (id) {
-  //         router.push(`/trivia/${id}`);
-  //         return true
-  //       }
-  //     }
-  //   }
-  // }
+        if (id) {
+          // router.push(`/menus/${id}`);
+          return true
+        }
+      }
+    }
+  }
 
-  // console.warn("Unable to create game with num questions", content);
   return false;
 }
 

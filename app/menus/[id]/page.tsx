@@ -8,7 +8,7 @@ import useUser from "@/app/_hooks/user";
 import Loading from "./loading";
 
 function stripIngredientQuantity(ingredient: string) {
-  const regex = /(?:\d+\s+\w+)?(.*)/;
+  const regex = /^(?:\w+\s+of\s+)?(?:\d+\s*\w+\s+of\s+)?(?:\d+\s*\w+\s+)?(?:\d+\s+)?(.+)$/i;
   const match = ingredient.match(regex);
   if (match && match.length > 1) {
     return match[1];
@@ -24,7 +24,7 @@ function MenuItem({ name, description, ingredients, preparation, showDetails }: 
     ? ingredients.map(stripIngredientQuantity).slice(0, maxShortIngredients).join(", ")
     : ingredients.map(stripIngredientQuantity).join(", ");
 
-  console.log('>> app.menus[id].page.render()', { name, shortIngredients, ingredients });
+  // console.log('>> app.menus[id].page.render()', { name, shortIngredients, ingredients });
 
   useEffect(() => {
     if (showDetails) {
@@ -86,7 +86,7 @@ function Menu({ id, prompt, items, showDetails }: any) {
   );
 }
 
-async function handleDeleteGame(id: string, deleteFn: any, router: any) {
+async function handleDeleteMenu(id: string, deleteFn: any, router: any) {
   const response = confirm("Delete menu?");
   if (response) {
     deleteFn(id);
@@ -117,7 +117,7 @@ export default function Page({ params }: { params: { id: string } }) {
       <Link href="/menus">Back</Link>
       {menu && <Link onClick={() => setshowDetails(!showDetails)}>{showDetails ? "Hide details" : "Show details"}</Link>}
       {/* {game && <Link onClick={() => handlePlayGame(params.id, startGame, router)}>Play</Link>} */}
-      {menu && user && (user.uid == menu.createdBy || user.admin) && <Link style="warning" onClick={() => handleDeleteGame(params.id, deleteMenu, router)}>Delete</Link>}
+      {menu && user && (user.uid == menu.createdBy || user.admin) && <Link style="warning" onClick={() => handleDeleteMenu(params.id, deleteMenu, router)}>Delete</Link>}
     </div>
   );
 
@@ -132,7 +132,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
   return (
     <main className="flex flex-col items-left lg:max-w-4xl lg:mx-auto px-4">
-      <h1 className="text-center">{menu.name}</h1>
+      <h1 className="text-center capitalize">{menu.name}</h1>
       {/* <p className='italic text-center'>
         something something something
       </p> */}

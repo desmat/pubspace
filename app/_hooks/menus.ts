@@ -1,7 +1,7 @@
+import { User } from 'firebase/auth';
 import moment from 'moment';
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import { Post } from "@/types/Post"
 import { Menu } from '@/types/Menus';
 
 const useMenus: any = create(devtools((set: any, get: any) => ({
@@ -30,7 +30,7 @@ const useMenus: any = create(devtools((set: any, get: any) => ({
     } else {
       fetch('/api/menus').then(async (res) => {
         if (res.status != 200) {
-          console.error(`Error fetching posts: ${res.status} (${res.statusText})`);
+          console.error(`Error fetching menus: ${res.status} (${res.statusText})`);
           return;
         }
 
@@ -44,92 +44,69 @@ const useMenus: any = create(devtools((set: any, get: any) => ({
     }
   },
 
-  // add: async (content: string, posterName: string, posterUID: string, position?: number) => {
-  //   console.log(">> hooks.menu.add content:", content);
+  createMenu: async (user: User, name: string, type: string, numItems: number) => {
+    console.log(">> hooks.menu.createMenu", { name, type, numItems });
 
-  //   // optimistic
-  //   const tempId = crypto.randomUUID();
-  //   const post = {
-  //     id: tempId,
-  //     postedBy: posterName,
-  //     postedByUID: posterUID,
-  //     postedAt: moment().valueOf(),
-  //     content,
-  //     position,
-  //     optimistic: true,
-  //   };
-  //   set({ posts: [...get().posts, post] });
+    // optimistic
+    const tempId = crypto.randomUUID();
+    const menu = {
+      id: tempId,
+      createdBy: user.uid,
+      createdAt: moment().valueOf(),
+      status: "generating",
+      name,
+      // prompt,
+      items: [],
+      optimistic: true,
+    }
+    set({ menus: [...get().menus, menu] });
 
-  //   fetch('/api/posts', {
-  //     method: "POST",
-  //     body: JSON.stringify({ content, position }),
-  //   }).then(async (res) => {
-  //     if (res.status != 200) {
-  //       console.error(`Error adding post: ${res.status} (${res.statusText})`);
-  //       const posts = get().posts.filter((post: Post) => post.id != tempId);
-  //       set({ posts });
-  //       return;
-  //     }
+    fetch('/api/menus', {
+      method: "POST",
+      body: JSON.stringify({ name, type, numItems }),
+    }).then(async (res) => {
+      if (res.status != 200) {
+        console.error(`Error adding menu: ${res.status} (${res.statusText})`);
+        const menus = get().menus.filter((menu: Menu) => menu.id != tempId);        
+        set({ menus });
+        return;
+      }
 
-  //     const data = await res.json();
-  //     const post = data.post;
-  //     // remove optimistic post
-  //     const posts = get().posts.filter((post: Post) => post.id != tempId);
-  //     set({ posts: [...posts, post] });
-  //   });
-  // },
+      const data = await res.json();
+      const menu = data.menu;
+      // remove optimistic post
+      const menus = get().menus.filter((menu: Menu) => menu.id != tempId);
+      set({ menus: [...menus, menu] });
+    });
+  },
 
-  // edit: async (post: Post) => {
-  //   console.log(">> hooks.menu.edit post:", post);
+  deleteMenu: async (id: string) => {
+    console.log(">> hooks.menu.deleteMenu id:", id);
 
-  //   if (!post.id) {
-  //     throw `Cannot edit post with null id`;
-  //   }
+    if (!id) {
+      throw `Cannot delete menu with null id`;
+    }
 
-  //   // optimistic
-  //   const posts = get().posts.filter((post: Post) => post.id != post.id);
-  //   posts.push(post);
-  //   set({ posts });
+    const { menus, deletedMenus } = get();
 
-  //   fetch(`/api/posts/${post.id}`, {
-  //     method: "PUT",
-  //     body: JSON.stringify(post),
-  //   }).then(async (res) => {
-  //     if (res.status != 200) {
-  //       console.error(`Error editing post ${post.id}: ${res.status} (${res.statusText})`);
-  //     }
+    // optimistic
+    set({
+      menus: menus.filter((menu: Menu) => menu.id != id),
+      deletedMenus: [...deletedMenus, menus.filter((menu: Menu) => menu.id == id)[0]],
+    });
 
-  //     // TODO bring back the thing here?
-  //   });
-  // },
+    fetch(`/api/menus/${id}`, {
+      method: "DELETE",
+    }).then(async (res) => {
+      if (res.status != 200) {
+        console.error(`Error deleting menus ${id}: ${res.status} (${res.statusText})`);
+        set({ menus, deletedMenus });
+        return;
+      }
 
-  // delete: async (id: string) => {
-  //   console.log(">> hooks.menu.delete id:", id);
-
-  //   if (!id) {
-  //     throw `Cannot delete post with null id`;
-  //   }
-
-  //   const { posts, deletedPosts } = get();
-
-  //   // optimistic
-  //   set({
-  //     posts: posts.filter((p: Post) => p.id != id),
-  //     deletedPosts: [...deletedPosts, posts.filter((post: Post) => post.id == id)[0]],
-  //   });
-
-  //   fetch(`/api/posts/${id}`, {
-  //     method: "DELETE",
-  //   }).then(async (res) => {
-  //     if (res.status != 200) {
-  //       console.error(`Error deleting post ${id}: ${res.status} (${res.statusText})`);
-  //       set({ posts, deletedPosts });
-  //       return;
-  //     }
-
-  //     set({ deletedPosts: deletedPosts.filter((post: Post) => post.id == id) });
-  //   });
-  // },
+      set({ deletedMenus: deletedMenus.filter((menu: Menu) => menu.id == id) });
+    });
+  },
 })));
 
 export default useMenus;
