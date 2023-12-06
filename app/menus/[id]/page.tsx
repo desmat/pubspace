@@ -55,7 +55,7 @@ function MenuItem({ name, description, ingredients, preparation, showDetails }: 
           <div className="font-semibold">Ingredients:</div>
           <ul className="ml-4">
             {
-              ingredients.map((ingredient: string) => <li className="capitalize">{ingredient}</li>)
+              ingredients.map((ingredient: string, offset: number) => <li key={offset} className="capitalize">{ingredient}</li>)
             }
           </ul>
         </div>
