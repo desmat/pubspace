@@ -13,10 +13,12 @@ import Loading from "./loading";
 function MenuEntry({ menu, user }: any) {
   const isReady = ["created"].includes(menu.status);
   const maxSummaryItems = 3;
-  const summary = menu?.items?.length > maxSummaryItems
-    ? menu.items.slice(0, maxSummaryItems).map((item: MenuItem) => item.name).join(", ") + ` and ${menu.items.length - maxSummaryItems} more`
-    : menu?.items?.map((item: MenuItem) => item.name).join(", ") || "";
-  console.log('>> app.menus.page.GameEntry.render()', { menu, user, summary });
+  const summary = menu?.items?.length > 0
+    ? menu?.items?.length > maxSummaryItems
+      ? menu.items.slice(0, maxSummaryItems).map((item: MenuItem) => item.name).join(", ") + ` and ${menu.items.length - maxSummaryItems} more`
+      : menu?.items?.map((item: MenuItem) => item.name).join(", ") || ""
+    : "";
+  console.log('>> app.menus.page.MenuEntry.render()', { menu, user, summary });
 
   return (
     <Link style="parent" href={`/menus/${menu.id}`}>

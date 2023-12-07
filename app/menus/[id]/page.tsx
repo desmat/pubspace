@@ -19,10 +19,12 @@ function stripIngredientQuantity(ingredient: string) {
 
 function MenuItem({ name, description, ingredients, preparation, showDetails }: any) {
   const [showDetail, setshowDetail] = useState(false);
-  const maxShortIngredients = 4;
-  const shortIngredients = ingredients.length > maxShortIngredients
-    ? ingredients.map(stripIngredientQuantity).slice(0, maxShortIngredients).join(", ")
-    : ingredients.map(stripIngredientQuantity).join(", ");
+  const maxShortIngredients = 5;
+  const shortIngredients = ingredients?.length > 0 ?
+    ingredients.length > maxShortIngredients
+      ? ingredients.map(stripIngredientQuantity).slice(0, maxShortIngredients).join(", ")
+      : ingredients.map(stripIngredientQuantity).join(", ")
+    : "";
 
   // console.log('>> app.menus[id].page.render()', { name, shortIngredients, ingredients });
 
