@@ -18,17 +18,19 @@ function QuestionEntry({ questionOffset, id, text, answers, category, showAnswer
   }, [showAnswers]);
 
   return (
-    <p className={"text-left pb-4" + (showAnswers ? "" : " group hover:cursor-pointer")} onClick={() => !showAnswers && setShowAnswer(!showAnswer)}>
-      <span className="">
-        {questionOffset + 1}. <span className="capitalize">[{category}]</span> {text}
-        {!showAnswers &&
-          <Link style="light" className="opacity-40 group-hover:opacity-100 group-hover:underline group-active:text-light-1 group- ml-2">{showAnswer ? "Hide answer" : "Show answer"}</Link>
+    <p className="text-left pb-4">
+      <Link style="parent" onClick={() => !showAnswers && setShowAnswer(!showAnswer)}>
+        <span className="">
+          {questionOffset + 1}. <span className="capitalize">[{category}]</span> {text}
+          {!showAnswers &&
+            <Link style="light" className="ml-2">{showAnswer ? "Hide answer" : "Show answer"}</Link>
+          }
+        </span>
+        <br />
+        {answers && answers.length > 0 &&
+          answers.map((answer: any, answerOffset: number) => <span key={`${id}-${answerOffset}`} className="ml-4">{String.fromCharCode(97 + answerOffset)}) {answer.text}{(showAnswer || showAnswers) && answer.isCorrect ? " (Correct Answer)" : ""}<br /></span>)
         }
-      </span>
-      <br />
-      {answers && answers.length > 0 &&
-        answers.map((answer: any, answerOffset: number) => <span key={`${id}-${answerOffset}`} className="ml-4">{String.fromCharCode(97 + answerOffset)}) {answer.text}{(showAnswer || showAnswers) && answer.isCorrect ? " (Correct Answer)" : ""}<br /></span>)
-      }
+      </Link>
     </p>
   );
 }
@@ -77,7 +79,7 @@ export default function Page({ params }: { params: { id: string } }) {
   }
 
   const links = (
-    <div className="flex flex-col lg:flex-row lg:gap-2 items-center justify-center mt-2 mb-4">
+    <div className="flex flex-col md:flex-row md:gap-3 items-center justify-center mt-2 mb-4">
       <Link href="/trivia">Back</Link>
       {game && <Link onClick={() => setShowAnswers(!showAnswers)}>{showAnswers ? "Hide answers" : "Show answers"}</Link>}
       {/* {game && <Link onClick={() => handlePlayGame(params.id, startGame, router)}>Play</Link>} */}

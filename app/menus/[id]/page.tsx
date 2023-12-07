@@ -33,39 +33,41 @@ function MenuItem({ name, description, ingredients, preparation, showDetails }: 
   }, [showDetails]);
 
   return (
-    <p className={"text-left flex flex-col gap-2 pb-6" + (showDetails ? "" : " group hover:cursor-pointer")} onClick={() => !showDetails && setshowDetail(!showDetail)}>
-      <div className="">
-        <span className="capitalize font-semibold">{name}</span>: {description}
-        {!showDetails &&
-          <>
-            <Link style="light" className="opacity-40 group-hover:opacity-100 group-hover:underline group-active:text-light-1 group- ml-2">{showDetail ? "Hide details" : "Show details"}</Link>
-          </>
+    <p className="text-left flex flex-col gap-2 pb-6" >
+      <Link style="parent" onClick={() => !showDetails && setshowDetail(!showDetail)}>
+        <div className="">
+          <span className="capitalize font-semibold">{name}</span>: {description}
+          {!showDetails &&
+            <>
+              <Link style="child light" className="ml-2">{showDetail ? "Hide details" : "Show details"}</Link>
+            </>
+          }
+        </div>
+        {!showDetail && !showDetails &&
+          <div className="capitalize italic text-dark-3 -mt-1">{shortIngredients}</div>
         }
-      </div>
-      {!showDetail && !showDetails &&
-        <div className="capitalize italic text-dark-3 -mt-1">{shortIngredients}</div>
-      }
-      {/* {ingredients.length > maxShortIngredients &&
+        {/* {ingredients.length > maxShortIngredients &&
         <span className="italic">
           {` (and ${ingredients.length - maxShortIngredients} more)`}
         </span>
       } */}
-      {(showDetails || showDetail) &&
-        <div>
-          <div className="font-semibold">Ingredients:</div>
-          <ul className="ml-4">
-            {
-              ingredients.map((ingredient: string, offset: number) => <li key={offset} className="capitalize">{ingredient}</li>)
-            }
-          </ul>
-        </div>
-      }
-      {(showDetails || showDetail) &&
-        <div className="mb-2">
-          <div className="font-semibold">Preparation:</div>
-          <div>{preparation}</div>
-        </div>
-      }
+        {(showDetails || showDetail) &&
+          <div>
+            <div className="font-semibold">Ingredients:</div>
+            <ul className="ml-4">
+              {
+                ingredients.map((ingredient: string, offset: number) => <li key={offset} className="capitalize">{ingredient}</li>)
+              }
+            </ul>
+          </div>
+        }
+        {(showDetails || showDetail) &&
+          <div className="mb-2">
+            <div className="font-semibold">Preparation:</div>
+            <div>{preparation}</div>
+          </div>
+        }
+      </Link>
     </p>
   );
 }
@@ -113,7 +115,7 @@ export default function Page({ params }: { params: { id: string } }) {
   }
 
   const links = (
-    <div className="flex flex-col lg:flex-row lg:gap-2 items-center justify-center mt-2 mb-4">
+    <div className="flex flex-col md:flex-row md:gap-3 items-center justify-center mt-2 mb-4">
       <Link href="/menus">Back</Link>
       {menu && <Link onClick={() => setshowDetails(!showDetails)}>{showDetails ? "Hide details" : "Show details"}</Link>}
       {/* {game && <Link onClick={() => handlePlayGame(params.id, startGame, router)}>Play</Link>} */}

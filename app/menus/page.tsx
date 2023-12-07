@@ -11,7 +11,6 @@ import { Menu, MenuItem, SuggestedMenuTypes } from "@/types/Menus"
 import Loading from "./loading";
 
 function MenuEntry({ menu, user }: any) {
-  const router = useRouter();
   const isReady = ["created"].includes(menu.status);
   const maxSummaryItems = 3;
   const summary = menu?.items?.length > maxSummaryItems
@@ -20,13 +19,13 @@ function MenuEntry({ menu, user }: any) {
   console.log('>> app.menus.page.GameEntry.render()', { menu, user, summary });
 
   return (
-    <p className="text-left py-2.5 group hover:cursor-pointer active:text-light-1" onClick={() => router.push(`/menus/${menu.id}`)}>
+    <Link style="parent" href={`/menus/${menu.id}`}>
       <span className="m-0">
         <span className="capitalize font-semibold">{menu.name}</span>
         {isReady &&
           <>
             {` (${summary})`}
-            <Link style="light" className="group-hover:opacity-100 group-hover:underline group-active:text-light-1 ml-2" href={`/menus/${menu.id}`}>View</Link>
+            <Link style="child light" className="ml-2">View</Link>
           </>
         }
         {!isReady &&
@@ -35,7 +34,7 @@ function MenuEntry({ menu, user }: any) {
           </>
         }
       </span>
-    </p>
+    </Link>
   );
 }
 
@@ -83,7 +82,7 @@ export default function Page() {
   }, []);
 
   const links = (
-    <div className="flex flex-col lg:flex-row lg:gap-2 items-center justify-center mt-2 mb-4">
+    <div className="flex flex-col md:flex-row md:gap-3 items-center justify-center mt-2 mb-4">
       <div title={user ? "" : "Login to create new menu"}>
         <Link className={user ? "" : "cursor-not-allowed"} onClick={() => /* user && */ handleCreateMenu(createMenu, router, user)}>
           Create New Menu
@@ -112,7 +111,7 @@ export default function Page() {
         </p>
         {links}
         {filteredMenus && filteredMenus.length > 0 &&
-          <div className="md:self-center">
+          <div className="md:self-center flex flex-col gap-3">
             {
               filteredMenus
                 // .filter(...)

@@ -21,8 +21,8 @@ export default function NavLink({
         href={href || "#"}
         className={(
           isActive
-            ? (isMenu ? "text-dark-3" : "text-slate-100") + " cursor-default hover:no-underline"
-            : (isMenu ? "text-dark-2" : "text-slate-300") + " cursor-pointer hover:underline"
+            ? (isMenu ? "text-dark-3" : "text-slate-100")
+            : (isMenu ? "text-dark-2" : "text-slate-300")
         ) + (isMenu
           ? ""
           : " hover:text-slate-100"
