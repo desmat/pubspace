@@ -1,14 +1,15 @@
 import { default as NextLink } from 'next/link'
 
 export default function Link({
-  children, href, className, onClick, style, title
+  children, href, className, onClick, style, title, target
 }: {
   children: React.ReactNode,
   href?: string,
   className?: string,
   onClick?: (e?: any) => void,
   style?: string,
-  title?: string
+  title?: string,
+  target?: string,
 }) {
   // console.log('>> components.NavLink.render()', { isActive });
 
@@ -37,6 +38,7 @@ export default function Link({
       href={href || "#"}
       onClick={(e) => { if (onClick) { e.preventDefault(); onClick(e); } else if (!href) { e.preventDefault(); } }}
       title={title || ""}
+      target={target || ""}
       className={computedClassName}
     >
       {children}
