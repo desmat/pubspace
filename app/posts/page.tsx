@@ -92,12 +92,12 @@ export default function Posts() {
             }
 
             return (
-              <div key={post.id}>
+              <div key={post.id} className={!filteredPosts.has(post.id) ? "opacity-40 hover:opacity-100" : ""}>
                 {post.optimistic &&
                   <PostEntry {...post} />
                 }
                 {!post.optimistic &&
-                  <Link href={`/posts/${post.id}`} style="plain" className={`p-0${!filteredPosts.has(post.id) ? " opacity-40 hover:opacity-100" : ""}`}>
+                  <Link href={`/posts/${post.id}`} style="plain" className="p-0">
                     <PostEntry {...post} />
                   </Link>
                 }
