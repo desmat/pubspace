@@ -1,11 +1,11 @@
 // 'use server'
 'use client'
 
-import { default as NextLink } from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react';
 import { BsPlusLg } from "react-icons/bs"
 import { User } from 'firebase/auth';
+import Link from "@/app/_components/Link";
 import { PostEntry } from "@/app/_components/Post";
 import FilterButton from '@/app/_components/FilterButton';
 import { Post } from "@/types/Post"
@@ -26,7 +26,7 @@ function EmptySlot({ addPostFn, user, position }: any) {
   if (!user) {
     return (
       <div
-          className="relative cursor-not-allowed opacity-0 hover:opacity-30 p-0 border border-dashed border-black"
+        className="relative cursor-not-allowed opacity-0 hover:opacity-30 p-0 border border-dashed border-black"
         title="Login to add a Post"
       >
         <BsPlusLg className="m-auto absolute left-0 right-0 top-0 bottom-0" />
@@ -58,8 +58,10 @@ export default function Posts() {
   const [user] = useUser((state: any) => [state.user]);
   const params = useSearchParams();
   const uidFilter = params.get("uid");
-  const filteredPosts = uidFilter ? posts.filter((post: Post) => post.postedByUID == uidFilter) : posts
-  const sortedPosts = filteredPosts.sort((a: Post, b: Post) => (a.position || 0) - (b.position || 0));
+  const filteredPosts = new Set(
+    (uidFilter ? posts.filter((post: Post) => post.postedByUID == uidFilter) : posts)
+      .map((post: Post) => post.id));
+  const sortedPosts = /* filteredPosts */ posts.sort((a: Post, b: Post) => (a.position || 0) - (b.position || 0));
   const mappedPosts = new Map(sortedPosts.map((post: Post) => [post.position || 0, post]));
   const mappedPostKeys = Array.from(mappedPosts.keys()) as [];
   const maxPosition = mappedPosts && mappedPosts.size > 0 ? Math.max.apply(0, mappedPostKeys) : 0;
@@ -74,7 +76,7 @@ export default function Posts() {
 
   return (
     <main className="flex flex-col">
-      <FilterButton href="/posts" userId={user?.uid} isFiltered={!!uidFilter}  />
+      <FilterButton href="/posts" userId={user?.uid} isFiltered={!!uidFilter} />
 
       {mappedPosts && mappedPosts.size > 0 &&
         <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-2">
@@ -95,9 +97,9 @@ export default function Posts() {
                   <PostEntry {...post} />
                 }
                 {!post.optimistic &&
-                  <NextLink href={`/posts/${post.id}`} className="no-link-style p-0">
+                  <Link href={`/posts/${post.id}`} style="plain" className={`p-0${!filteredPosts.has(post.id) ? " opacity-40 hover:opacity-100" : ""}`}>
                     <PostEntry {...post} />
-                  </NextLink>
+                  </Link>
                 }
               </div>
             )
@@ -105,7 +107,7 @@ export default function Posts() {
           }
         </div>
       }
-      {(!filteredPosts || !filteredPosts.length) &&
+      {(!mappedPosts || !(mappedPosts.size > 0)) &&
         <p className='italic text-center'>No posts yet :(</p>
       }
     </main>
