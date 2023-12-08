@@ -7,7 +7,7 @@ import { Post } from "@/types/Post"
 export function PostEntry({ id, postedBy, postedByUID, postedAt, content }: Post) {
   console.log(`>> components.PostEntry.render(${id})`);
   return (
-    <div className="flex flex-col text-left p-2 border border-solid border-neutral-400 bg-slate-100 drop-shadow-md">
+    <div className="flex flex-col text-left p-2 border border-solid border-neutral-400 bg-slate-100 drop-shadow-md hover:drop-shadow-lg">
       <p className="_bg-pink-200 h-20 line-clamp-3">{content.substring(0, 200) + (content.length > 200 ? "..." : "")}</p>
       <div className="truncate text-center align-bottom first-letter:uppercase text-dark-1 text-sm">
         <span className="opacity-50 truncate">
