@@ -3,24 +3,24 @@ import Link from "./Link"
 
 export default function FilterButton({ href, userId, isFiltered }: any) {
   return (
-    <>
+    <div className="z-10">
       {isFiltered &&
         <Link
           href={href}
-          className="fixed _lg:top-2 bottom-2 right-1 h-fit"
+          className="fixed bottom-3 right-3 h-fit"
           title={`Show all`}
         >
-          <BsFilterCircleFill className="text-2xl rounded-full shadow-md" />
+          <BsFilterCircleFill className="text-3xl rounded-full shadow-md" />
         </Link>
       }
       {!isFiltered &&
         <Link
           href={`${href}?uid=${userId}`}
-          className="fixed _lg:top-2 bottom-2 right-1 h-fit"
+          className="fixed bottom-3 right-3 h-fit"
           title={`Show created by me`}>
-          <BsFilterCircle className="text-2xl rounded-full opacity-30 hover:opacity-100 hover:shadow-md hover:backdrop-blur-sm" />
+          <BsFilterCircle className="text-3xl rounded-full opacity-30 hover:opacity-100 hover:shadow-md hover:backdrop-blur-sm" />
         </Link>
       }
-    </>
+    </div>
   )
 }
