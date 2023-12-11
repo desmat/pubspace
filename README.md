@@ -1,8 +1,12 @@
 # PubSpace: The app for public spaces
 
-A quick-and-dirty starter of a super app for public spaces (pubs, cafés, etc) to manage and publish bulletin boards, menus, event calendars, maybe even trivia and other pub games.
+A tech demo app exploring utilities for public spaces (pubs, cafés, etc.) powered by OpenAI's ChatGPT.
 
-Just a basic bulletin board for now, more to come soon!
+Includes:
+- Bulletin board for announcements, community use, etc.
+- Food and drink menus for both patrons to peruse and preparation instructions for staff.
+- Trivia games for weekly game nights or for your own entertainment!
+
 
 ## Demo
 
