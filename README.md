@@ -22,6 +22,7 @@ Includes:
 - Firebase
 - Redis
 - Vercel
+- OpenAI
 
 
 ## Getting Started
