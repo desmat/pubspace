@@ -2,9 +2,7 @@
 
 import { User } from "firebase/auth";
 import { usePathname, useRouter } from 'next/navigation'
-import { useEffect } from 'react';
 import { BsFillPlusCircleFill } from "react-icons/bs"
-import { BsLightningFill } from "react-icons/bs"
 import { BsClipboardFill } from "react-icons/bs"
 import { BsCupHotFill } from "react-icons/bs";
 import { BsFillQuestionSquareFill } from 'react-icons/bs'
@@ -28,10 +26,20 @@ function getUsername(user: User | undefined) {
 
 function menuItems({ pathname, user, addPost, router }: { pathname: string, user: User | undefined, addPost: any | undefined, router: any | undefined }) {
   return [
+    // {
+    //   name: "Feed",
+    //   href: "/feed",
+    //   icon: <BsLightningFill className="my-auto text-right" />
+    // },
     {
-      name: "Feed",
-      href: "/feed",
-      icon: <BsLightningFill className="my-auto text-right" />
+      name: "Menus",
+      href: "/menus",
+      icon: <BsCupHotFill className="my-auto" />
+    },
+    {
+      name: "Trivia",
+      href: "/trivia",
+      icon: <BsFillQuestionSquareFill className="my-auto" />
     },
     {
       name: "Board",
@@ -56,16 +64,6 @@ function menuItems({ pathname, user, addPost, router }: { pathname: string, user
           return false;
         }
       }
-    },
-    {
-      name: "Menus",
-      href: "/menus",
-      icon: <BsCupHotFill className="my-auto" />
-    },
-    {
-      name: "Trivia",
-      href: "/trivia",
-      icon: <BsFillQuestionSquareFill className="my-auto" />
     },
   ].map((menuItem: any) => {
     menuItem.isActive = isActive(pathname, menuItem.href);

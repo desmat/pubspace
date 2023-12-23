@@ -15,9 +15,9 @@ export default function Page() {
       <div className="lg:self-center flex flex-col gap-4">
         <p>A tech demo app exploring utilities for public spaces (pubs, cafés, etc.) powered by OpenAI&apos;s ChatGPT.</p>
         <div className="flex flex-col gap-0">
-          <p>&#8226;&nbsp;<Link href="/posts" style="parent" className="group"><Link style="child">Bulletin board</Link> for announcements, community use, etc.</Link></p>
           <p>&#8226;&nbsp;<Link href="/menus" style="plain" className="group"><Link style="child">Food and drink menus</Link> for both patrons to peruse and preparation instructions for staff.</Link></p>
           <p>&#8226;&nbsp;<Link href="/trivia" style="plain" className="group"><Link style="child">Trivia games</Link> for weekly game nights or for your own entertainment!</Link></p>
+          <p>&#8226;&nbsp;<Link href="/posts" style="parent" className="group"><Link style="child">Bulletin board</Link> for announcements, community use, etc.</Link></p>
         </div>
         {userLoaded && !user &&
           <p className="text-center"><Link href="/profile">Signup now!</Link></p>
