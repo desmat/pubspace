@@ -2,7 +2,7 @@ import moment from 'moment';
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { Game } from "@/types/Trivia";
-import { User } from 'firebase/auth';
+import useAlert from './alert';
 
 const useTrivia: any = create(devtools((set: any, get: any) => ({
   games: [],
@@ -15,7 +15,7 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
 
     fetch('/api/trivia/games').then(async (res) => {
       if (res.status != 200) {
-        console.error(`Error fetching trivia games: ${res.status} (${res.statusText})`);
+        useAlert.getState().error(`Error fetching trivia games: ${res.status} (${res.statusText})`);
         return;
       }
 
@@ -35,7 +35,7 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
 
     fetch(`/api/trivia/games/${id}`).then(async (res) => {
       if (res.status != 200) {
-        console.error(`Error fetching trivia games ${id}: ${res.status} (${res.statusText})`);
+        useAlert.getState().error(`Error fetching trivia games ${id}: ${res.status} (${res.statusText})`);
         set({ loaded: true });
         return;
       }
@@ -69,7 +69,7 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
       body: JSON.stringify({ createdBy, numQuestions, name, categories }),
     }).then(async (res) => {
       if (res.status != 200) {
-        console.error(`Error creating game: ${res.status} (${res.statusText})`);
+        useAlert.getState().error(`Error creating game: ${res.status} (${res.statusText})`);
         const games = get().games.filter((game: Game) => game.id != tempId);
         set({ games });
       }
@@ -91,11 +91,11 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
         const splitValues = chunkValues.trim().split(/\n+/);
         const splitValue = splitValues[splitValues.length - 1].trim();
 
-        console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, chunkValues, splitValue });
+        // console.warn("*** hooks.trivia.createGame streaming from api", { doneReading, value, chunkValue, chunkValues, splitValue });
 
         try {
           const jsonValue = splitValue && JSON.parse(splitValue);
-          console.warn("*** hooks.trivia.createGame streaming from api", { splitValue, jsonValue });
+          // console.warn("*** hooks.trivia.createGame streaming from api", { splitValue, jsonValue });
           
           if (jsonValue && jsonValue.status) {
             // update game status
@@ -111,7 +111,7 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
             done = true;
           }
         } catch (error) {
-          console.warn("Unable to parse json", { error, chunkValue })
+          useAlert.getState().error("Unable to parse json", { error, chunkValue })
         }
       }
     });
@@ -141,7 +141,7 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
       method: "DELETE",
     }).then(async (res) => {
       if (res.status != 200) {
-        console.error(`Error deleting post ${id}: ${res.status} (${res.statusText})`);
+        useAlert.getState().error(`Error deleting post ${id}: ${res.status} (${res.statusText})`);
         set({ games, deletedGames });
         return;
       }

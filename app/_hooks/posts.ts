@@ -2,6 +2,7 @@ import moment from 'moment';
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { Post } from "@/types/Post"
+import useAlert from './alert';
 
 
 // TODO PostState type
@@ -18,7 +19,7 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
     if (id) {
       fetch(`/api/posts/${id}`).then(async (res) => {
         if (res.status != 200) {
-          console.error(`Error fetching post ${id}: ${res.status} (${res.statusText})`);
+          useAlert.getState().error(`Error fetching post ${id}: ${res.status} (${res.statusText})`);
           set({ loaded: true });
           return;
         }
@@ -32,7 +33,7 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
     } else {
       fetch('/api/posts').then(async (res) => {
         if (res.status != 200) {
-          console.error(`Error fetching posts: ${res.status} (${res.statusText})`);
+          useAlert.getState().error(`Error fetching posts: ${res.status} (${res.statusText})`);
           return;
         }
 
@@ -67,7 +68,7 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
       body: JSON.stringify({ content, position }),
     }).then(async (res) => {
       if (res.status != 200) {
-        console.error(`Error adding post: ${res.status} (${res.statusText})`);
+        useAlert.getState().error(`Error adding post: ${res.status} (${res.statusText})`);
         const posts = get().posts.filter((post: Post) => post.id != tempId);
         set({ posts });
         return;
@@ -98,7 +99,7 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
       body: JSON.stringify(post),
     }).then(async (res) => {
       if (res.status != 200) {
-        console.error(`Error editing post ${post.id}: ${res.status} (${res.statusText})`);
+        useAlert.getState().error(`Error editing post ${post.id}: ${res.status} (${res.statusText})`);
       }
 
       // TODO bring back the thing here?
@@ -124,7 +125,7 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
       method: "DELETE",
     }).then(async (res) => {
       if (res.status != 200) {
-        console.error(`Error deleting post ${id}: ${res.status} (${res.statusText})`);
+        useAlert.getState().error(`Error deleting post ${id}: ${res.status} (${res.statusText})`);
         set({ posts, deletedPosts });
         return;
       }

@@ -3,6 +3,7 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { init as doInit, logout as doLogout, signin as doSignin, signInAnonymously as doSignInAnonymously } from "@/services/auth";
 import { SigninMethod } from "@/types/SigninMethod";
+import useAlert from "./alert";
 
 const useUser: any = create(devtools((set: any, get: any) => ({
   user: undefined,
@@ -27,7 +28,7 @@ const useUser: any = create(devtools((set: any, get: any) => ({
             method: "GET"
           }).then(async (response: any) => {
             if (response.status != 200) {
-              console.error(`Error fetching user ${user.uid}: ${response.status} (${response.statusText})`);
+              useAlert.getState().error(`Error fetching user ${user.uid}: ${response.status} (${response.statusText})`);
               set({ loaded: true, loading: false, fetching: false });
               return;
             }
@@ -95,7 +96,7 @@ const useUser: any = create(devtools((set: any, get: any) => ({
             resolve(user);
           });
         }).catch((error) => {
-          console.warn('>> hooks.User.signin', { error });
+          useAlert.getState().error(`Error signing in: ${error}`);
           set({ /* user: undefined, */ loaded: true, loading: false, fetching: false });
           reject(error);
         });
@@ -118,7 +119,7 @@ const useUser: any = create(devtools((set: any, get: any) => ({
             console.log(">> hooks.User.logout success");
             resolve(true);
           }).catch((error) => {
-            console.warn(">> hooks.User.logout error", { error })
+            useAlert.getState().error(`Error logging out: ${error}`);
             reject(error);
           })
         });

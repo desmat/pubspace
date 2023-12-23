@@ -7,7 +7,7 @@ import { validateUserSession } from '@/services/users';
 
 export async function GET(request: Request) {
   console.log('>> app.api.menus.GET');
-
+    
   const menus = await getMenus();
   return NextResponse.json({ menus });
 }

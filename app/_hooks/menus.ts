@@ -3,6 +3,7 @@ import moment from 'moment';
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { Menu } from '@/types/Menus';
+import useAlert from './alert';
 
 const useMenus: any = create(devtools((set: any, get: any) => ({
   menus: [],
@@ -16,7 +17,7 @@ const useMenus: any = create(devtools((set: any, get: any) => ({
     if (id) {
       fetch(`/api/menus/${id}`).then(async (res) => {
         if (res.status != 200) {
-          console.error(`Error fetching menu ${id}: ${res.status} (${res.statusText})`);
+          useAlert.getState().error(`Error fetching menu ${id}: ${res.status} (${res.statusText})`);
           set({ loaded: true });
           return;
         }
@@ -30,7 +31,7 @@ const useMenus: any = create(devtools((set: any, get: any) => ({
     } else {
       fetch('/api/menus').then(async (res) => {
         if (res.status != 200) {
-          console.error(`Error fetching menus: ${res.status} (${res.statusText})`);
+          useAlert.getState().error(`Error fetching menus: ${res.status} (${res.statusText})`);
           return;
         }
 
@@ -66,7 +67,7 @@ const useMenus: any = create(devtools((set: any, get: any) => ({
       body: JSON.stringify({ name, type, numItems }),
     }).then(async (res) => {
       if (res.status != 200) {
-        console.error(`Error adding menu: ${res.status} (${res.statusText})`);
+        useAlert.getState().error(`Error adding menu: ${res.status} (${res.statusText})`);
         const menus = get().menus.filter((menu: Menu) => menu.id != tempId);        
         set({ menus });
         return;
@@ -99,7 +100,7 @@ const useMenus: any = create(devtools((set: any, get: any) => ({
       method: "DELETE",
     }).then(async (res) => {
       if (res.status != 200) {
-        console.error(`Error deleting menus ${id}: ${res.status} (${res.statusText})`);
+        useAlert.getState().error(`Error deleting menus ${id}: ${res.status} (${res.statusText})`);
         set({ menus, deletedMenus });
         return;
       }
