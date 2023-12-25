@@ -33,7 +33,8 @@ async function generateMenu(type: string, numItems: number): Promise<any> {
       {
         role: 'system',
         content: `You are an assistant that receives a request to create a menu with a given style. 
-Please respond ONLY with JSON data containing name, a short description, ingredients and preparation instructions with only the following keys: "name", "description", "ingredients", "preparation" with root key "menu"`
+Please respond ONLY with JSON data containing name, a short description, ingredients (please include quantities or volumes) and preparation instructions with only the following keys: "name", "description", "ingredients", "preparation" with root key "menu".
+The "ingredients" key should only contain an array of strings.`
       },
       {
         role: 'user',
