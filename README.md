@@ -10,7 +10,7 @@ Includes:
 
 ## Demo
 
-[https://pubspace.desmat.ca](PubSpace.desmat.ca)
+[PubSpace.desmat.ca](https://pubspace.desmat.ca)
 
 
 ## Tech
