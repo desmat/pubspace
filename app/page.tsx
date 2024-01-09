@@ -31,11 +31,11 @@ export default function Page() {
           {/* <MdHome className=" _mt-[0.1rem] _mr-[-0.2rem] text-xl" /> */}
           www.desmat.ca
         </Link>
-        <Link key="email" href="mailto:workout@desmat.ca" target="_blank" className="_bg-yellow-200 flex flex-row gap-1 items-center">
+        <Link key="email" href="mailto:pubspace@desmat.ca" target="_blank" className="_bg-yellow-200 flex flex-row gap-1 items-center">
           {/* <MdMail className="_mt-[0.05rem] _mr-[-0.25rem] text-xl" /> */}
           @desmat.ca
         </Link>
-        <Link key="github" href="https://github.com/desmat/workout" target="_blank" className="_bg-yellow-200 flex flex-row gap-0.5 items-center">
+        <Link key="github" href="https://github.com/desmat/pubspace" target="_blank" className="_bg-yellow-200 flex flex-row gap-0.5 items-center">
           <BsGithub className="mt-[0.1rem] text-md" />
           desmat
         </Link>
