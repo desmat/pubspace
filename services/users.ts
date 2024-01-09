@@ -69,11 +69,12 @@ export async function authenticateUser(request: any) {
   let tokens;
   if (idToken) {
     try {
+      console.log("*** authenticateUser", { idToken });
       tokens = await verifyIdToken(idToken);
-      // console.log("*** authenticateUser", { tokens, idToken });
+      console.log("*** authenticateUser", { tokens });
       const user = await getUser(tokens.uid);
       const refreshAndIdTokens = await getCustomIdAndRefreshTokens(idToken, firebaseConfig.apiKey || "");
-      // console.log("*** authenticateUser ***", { user, idToken });
+      console.log("*** authenticateUser ***", { user, refreshAndIdTokens });
       return { user, refreshToken: refreshAndIdTokens.refreshToken };
     } catch (error: any) {
       // console.warn("*** authenticateUser ***", { code: error.code, message: error.message, error });
