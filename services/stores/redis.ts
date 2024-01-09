@@ -5,6 +5,7 @@ import { kv } from "@vercel/kv";
 import { Menu, MenuItem } from "@/types/Menus";
 import { Post } from "@/types/Post";
 import { Game, Question } from "@/types/Trivia";
+import { uuid } from '@/utils/misc';
 import { samplePosts } from './samples';
 
 const menusKey = "menus";
@@ -197,7 +198,7 @@ export async function addPost(content: string, postedBy: string, postedByUID?: s
     console.log(">> services.stores.redis.addPost content:", { content, postedBy });
 
     const post = {
-        id: crypto.randomUUID(),
+        id: uuid(),
         position,
         postedBy,
         postedByUID,

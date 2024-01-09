@@ -3,6 +3,7 @@
 import moment from 'moment';
 import { Post } from "@/types/Post";
 import { User } from 'firebase/auth';
+import { uuid } from '@/utils/misc';
 import { getUserName } from './users';
 
 let store: any;
@@ -32,7 +33,7 @@ export async function addPost(postData: any, user: any): Promise<Post> {
   }
 
   const post = {
-    id: crypto.randomUUID(),
+    id: uuid(),
     postedBy: getUserName(user),
     postedByUID: user.uid,
     postedAt: moment().valueOf(),

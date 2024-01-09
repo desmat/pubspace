@@ -3,6 +3,7 @@ import moment from 'moment';
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { Menu } from '@/types/Menus';
+import { uuid } from '@/utils/misc';
 import useAlert from './alert';
 
 const useMenus: any = create(devtools((set: any, get: any) => ({
@@ -49,7 +50,7 @@ const useMenus: any = create(devtools((set: any, get: any) => ({
     console.log(">> hooks.menu.createMenu", { name, type, numItems });
 
     // optimistic
-    const tempId = crypto.randomUUID();
+    const tempId = uuid();
     const menu = {
       id: tempId,
       createdBy: user.uid,

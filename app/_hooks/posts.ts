@@ -2,6 +2,7 @@ import moment from 'moment';
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { Post } from "@/types/Post"
+import { uuid } from '@/utils/misc';
 import useAlert from './alert';
 
 
@@ -51,7 +52,7 @@ const usePosts: any = create(devtools((set: any, get: any) => ({
     console.log(">> hooks.postStore.add content:", content);
 
     // optimistic
-    const tempId = crypto.randomUUID();
+    const tempId = uuid();
     const post = {
       id: tempId,
       postedBy: posterName,
