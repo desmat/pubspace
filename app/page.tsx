@@ -27,14 +27,17 @@ export default function Page() {
         }
       </div>
       <div className="fixed left-0 lg:left-16 bottom-4 lg:bottom-6 w-full _bg-orange-300 flex flex-row justify-center gap-4">
-        <Link href="https://www.desmat.ca" target="_blank" className="_bg-yellow-200 flex flex-row gap-1 align-text-bottom">
-          <MdHome className="mt-1.5" />www.desmat.ca
+        <Link key="web" href="https://www.desmat.ca" target="_blank" className="_bg-yellow-200 flex flex-row gap-0.5 items-center">
+          {/* <MdHome className=" _mt-[0.1rem] _mr-[-0.2rem] text-xl" /> */}
+          www.desmat.ca
         </Link>
-        {/* <Link href="mailto:mail@desmat.ca" target="_blank" className="_bg-yellow-200 flex flex-row gap-1.5 align-text-bottom">
-          <MdMail className="mt-1.5" />mail@desmat.ca
-        </Link> */}
-        <Link href="https://github.com/desmat" target="_blank" className="_bg-yellow-200 flex flex-row gap-1.5 align-text-bottom">
-          <BsGithub className="mt-1.5" />github.com/desmat
+        <Link key="email" href="mailto:workout@desmat.ca" target="_blank" className="_bg-yellow-200 flex flex-row gap-1 items-center">
+          {/* <MdMail className="_mt-[0.05rem] _mr-[-0.25rem] text-xl" /> */}
+          @desmat.ca
+        </Link>
+        <Link key="github" href="https://github.com/desmat/workout" target="_blank" className="_bg-yellow-200 flex flex-row gap-0.5 items-center">
+          <BsGithub className="mt-[0.1rem] text-md" />
+          desmat
         </Link>
       </div>
     </main>
