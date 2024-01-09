@@ -2,6 +2,7 @@ import moment from 'moment';
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { Game } from "@/types/Trivia";
+import { uuid } from '@/utils/misc';
 import useAlert from './alert';
 
 const useTrivia: any = create(devtools((set: any, get: any) => ({
@@ -52,7 +53,7 @@ const useTrivia: any = create(devtools((set: any, get: any) => ({
     console.log("*** hooks.trivia.createGame", { createdBy, numQuestions, name, categories });
 
     // optimistic game
-    const tempId = crypto.randomUUID();
+    const tempId = uuid();
     const game = {
       id: tempId,
       createdBy,

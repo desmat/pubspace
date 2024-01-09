@@ -3,6 +3,7 @@
 import moment from 'moment';
 import { Post } from "@/types/Post";
 import { Game, Question } from "@/types/Trivia";
+import { uuid } from '@/utils/misc';
 import { samplePosts } from './samples';
 
 let inMemoryPosts = samplePosts;
@@ -86,7 +87,7 @@ export async function addPost(content: string, postedBy: string, postedByUID?: s
     console.log(">> services.stores.memory.addPost content:", { content, postedBy });
 
     const post = {
-        id: crypto.randomUUID(),
+        id: uuid(),
         position,
         postedBy,
         postedByUID,

@@ -6,6 +6,7 @@ import * as firebase from '@/services/firebase'
 import { Post } from "@/types/Post"
 import { Game, Question } from "@/types/Trivia";
 import { Menu } from "@/types/Menus";
+import { uuid } from "@/utils/misc";
 import { samplePosts } from './samples';
 
 
@@ -197,7 +198,7 @@ export async function addPost(content: string, postedBy: string, postedByUID?: s
     console.log(">> services.stores.firestore.addPost content:", { content, postedBy });
 
     const post = {
-        id: crypto.randomUUID(),
+        id: uuid(),
         position,
         postedBy,
         postedByUID,

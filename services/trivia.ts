@@ -3,6 +3,7 @@
 import moment from 'moment';
 import { Game, Question } from "@/types/Trivia";
 import shuffleArray from '@/utils/shuffleArray';
+import { uuid } from '@/utils/misc';
 import OpenAI from 'openai';
 
 let store: any;
@@ -72,7 +73,7 @@ function parseQuestions(category: string, questions: any): Question[] {
     });
 
     return {
-      id: crypto.randomUUID(),
+      id: uuid(),
       category,
       number: questionOffset,
       text: q.question,
@@ -133,7 +134,7 @@ export async function createGame(user: any, numQuestions: number, name?: string,
   // console.log("*** services.trivia.createGame", { triviaQuestions, triviaQuestionsCategories, cleanedCategories, existingCategories, missingCategories, savedQuestions, generatedQuestions });
 
   const game = {
-    id: crypto.randomUUID(),
+    id: uuid(),
     status: "created",
     createdBy: user.uid,
     createdAt: moment().valueOf(),

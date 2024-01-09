@@ -4,6 +4,7 @@ import { User } from 'firebase/auth';
 import moment from 'moment';
 import OpenAI from 'openai';
 import { Menu } from "@/types/Menus";
+import { uuid } from '@/utils/misc';
 
 let store: any;
 import(`@/services/stores/${process.env.STORE_TYPE}`).then((importedStore) => {
@@ -81,7 +82,7 @@ export async function createMenu(user: User, name: string, type: string, numItem
   }
 
   const menu = {
-    id: crypto.randomUUID(),
+    id: uuid(),
     createdBy: user.uid,
     createdAt: moment().valueOf(),
     status: "created",
