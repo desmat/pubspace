@@ -35,7 +35,7 @@
     "zustand": "^4.4.0"
   },
   "devDependencies": {
-    "@types/uuid": "^9.0.7",
+    "@types/uuid": "^9.0.8",
     "encoding": "^0.1.13"
   }
 }
