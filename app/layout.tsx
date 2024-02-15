@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Pubspace',
-  description: 'Billboard, calendar, games and other things for coffee shops/bars/public houses/etc',
+  description: 'AI-powered utilities for public spaces (pubs, cafés, etc.)',
 }
 
 export default function RootLayout({
@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <meta property="og:title" content="Pubspace: AI-Powered utilities for public spaces (pubs, cafés, etc.)" />
+        <meta property="og:title" content="Pubspace: AI-powered utilities for public spaces (pubs, cafés, etc.)" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://pubspace.desmat.ca/" />
         {/* <meta property="og:image" content="https://workout.desmat.ca/social_img.png" /> */}
